@@ -1,0 +1,12 @@
+3
+road,40,5
+ car,10,3,50
+ car,12,5,40
+endroad
+road,80,9
+ car,20,5,45
+endroad
+road,60,6
+ car,30,6,40
+ car,50,4,80
+endroad
