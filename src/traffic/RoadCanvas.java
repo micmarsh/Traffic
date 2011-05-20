@@ -1,6 +1,7 @@
 package traffic;
 
 import java.awt.Canvas;
+import java.awt.Graphics;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -10,9 +11,9 @@ import java.util.ArrayList;
 public class RoadCanvas extends Canvas {
 	Road roads[];
 	int road;
+	//Graphics g;
 	
 	RoadCanvas(String input, ArrayList<Car> cars){
-		
 		BufferedReader infile = null;
 		String line = null;
 		 try {
@@ -31,6 +32,9 @@ public class RoadCanvas extends Canvas {
 		try {//Populates global road array and "super global" car array.
 			
 			do{
+				int maxEnd = 0;
+				int minStart = 0;
+				
 				do{
 					
 					line = infile.readLine();
@@ -39,14 +43,24 @@ public class RoadCanvas extends Canvas {
 					line = line.replaceAll(" ", "");
 					String[] lineElts = line.split(",");
 				//	System.out.println(line);
-					if(lineElts[0].equals("road"))
-						roads[road] = new Road(lineElts,this);
+					if(lineElts[0].equals("road")){
+						//System.out.println("Road number: "+road);
+						roads[road] = new Road(lineElts);
+					}
 					
-					if(lineElts[0].equals("car"))
-						cars.add(new Car(lineElts,road));
-						
+					if(lineElts[0].equals("car")){
+						Car c = new Car(lineElts,this,road);
+						cars.add(c);
+						roads[road].rCars.add(c);
+						if(c.finish > maxEnd)
+							maxEnd = c.finish;
+						if(minStart == 0 || c.start < minStart)
+							minStart = c.start;
+					}
 					
 				}while(!line.equals("endroad"));
+				if(road < roads.length)
+					roads[road].setLength(minStart,maxEnd);//Like all numbers in this loop, this is in UNITS.
 				road++;
 			}while(line != null);
 			
@@ -54,13 +68,33 @@ public class RoadCanvas extends Canvas {
 			e.printStackTrace();
 		}
 		
+		/*cars.get(cars.size()-1).finish = 69;
+		System.out.println(cars.get(cars.size()-1).finish);
+		System.out.println(roads[roads.length-1].rCars.get(roads[roads.length-1].rCars.size()-1).finish);
 		
+		roads[roads.length-1].rCars.get(roads[roads.length-1].rCars.size()-1).finish = 42;
+		System.out.println(cars.get(cars.size()-1).finish);
+		System.out.println(roads[roads.length-1].rCars.get(roads[roads.length-1].rCars.size()-1).finish);
+		
+		System.out.print(roads[2].getLength());*/
 	}
 	
 	public void adjustSize(int width, int height){
 		setSize(width,height);
+		road = 0;
 		for(Road r:roads){
 			r.adjust(this);//TODO: will take arguments eventually
+			road++;
+		}
+		//repaint();
+	}
+	/*public void update(Graphics g){
+		super.update(g);
+		paint(g);
+	}*/
+	public void paint(Graphics g){
+		for(Road r:roads){
+			r.paintComponent(g);
 		}
 	}
 }

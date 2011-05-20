@@ -1,12 +1,165 @@
-3
+18
 road,40,5
  car,10,3,50
- car,12,5,40
-endroad
-road,80,9
- car,20,5,45
-endroad
-road,60,6
+ car,25,5,40
  car,30,6,40
- car,50,4,80
+ car,70,4,80
+car,10,3,50
+ car,45,5,60
+ car,35,6,42
+ car,5,4,80
 endroad
+road,30,9
+ car,20,5,45
+ car,42,6,89
+ car,3,2,80
+ car,37,6,60
+ car,22,10,70
+ car,50,8,75
+endroad
+road,40,5
+ car,10,3,50
+ car,25,5,40
+ car,30,6,40
+ car,70,4,80
+car,10,3,50
+ car,45,5,60
+ car,35,6,42
+ car,5,4,80
+endroad
+road,30,9
+ car,20,5,45
+ car,42,6,89
+ car,3,2,80
+ car,37,6,60
+ car,22,10,70
+ car,50,8,75
+endroad
+road,40,5
+ car,10,3,50
+ car,25,5,40
+ car,30,6,40
+ car,70,4,80
+car,10,3,50
+ car,45,5,60
+ car,35,6,42
+ car,5,4,80
+endroad
+road,30,9
+ car,20,5,45
+ car,42,6,89
+ car,3,2,80
+ car,37,6,60
+ car,22,10,70
+ car,50,8,75
+endroad
+road,40,5
+ car,10,3,50
+ car,25,5,40
+ car,30,6,40
+ car,70,4,80
+car,10,3,50
+ car,45,5,60
+ car,35,6,42
+ car,5,4,80
+endroad
+road,30,9
+ car,20,5,45
+ car,42,6,89
+ car,3,2,80
+ car,37,6,60
+ car,22,10,70
+ car,50,8,75
+endroad
+road,40,5
+ car,10,3,50
+ car,25,5,40
+ car,30,6,40
+ car,70,4,80
+car,10,3,50
+ car,45,5,60
+ car,35,6,42
+ car,5,4,80
+endroad
+road,30,9
+ car,20,5,45
+ car,42,6,89
+ car,3,2,80
+ car,37,6,60
+ car,22,10,70
+ car,50,8,75
+endroad
+road,40,5
+ car,10,3,50
+ car,25,5,40
+ car,30,6,40
+ car,70,4,80
+car,10,3,50
+ car,45,5,60
+ car,35,6,42
+ car,5,4,80
+endroad
+road,30,9
+ car,20,5,45
+ car,42,6,89
+ car,3,2,80
+ car,37,6,60
+ car,22,10,70
+ car,50,8,75
+endroad
+road,40,5
+ car,10,3,50
+ car,25,5,40
+ car,30,6,40
+ car,70,4,80
+car,10,3,50
+ car,45,5,60
+ car,35,6,42
+ car,5,4,80
+endroad
+road,30,9
+ car,20,5,45
+ car,42,6,89
+ car,3,2,80
+ car,37,6,60
+ car,22,10,70
+ car,50,8,75
+endroad
+road,40,5
+ car,10,3,50
+ car,25,5,40
+ car,30,6,40
+ car,70,4,80
+car,10,3,50
+ car,45,5,60
+ car,35,6,42
+ car,5,4,80
+endroad
+road,30,9
+ car,20,5,45
+ car,42,6,89
+ car,3,2,80
+ car,37,6,60
+ car,22,10,70
+ car,50,8,75
+endroad
+road,40,5
+ car,10,3,50
+ car,25,5,40
+ car,30,6,40
+ car,70,4,80
+car,10,3,50
+ car,45,5,60
+ car,35,6,42
+ car,5,4,80
+endroad
+road,30,9
+ car,20,5,45
+ car,42,6,89
+ car,3,2,80
+ car,37,6,60
+ car,22,10,70
+ car,50,8,75
+endroad
+
+

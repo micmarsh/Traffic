@@ -1,5 +1,6 @@
 package traffic;
 
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -29,6 +30,7 @@ public class Traffic {
 			c = new RoadCanvas(input,cars);
 			b = new ButtonPanel(buttons);//TODO:will take arguments eventually
 			
+			this.addComponentListener(this);
 			sizeComponents();
 			
 			add(c);
@@ -36,8 +38,8 @@ public class Traffic {
 		}
 		
 		private void sizeComponents(){//int cHeight,int cWidth,int pHeight,int pWidth){
-			c.adjustSize(getWidth()-120,getHeight());
-			b.adjustSize(100,getHeight());
+			c.adjustSize(getWidth()-120,getHeight());//TODO:Add an "upause" to start of this function, 
+			b.adjustSize(100,getHeight());//TODO:continued: catch Road.adjust()'s exception, pause program
 		//	System.out.println(cars.size());
 			for(Car car:cars)
 				car.adjust(c);
@@ -74,7 +76,8 @@ public class Traffic {
 	public int run(String args[]){
 		//System.out.println(args[0]);
 		MainFrame m = new MainFrame("Traffic Simulator",args[0]);//TODO:this indexing is suspicious, investigate further
-		
+	
+		m.setVisible(true);
 		//TODO: main loop and all other such things
 		
 		return 0;
