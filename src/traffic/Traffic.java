@@ -7,28 +7,35 @@ import java.awt.event.ComponentListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 
 public class Traffic {
+	boolean play;
 	
-	ArrayList<Car> cars;
-	JButton buttons[];
+	//JButton buttons[];
 	
 	public class MainFrame extends JFrame implements ComponentListener {
 		RoadCanvas c;
 		ButtonPanel b;
+		ArrayList<Car> cars;
+		
 		MainFrame(String title,String input){
 			super(title);
 			setSize(500, 400);
-			
+		//	JCheckBox[] checks = {new JCheckBox("foo"),new JCheckBox("bar"),new JCheckBox("bar")};
+			//JComboCheckBox foo = new JComboCheckBox(checks);
 			FlowLayout L = new FlowLayout();
 			L.setAlignment(L.LEFT);
 			setLayout(L);
 			
 			cars = new ArrayList<Car>();
 			
+			
+			
 			c = new RoadCanvas(input,cars);
-			b = new ButtonPanel(buttons);//TODO:will take arguments eventually
+			b = new ButtonPanel(/*buttons,*/this);//,foo);//TODO:will take arguments eventually
 			
 			this.addComponentListener(this);
 			sizeComponents();
@@ -45,6 +52,17 @@ public class Traffic {
 				car.adjust(c);
 		}
 
+		public void next(){//TODO: this will take arguments
+			for (Car car : cars){
+				car.move();
+				car.adjust(c);
+			}
+			c.justPaintCars = true;
+			c.repaint();
+			c.justPaintCars = false;
+	
+		}
+		
 		@Override
 		public void componentHidden(ComponentEvent arg0) {
 			// TODO Auto-generated method stub

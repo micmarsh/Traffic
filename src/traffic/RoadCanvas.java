@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public class RoadCanvas extends Canvas {
 	Road roads[];
 	int road;
+	public boolean justPaintCars;
 	//Graphics g;
 	
 	RoadCanvas(String input, ArrayList<Car> cars){
@@ -68,6 +69,7 @@ public class RoadCanvas extends Canvas {
 			e.printStackTrace();
 		}
 		
+		justPaintCars = false;
 		/*cars.get(cars.size()-1).finish = 69;
 		System.out.println(cars.get(cars.size()-1).finish);
 		System.out.println(roads[roads.length-1].rCars.get(roads[roads.length-1].rCars.size()-1).finish);
@@ -93,8 +95,13 @@ public class RoadCanvas extends Canvas {
 		paint(g);
 	}*/
 	public void paint(Graphics g){
+	//	System.out.println("painted!");
 		for(Road r:roads){
-			r.paintComponent(g);
+			if(justPaintCars)
+				for(Car car : r.rCars)
+					car.paintCar(g);
+			else
+				r.paintComponent(g);
 		}
 	}
 }

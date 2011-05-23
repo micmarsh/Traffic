@@ -41,7 +41,7 @@ public class Road {
 		xPos = 0;
 		yPos = c.road * height;
 		
-		System.out.println("yPos just set to "+yPos+" and Road number is: "+c.road);
+	//	System.out.println("yPos just set to "+yPos+" and Road number is: "+c.road);
 		
 		sHeight = height/3;
 		sWidth = width;
@@ -133,7 +133,7 @@ public class Road {
 			    FontMetrics fm = g.getFontMetrics();
 			    int w = fm.stringWidth(""+(new Random()).nextInt());
 			    int h = fm.getAscent();
-			    System.out.println("yPos is:" +yPos);
+		//	    System.out.println("yPos is:" +yPos);
 			    g.drawString((intLoc-start)+" "+pixelsPerUnit, yPos/2,yPos+h);
 
 			
