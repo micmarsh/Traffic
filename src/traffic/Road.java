@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Road {
-	private int intLoc;//these are in "units"!
-	private int intLength;//these are in "units"!
+	public int intLoc;//these are in "units"!
+	public int intLength;//these are in "units"!
 	private int height,width,xPos;
 	public int sYPos,sHeight;
 	private int sWidth,sXPos,yPos;
@@ -73,12 +73,10 @@ public class Road {
 			g.setColor(Color.red);
 			g.fillRect((intLoc-start)*pixelsPerUnit,sYPos,intLength*pixelsPerUnit,sHeight);
 			
-			Color[] colors = {Color.yellow,Color.blue,Color.green,Color.white,Color.magenta,Color.pink,
-					Color.orange,Color.cyan};
-			int i = 0;
+			
 			ArrayList<Integer> finishes = new ArrayList<Integer>();
 			for(Car c:rCars){
-				g.setColor(colors[i]);
+				g.setColor(c.color);
 				
 				int offSet = 0;
 				
@@ -87,7 +85,7 @@ public class Road {
 				
 				finishes.add(c.finish+offSet);
 				c.paintComponent(g,pixelsPerUnit,offSet);
-				i = (i+1)%8;
+				
 				/*B += incr;
 				if(B > 250){
 					B = 0;

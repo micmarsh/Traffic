@@ -1,6 +1,7 @@
 package traffic;
 
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -8,13 +9,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 public class RoadCanvas extends Canvas {
 	Road roads[];
 	int road;
 	public boolean justPaintCars;
+	public Car[] crashed;
 	//Graphics g;
 	
 	RoadCanvas(String input, ArrayList<Car> cars){
+		System.out.println("Constructing Road Canvas...");
 		BufferedReader infile = null;
 		String line = null;
 		 try {
@@ -36,6 +41,10 @@ public class RoadCanvas extends Canvas {
 				int maxEnd = 0;
 				int minStart = 0;
 				
+				Color[] colors = {Color.yellow,Color.blue,Color.green,Color.white,Color.magenta,
+						Color.orange,Color.cyan};
+				int i = 0;
+				
 				do{
 					
 					line = infile.readLine();
@@ -47,6 +56,7 @@ public class RoadCanvas extends Canvas {
 					if(lineElts[0].equals("road")){
 						//System.out.println("Road number: "+road);
 						roads[road] = new Road(lineElts);
+						i = 0;
 					}
 					
 					if(lineElts[0].equals("car")){
@@ -57,6 +67,8 @@ public class RoadCanvas extends Canvas {
 							maxEnd = c.finish;
 						if(minStart == 0 || c.start < minStart)
 							minStart = c.start;
+						c.color = colors[i];
+						i = (i+1)%7;
 					}
 					
 				}while(!line.equals("endroad"));
@@ -70,6 +82,10 @@ public class RoadCanvas extends Canvas {
 		}
 		
 		justPaintCars = false;
+		crashed = new Car[2];
+		crashed[0] = null;
+		crashed[1] = null;
+		System.out.println("Road Canvas Complete!");
 		/*cars.get(cars.size()-1).finish = 69;
 		System.out.println(cars.get(cars.size()-1).finish);
 		System.out.println(roads[roads.length-1].rCars.get(roads[roads.length-1].rCars.size()-1).finish);
@@ -95,13 +111,39 @@ public class RoadCanvas extends Canvas {
 		paint(g);
 	}*/
 	public void paint(Graphics g){
-	//	System.out.println("painted!");
-		for(Road r:roads){
-			if(justPaintCars)
-				for(Car car : r.rCars)
-					car.paintCar(g);
-			else
-				r.paintComponent(g);
-		}
+		
+		//if(crashed[1] == null){
+			for(Road r:roads){
+				if(justPaintCars){
+					System.out.println("painted!");
+
+					for(Car car : r.rCars)
+					//	if(!car.deleted)
+							car.paintCar(g);
+				}
+				else{
+
+					r.paintComponent(g);
+				}
+					
+			}
+		//	if(crashed[1] != null){
+			//	System.out.println("String drawn?");
+				//g.setColor(Color.RED);
+				//g.drawString(colorName(crashed[0].color)+" car and "+colorName(crashed[1].color)+" car crashed on" +
+					//	" road "+(crashed[0].roadIndex+1)+ " at position "+crashed[0].start, 10, this.getHeight()/2);
+				
+				
+	//		}
+	//	}
+	//	else{
+		
+		//}
 	}
+	
+	
+	//Color[] colors = {Color.yellow,Color.blue,Color.green,Color.white,Color.magenta,Color.pink,
+	//Color.orange,Color.cyan};
+	
+	
 }

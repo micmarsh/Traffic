@@ -7,14 +7,15 @@ import java.awt.Polygon;
 public class Car {
 	
 	public int start;
-	private int velocity;
+	int velocity;
 	public int finish;//All of these: all in units!
-	private int roadIndex;
+	int roadIndex;
 //	private int begin,end;//in pixels!
 	private Polygon image;
 	private int[] wheelStats;// index 0: size index, 1-4: locations of (1-2) first wheel, (3-4) second wheel, all in pixels
-	private Color color;
+	public Color color;
 	
+//public boolean deleted;
 	Car(String lineElts[],RoadCanvas c,int r){
 		start = Integer.parseInt(lineElts[1]);
 		velocity = Integer.parseInt(lineElts[2]);
@@ -22,6 +23,7 @@ public class Car {
 		roadIndex = r;
 		image = new Polygon();
 		wheelStats = new int[5];
+//		deleted = false;
 		adjust(c);
 		
 	}
@@ -59,9 +61,9 @@ public class Car {
 		
 	}
 	
-	public void setColor(Color c){
-		color = c;
-	}
+	//public void setColor(Color c){
+		//color = c;
+	//}
 	
 	public void paintCar(Graphics g){
 	//	System.out.println("Car Painted");
