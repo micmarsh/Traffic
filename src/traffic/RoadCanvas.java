@@ -115,7 +115,7 @@ public class RoadCanvas extends Canvas {
 		//if(crashed[1] == null){
 			for(Road r:roads){
 				if(justPaintCars){
-					System.out.println("painted!");
+	//				System.out.println("painted!");
 
 					for(Car car : r.rCars)
 					//	if(!car.deleted)
