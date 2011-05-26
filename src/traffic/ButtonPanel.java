@@ -6,14 +6,19 @@ import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import traffic.Traffic.MainFrame;
 
-public class ButtonPanel extends JPanel implements MouseListener {
+public class ButtonPanel extends JPanel implements MouseListener,DocumentListener {
 	MainFrame parent;
 //	JButton buttons[];
-	
+	JButton play;
+	JTextField fps;
 	ButtonPanel(MainFrame m){//,JComboCheckBox combo){
 		System.out.println("Constructing Button Panel...");
 		parent = m;
@@ -27,8 +32,20 @@ public class ButtonPanel extends JPanel implements MouseListener {
 		JButton rewind = new JButton("Rewind");
 		rewind.addMouseListener(this);
 		
+		play = new JButton("Play");
+		play.addMouseListener(this);
+		
+		fps = new JTextField("1");
+		
+		JButton update = new JButton("Update");
+		update.addMouseListener(this);
+		
 		this.add(next);
+		this.add(play);
 		this.add(rewind);
+		this.add(new JLabel("FPS:"));
+		this.add(fps);
+		//this.add(update); //doesn't seem may not be necesary
 		//this.add(new JButton("heh"));
 		System.out.println("Button Panel Completed!");
 	}
@@ -42,11 +59,26 @@ public class ButtonPanel extends JPanel implements MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 	//	JButton b = (JButton) arg0.getComponent();
-		String text = ((JButton) arg0.getComponent()).getText();
+		
+		JButton b = (JButton)arg0.getComponent();
+		String text = b.getText();
+		
 		if(text.equals("Step"))
 			parent.next();
 		if(text.equals("Rewind"))
 			parent.rewind();
+		if(text.equals("Play")){
+			parent.miliSecondsPerFrame = 1000/Integer.parseInt(fps.getText());		
+			parent.play = true;
+			b.setText("Pause");
+		}
+		if(text.equals("Pause")){
+			parent.play = false;
+			b.setText("Play");
+		}
+		if(text.equals("Update")){
+			parent.miliSecondsPerFrame = 1000/Integer.parseInt(fps.getText());		
+		}
 		//parent.sizeComponents();//TODO: this is obviously the worst way to do this, still lots of work/optimization to be done
 	}
 
@@ -70,6 +102,23 @@ public class ButtonPanel extends JPanel implements MouseListener {
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void changedUpdate(DocumentEvent arg0) {
+			
+	}
+
+	@Override
+	public void insertUpdate(DocumentEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeUpdate(DocumentEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}

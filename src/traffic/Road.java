@@ -75,6 +75,8 @@ public class Road {
 			
 			
 			ArrayList<Integer> finishes = new ArrayList<Integer>();
+			
+			if(!rCars.isEmpty())
 			for(Car c:rCars){
 				g.setColor(c.color);
 				

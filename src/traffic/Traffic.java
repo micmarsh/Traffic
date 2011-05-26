@@ -15,7 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 public class Traffic {
-	boolean play;
+	
 	
 	//JButton buttons[];
 	
@@ -24,6 +24,8 @@ public class Traffic {
 		ButtonPanel b;
 		ArrayList<Car> cars;
 		ArrayList<SnapShot[]> memory;
+		boolean play;
+		int miliSecondsPerFrame;
 		
 		MainFrame(String title,String input){
 			super(title);
@@ -37,6 +39,8 @@ public class Traffic {
 			
 			cars = new ArrayList<Car>();
 			memory = new ArrayList<SnapShot[]>();
+			play = false;
+			miliSecondsPerFrame = 1000;
 			
 			
 			c = new RoadCanvas(input,cars);
@@ -300,8 +304,30 @@ public class Traffic {
 		MainFrame m = new MainFrame("Traffic Simulator",args[0]);//TODO:this indexing is suspicious, investigate further
 	
 		m.setVisible(true);
-		//TODO: main loop and all other such things
+		
 		System.out.println("Program loaded, starting up!");
+		
+		while(true){
+			
+			try {
+				Thread.sleep(m.miliSecondsPerFrame);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				break;
+			}
+			
+			if(m.cars.isEmpty()){
+				m.play = false;
+				m.b.play.setText("Play");
+			}
+			
+			if(m.play)
+				m.next();
+
+		}
+		//TODO: main loop and all other such things
+	
 		return 0;
 		
 	}
