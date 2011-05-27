@@ -40,11 +40,17 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 		JButton update = new JButton("Update");
 		update.addMouseListener(this);
 		
+		JButton reset = new JButton("Reset");
+		reset.addMouseListener(this);
+		
 		this.add(next);
 		this.add(play);
-		this.add(rewind);
 		this.add(new JLabel("FPS:"));
 		this.add(fps);
+		this.add(rewind);
+		this.add(reset);
+		
+		
 		//this.add(update); //doesn't seem may not be necesary
 		//this.add(new JButton("heh"));
 		System.out.println("Button Panel Completed!");
@@ -78,6 +84,9 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 		}
 		if(text.equals("Update")){
 			parent.miliSecondsPerFrame = 1000/Integer.parseInt(fps.getText());		
+		}
+		if(text.equals("Reset")){
+			parent.reset();
 		}
 		//parent.sizeComponents();//TODO: this is obviously the worst way to do this, still lots of work/optimization to be done
 	}

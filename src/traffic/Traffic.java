@@ -16,16 +16,28 @@ import javax.swing.JOptionPane;
 
 public class Traffic {
 	
-	
-	//JButton buttons[];
+
+	public class SnapShot {//Records changes in position, velocity, and whether or not the car finished in a given "turn
+		public int posChange,velChange,road;
+		boolean changed;
+		Car source;
+		SnapShot(int pC,int vC, Car c){
+			posChange = pC;
+			velChange = vC;
+			road = -1;
+			changed = false;
+			source = c;
+		}
+	}
 	
 	public class MainFrame extends JFrame implements ComponentListener {
 		RoadCanvas c;
 		ButtonPanel b;
 		ArrayList<Car> cars;
-		ArrayList<SnapShot[]> memory;
+		ArrayList<SnapShot[]> memory;//Used to record car actions, in case of a rewind in the future
 		boolean play;
 		int miliSecondsPerFrame;
+		ClickAndDrag listener;
 		
 		MainFrame(String title,String input){
 			super(title);
@@ -42,9 +54,14 @@ public class Traffic {
 			play = false;
 			miliSecondsPerFrame = 1000;
 			
+
 			
 			c = new RoadCanvas(input,cars);
-			b = new ButtonPanel(/*buttons,*/this);//,foo);//TODO:will take arguments eventually
+			b = new ButtonPanel(this);
+			
+			listener = new ClickAndDrag(c);
+			
+			c.addListener(listener);
 			
 			this.addComponentListener(this);
 			sizeComponents();
@@ -97,11 +114,12 @@ public class Traffic {
 		public void checkLoop(SnapShot[] array){
 			Car inIntersection = null;
 			Car intTaken = null;
+			
 			ArrayList<RoadAndInt> toRemove = new ArrayList<RoadAndInt>();
 			//int index = 0;
 			for(Road r : c.roads){
 				if(inIntersection != null){
-					if(intTaken != null )
+					if(intTaken != null )//once there's a car in two intersections, it crashes
 				;//		crash(inIntersection,intTaken,true);
 					intTaken = inIntersection;
 					inIntersection = null;
@@ -127,7 +145,7 @@ public class Traffic {
 				
 			
 			}
-			System.out.println("\n\n");
+			//System.out.println("\n\n");
 			
 			RoadAndInt [] toR = new RoadAndInt[toRemove.size()];//All of this new stuff: solved old problem, created new one.
 			for(int i = 0; i< toR.length;i++)
@@ -141,8 +159,6 @@ public class Traffic {
 			for (RoadAndInt r:toR){
 			//	System.out.println(r.integer+" "+toR.length);
 				int i = r.integer;
-				
-			
 				
 				Car c = r.road.rCars.get(i); 
 			//	if(c.start >= c.finish){
@@ -170,7 +186,8 @@ public class Traffic {
 				System.out.println("Size after: "+cars.size());
 			}
 			
-			
+			if(!toRemove.isEmpty())
+				listener.updateCars();
 		}
 		
 		public class IntComparator implements Comparator<RoadAndInt>{
@@ -206,6 +223,11 @@ public class Traffic {
 				c.repaint();
 				c.justPaintCars = false;
 			}
+		}
+		
+		public void reset(){
+			while(!memory.isEmpty())
+				rewind();
 		}
 		
 		

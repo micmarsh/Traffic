@@ -15,7 +15,7 @@ public class RoadCanvas extends Canvas {
 	Road roads[];
 	int road;
 	public boolean justPaintCars;
-	public Car[] crashed;
+	//public Car[] crashed;
 	//Graphics g;
 	
 	RoadCanvas(String input, ArrayList<Car> cars){
@@ -82,9 +82,11 @@ public class RoadCanvas extends Canvas {
 		}
 		
 		justPaintCars = false;
-		crashed = new Car[2];
-		crashed[0] = null;
-		crashed[1] = null;
+		//crashed = new Car[2];
+		//crashed[0] = null;
+		//crashed[1] = null;
+		
+		
 		System.out.println("Road Canvas Complete!");
 		/*cars.get(cars.size()-1).finish = 69;
 		System.out.println(cars.get(cars.size()-1).finish);
@@ -95,6 +97,10 @@ public class RoadCanvas extends Canvas {
 		System.out.println(roads[roads.length-1].rCars.get(roads[roads.length-1].rCars.size()-1).finish);
 		
 		System.out.print(roads[2].getLength());*/
+	}
+	
+	public void addListener(ClickAndDrag c){
+		this.addMouseListener(c);
 	}
 	
 	public void adjustSize(int width, int height){

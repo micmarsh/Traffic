@@ -3,14 +3,52 @@ package traffic;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Polygon;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class Car {
 	
-	public int start;
-	int velocity;
-	public int finish;//All of these: all in units!
+	/*public class Body extends Polygon implements MouseListener{
+		Body(){
+			super();
+		}
+		@Override
+		public void mouseClicked(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}*/
+	
+	public int start;//denoted in UNITS
+	int velocity;//denoted in UNITS
+	public int finish;//denoted in UNITS
 	int roadIndex;
-//	private int begin,end;//in pixels!
+
 	private Polygon image;
 	private int[] wheelStats;// index 0: size index, 1-4: locations of (1-2) first wheel, (3-4) second wheel, all in pixels
 	public Color color;
@@ -28,6 +66,9 @@ public class Car {
 		
 	}
 	
+	public Polygon getImage(){
+		return image;
+	}
 	
 	public void adjust(RoadCanvas c){
 		int offSet = c.roads[roadIndex].sHeight*4/3;
@@ -70,6 +111,7 @@ public class Car {
 		g.fillPolygon(image);
 		g.fillOval(wheelStats[1], wheelStats[2], wheelStats[0], wheelStats[0]);
 		g.fillOval(wheelStats[3], wheelStats[4], wheelStats[0], wheelStats[0]);
+		
 	}
 	
 	public void move(){
