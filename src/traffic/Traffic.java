@@ -17,18 +17,6 @@ import javax.swing.JOptionPane;
 public class Traffic {
 	
 
-	public class SnapShot {//Records changes in position, velocity, and whether or not the car finished in a given "turn
-		public int posChange,velChange,road;
-		boolean changed;
-		Car source;
-		SnapShot(int pC,int vC, Car c){
-			posChange = pC;
-			velChange = vC;
-			road = -1;
-			changed = false;
-			source = c;
-		}
-	}
 	
 	public class MainFrame extends JFrame implements ComponentListener {
 		RoadCanvas c;
@@ -37,7 +25,7 @@ public class Traffic {
 		ArrayList<SnapShot[]> memory;//Used to record car actions, in case of a rewind in the future
 		boolean play;
 		int miliSecondsPerFrame;
-		ClickAndDrag listener;
+		CanvasInterface listener;
 		
 		MainFrame(String title,String input){
 			super(title);
@@ -59,7 +47,7 @@ public class Traffic {
 			c = new RoadCanvas(input,cars);
 			b = new ButtonPanel(this);
 			
-			listener = new ClickAndDrag(c);
+			listener = new CanvasInterface(this);
 			
 			c.addListener(listener);
 			
@@ -77,6 +65,7 @@ public class Traffic {
 		//	System.out.println(cars.size());
 			for(Car car:cars)
 				car.adjust(c);
+			listener.updateCars();
 		}
 
 		public void next(){//TODO: this will take arguments
@@ -87,7 +76,7 @@ public class Traffic {
 			
 			for (Car car : cars){
 					current[i] = new SnapShot(car.velocity,0,car);//TODO:going to need a better way to keep track of pos and vel changes
-					System.out.println("Velocity: "+car.velocity);
+				//	System.out.println("Velocity: "+car.velocity);
 					car.move();
 					car.adjust(c);
 					i++;

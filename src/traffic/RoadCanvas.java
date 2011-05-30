@@ -99,7 +99,7 @@ public class RoadCanvas extends Canvas {
 		System.out.print(roads[2].getLength());*/
 	}
 	
-	public void addListener(ClickAndDrag c){
+	public void addListener(CanvasInterface c){
 		this.addMouseListener(c);
 	}
 	

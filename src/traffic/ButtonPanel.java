@@ -61,7 +61,9 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 		revalidate();
 		//TODO: possibly other stuff
 	}
-
+	
+	
+	
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 	//	JButton b = (JButton) arg0.getComponent();
@@ -82,9 +84,9 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 			parent.play = false;
 			b.setText("Play");
 		}
-		if(text.equals("Update")){
-			parent.miliSecondsPerFrame = 1000/Integer.parseInt(fps.getText());		
-		}
+		//if(text.equals("Update")){
+			//parent.miliSecondsPerFrame = 1000/Integer.parseInt(fps.getText());		
+		//}
 		if(text.equals("Reset")){
 			parent.reset();
 		}
