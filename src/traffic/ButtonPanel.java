@@ -23,7 +23,7 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 		System.out.println("Constructing Button Panel...");
 		parent = m;
 		GridLayout L1 = new GridLayout();
-		L1.setRows(13);//get an actual number, probably from the arguments that don't yet exist
+		L1.setRows(13);//TODO: get an actual number, probably from the arguments that don't yet exist
 		setLayout(L1);
 	//	this.add(combo);
 		JButton next = new JButton("Step");
@@ -84,13 +84,13 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 			parent.play = false;
 			b.setText("Play");
 		}
-		//if(text.equals("Update")){
-			//parent.miliSecondsPerFrame = 1000/Integer.parseInt(fps.getText());		
-		//}
 		if(text.equals("Reset")){
 			parent.reset();
+			if(play.getText().equals("Pause")){
+				parent.play = false;
+				play.setText("Play");
+			}
 		}
-		//parent.sizeComponents();//TODO: this is obviously the worst way to do this, still lots of work/optimization to be done
 	}
 
 	@Override

@@ -46,15 +46,15 @@ public class CanvasInterface implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-	//	System.out.println("click loc: "+e.getPoint().getX());
-
+		System.out.println("teh mouse was clicked!");
+		
 		if(clicked != null){
 			System.out.println("*******CLICKED IS NOT NULL*******\n");
 			clicked.velocity = prevVel;
 			
 			//SnapShot[] jump = new SnapShot[1];
-			int newLoc = (int) (e.getPoint().getX()/frame.c.roads[clicked.roadIndex].pixelsPerUnit);
-			int diff = (int) (newLoc - clicked.start);
+			int newLoc = (e.getPoint().x+ (clicked.getImage().xpoints[5]-clicked.getImage().xpoints[2]))/frame.c.roads[clicked.roadIndex].pixelsPerUnit ;
+			int diff = newLoc - clicked.start;
 			clicked.start = newLoc;
 			
 			/*
@@ -87,12 +87,17 @@ public class CanvasInterface implements MouseListener {
 			
 			frame.memory.add(current);	
 			
+			//clicked.adjust(frame.c);
+			
 			clicked = null;
 			
 			if(paused){
 				frame.b.mouseClicked(new MouseEvent(frame.b.play, prevLoc, prevLoc, prevLoc, prevLoc, prevLoc, prevLoc, false));
 				paused = false;
 			}
+			
+			updateCars();
+			
 			frame.c.justPaintCars = true;
 			frame.repaint();
 			frame.c.justPaintCars = false;
@@ -100,6 +105,7 @@ public class CanvasInterface implements MouseListener {
 		}else{
 
 			Point loc = e.getPoint();
+			System.out.println(""+loc.x);
 			for(CarAndBound cb : cars)
 				if(cb.boundary.contains(loc)){
 					System.out.println("*******CLICKED IS NULL********");

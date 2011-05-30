@@ -1,0 +1,16 @@
+Buttons: 
+
+-Step: Moves each car forward by it's velocity
+-Play/Pause: Constantly "presses" step at the desired frames per second
+-Rewind: Moves cars backwards one step, or undoes the most recent jump
+-Reset: Resets all cars to their original starting position
+
+Tips/Warnings:
+
+-To make a car jump, click on the "body"(not the wheels), then click on the location you want it to jump to (you can click outside of the road, the car will jump to that X coordinate).
+
+-To adjust frame per second, pause the program *by pressing pause*, enter the new fps, then hit play
+
+-FPS can't be negative
+
+-Clicking on a car in motion ("Play"), pauses the program. What happens if you press play at this time and attempt to continue the "jump" is still undefined, I'll probably be resolving this issue soon.

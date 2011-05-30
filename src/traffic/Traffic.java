@@ -169,10 +169,10 @@ public class Traffic {
 	
 			Arrays.sort(absoluteIndices);
 			for(int i = absoluteIndices.length - 1; i >= 0;i--){
-				System.out.println("Size before: "+cars.size());
+		//		System.out.println("Size before: "+cars.size());
 				
 				cars.remove(absoluteIndices[i].intValue());
-				System.out.println("Size after: "+cars.size());
+			//	System.out.println("Size after: "+cars.size());
 			}
 			
 			if(!toRemove.isEmpty())
