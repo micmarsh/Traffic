@@ -87,7 +87,7 @@ public class Traffic {
 			c.justPaintCars = false;
 
 			checkLoop(current);
-			
+			listener.updateCars();
 			memory.add(current);
 		}
 		
@@ -109,7 +109,7 @@ public class Traffic {
 			for(Road r : c.roads){
 				if(inIntersection != null){
 					if(intTaken != null )//once there's a car in two intersections, it crashes
-				;//		crash(inIntersection,intTaken,true);
+				//	crash(inIntersection,intTaken,true);
 					intTaken = inIntersection;
 					inIntersection = null;
 				}
@@ -123,7 +123,7 @@ public class Traffic {
 					for(int j = i+1; j<r.rCars.size();j++)
 						if(collision(r.rCars.get(i),r.rCars.get(j))){
 			//				System.out.println("Index i: "+i+" Index j: "+j);
-						//	crash(r.rCars.get(i),r.rCars.get(j),false);
+				//			crash(r.rCars.get(i),r.rCars.get(j),false);
 						}
 						
 					if(r.rCars.get(i).start >= r.intLoc && r.rCars.get(i).start <= r.intLength + r.intLoc)
@@ -211,6 +211,7 @@ public class Traffic {
 				c.justPaintCars = true;
 				c.repaint();
 				c.justPaintCars = false;
+				listener.updateCars();
 			}
 		}
 		
@@ -243,7 +244,7 @@ public class Traffic {
 				message = colorName(c1.color)+" car on road "+(c1.roadIndex+1)+" and "+colorName(c2.color)+" car on " +
 						"road "+(c2.roadIndex+1)+" crashed in the intersection.";
 				
-			int pressed=JOptionPane.showConfirmDialog(null,message+"\nDo you want to continue?",null,JOptionPane.YES_NO_OPTION);
+			int pressed = -69;//=JOptionPane.showConfirmDialog(null,message+"\nDo you want to continue?",null,JOptionPane.YES_NO_OPTION);
 			
 			//JOptionPane.
 			if (pressed==JOptionPane.YES_OPTION){

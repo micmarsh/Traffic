@@ -1,3 +1,6 @@
+To Run:
+Make sure Eclipse (http://www.eclipse.org/downloads/) is installed open this directory as an existing project in Eclipse (File: new: Java Project). Before running go to Run: Run Configurations, then to the "arguments" tab to ensure "sample.in" (w/o quotes) is listed as the program's first argument.
+
 Buttons: 
 
 -Step: Moves each car forward by it's velocity
@@ -13,4 +16,4 @@ Tips/Warnings:
 
 -FPS can't be negative
 
--Clicking on a car in motion ("Play"), pauses the program. What happens if you press play at this time and attempt to continue the "jump" is still undefined, I'll probably be resolving this issue soon.
+-Clicking on a car in motion ("Play"), pauses the program. If you resume the program the car will stand still until you click again

@@ -47,9 +47,10 @@ public class CanvasInterface implements MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		System.out.println("teh mouse was clicked!");
-		
+		//boolean foundACar = false;//TODO: NOTE: if this is going to stay, implement it better
 		if(clicked != null){
 			System.out.println("*******CLICKED IS NOT NULL*******\n");
+		//	foundACar = true;
 			clicked.velocity = prevVel;
 			
 			//SnapShot[] jump = new SnapShot[1];
@@ -109,6 +110,7 @@ public class CanvasInterface implements MouseListener {
 			for(CarAndBound cb : cars)
 				if(cb.boundary.contains(loc)){
 					System.out.println("*******CLICKED IS NULL********");
+			//		foundACar = true;
 					clicked = cb.car;
 					prevVel = clicked.velocity;
 					clicked.velocity = 0;
@@ -120,6 +122,8 @@ public class CanvasInterface implements MouseListener {
 					break;
 				}
 		}
+	//	if(!foundACar)
+		//	mouseClicked(e);
 		
 	}
 

@@ -13,4 +13,4 @@ Tips/Warnings:
 
 -FPS can't be negative
 
--Clicking on a car in motion ("Play"), pauses the program. What happens if you press play at this time and attempt to continue the "jump" is still undefined, I'll probably be resolving this issue soon.
+-Clicking on a car in motion ("Play"), pauses the program. If you resume the program the car will stand still until you click again
