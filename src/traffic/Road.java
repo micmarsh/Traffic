@@ -12,7 +12,7 @@ public class Road {
 	private int height,width,xPos;
 	public int sYPos,sHeight;
 	private int sWidth,sXPos,yPos;
-	private int start,finish;//these are in "units"!
+	public int start,finish;//these are in "units"!
 	public int pixelsPerUnit;
 	
 	public ArrayList<Car> rCars;
@@ -20,14 +20,16 @@ public class Road {
 	Road(String lineElts[]){
 		intLoc = Integer.parseInt(lineElts[1]);
 		intLength = Integer.parseInt(lineElts[2]);
+		
 		rCars = new ArrayList<Car>();
 		//adjust(c);
 		
 	}
 	
 	public void setLength(int begin, int end){//this is in "units"!
-		start = begin;
+		start = begin - 5;
 		finish = end;
+		intLoc -= start;
 	}
 	
 	public int getLength(){//this is in "units"!
@@ -71,7 +73,7 @@ public class Road {
 			g.fillRect(sXPos, sYPos, sWidth, sHeight);
 			
 			g.setColor(Color.red);
-			g.fillRect((intLoc-start)*pixelsPerUnit,sYPos,intLength*pixelsPerUnit,sHeight);
+			g.fillRect((intLoc)*pixelsPerUnit,sYPos,intLength*pixelsPerUnit,sHeight);
 			
 			
 			ArrayList<Integer> finishes = new ArrayList<Integer>();

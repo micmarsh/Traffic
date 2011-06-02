@@ -3,6 +3,7 @@ package traffic;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -48,22 +49,38 @@ public class Car {
 	int velocity;//denoted in UNITS
 	public int finish;//denoted in UNITS
 	int roadIndex;
+	
+	private Rectangle crashRange;
 
 	private Polygon image;
 	private int[] wheelStats;// index 0: size index, 1-4: locations of (1-2) first wheel, (3-4) second wheel, all in pixels
 	public Color color;
 	
+	public int minVel,maxVel;
+	public boolean controlled;
 //public boolean deleted;
 	Car(String lineElts[],RoadCanvas c,int r){
 		start = Integer.parseInt(lineElts[1]);
-		velocity = Integer.parseInt(lineElts[2]);
-		finish = Integer.parseInt(lineElts[3]);
+		minVel = Integer.parseInt(lineElts[2]);
+		velocity = Integer.parseInt(lineElts[3]);
+		maxVel = Integer.parseInt(lineElts[4]);
+		finish = Integer.parseInt(lineElts[5]);
+		if(lineElts[6].equals("0"))
+			controlled = false;
+		else
+			controlled = true;
 		roadIndex = r;
 		image = new Polygon();
 		wheelStats = new int[5];
+	
 //		deleted = false;
 		adjust(c);
 		
+	}
+	
+	public void normalize(RoadCanvas c,int r){
+		start -= c.roads[r].start;
+		finish -= c.roads[r].start;
 	}
 	
 	public Polygon getImage(){
@@ -74,7 +91,7 @@ public class Car {
 		int offSet = c.roads[roadIndex].sHeight*4/3;
 	//	System.out.println("c.WIDTH "+offSet);
 		int begin = start*c.roads[roadIndex].pixelsPerUnit - offSet;
-		int end = start*c.roads[roadIndex].pixelsPerUnit + offSet;
+		//int end = start*c.roads[roadIndex].pixelsPerUnit + offSet;
 		
 		offSet /= 6;
 //		System.out.println("c.WIDTH divided by 20, then by six: "+offSet);
@@ -93,7 +110,9 @@ public class Car {
 		wheelStats[2] = yPos+2*offSet;
 		wheelStats[4] = yPos+2*offSet;
 		image.reset();
-		
+		int ppu = c.roads[roadIndex].pixelsPerUnit;
+		crashRange = new Rectangle((start-2)*ppu,yPos,4*ppu,offSet*2);//the '2' and the '4' are b/c 2 is the crash range on either side
+	
 		for(int i = 0; i<8;i++){
 			image.addPoint(Xs[i], Ys[i]);
 			//System.out.println("Ys[i]: "+Ys[i]);
@@ -124,8 +143,11 @@ public class Car {
 	//	System.out.println("Approximate image X position: "+image.getBounds().width);
 	//	System.out.println("Approximate image Y position: "+image.getBounds().height);
 		g.drawLine(finish*pixelsPerUnit + offSet, wheelStats[2]-2*wheelStats[0], finish*pixelsPerUnit+offSet, wheelStats[2]+wheelStats[0]);
+		
 		paintCar(g);
 		
+		//g.setColor(Color.darkGray);
+		//g.fillRect(crashRange.x, crashRange.y, crashRange.width, crashRange.height);
 		
 		//g.fillRect(image.getBounds().x, image.getBounds().y, image.getBounds().width, image.getBounds().height);
 	}

@@ -19,7 +19,7 @@ public class Traffic {
 
 	
 	public class MainFrame extends JFrame implements ComponentListener {
-		RoadCanvas c;
+		RoadCanvas c;		
 		ButtonPanel b;
 		ArrayList<Car> cars;
 		ArrayList<SnapShot[]> memory;//Used to record car actions, in case of a rewind in the future
@@ -103,13 +103,13 @@ public class Traffic {
 		public void checkLoop(SnapShot[] array){
 			Car inIntersection = null;
 			Car intTaken = null;
-			
+			boolean NLneeded = false;
 			ArrayList<RoadAndInt> toRemove = new ArrayList<RoadAndInt>();
 			//int index = 0;
 			for(Road r : c.roads){
 				if(inIntersection != null){
 					if(intTaken != null )//once there's a car in two intersections, it crashes
-				//	crash(inIntersection,intTaken,true);
+					//	crash(inIntersection,intTaken,1);
 					intTaken = inIntersection;
 					inIntersection = null;
 				}
@@ -123,18 +123,24 @@ public class Traffic {
 					for(int j = i+1; j<r.rCars.size();j++)
 						if(collision(r.rCars.get(i),r.rCars.get(j))){
 			//				System.out.println("Index i: "+i+" Index j: "+j);
-				//			crash(r.rCars.get(i),r.rCars.get(j),false);
+						//	crash(r.rCars.get(i),r.rCars.get(j),0);
 						}
 						
-					if(r.rCars.get(i).start >= r.intLoc && r.rCars.get(i).start <= r.intLength + r.intLoc)
-						inIntersection = r.rCars.get(i);
-						
+					if(r.rCars.get(i).start >= r.intLoc && r.rCars.get(i).start <= r.intLength + r.intLoc){
+						if(inIntersection == null)
+							inIntersection = r.rCars.get(i);
+						else
+						//	crash(inIntersection,r.rCars.get(i),42);
+						System.out.println(this.colorName(inIntersection.color)+" road #: "+(inIntersection.roadIndex+1));
+						NLneeded = true;
+					}
 						
 				}
 				
 			
 			}
-			//System.out.println("\n\n");
+			if(NLneeded)
+			System.out.println("\n\n");
 			
 			RoadAndInt [] toR = new RoadAndInt[toRemove.size()];//All of this new stuff: solved old problem, created new one.
 			for(int i = 0; i< toR.length;i++)
@@ -222,7 +228,7 @@ public class Traffic {
 		
 		
 		public boolean collision(Car c1, Car c2){
-			int offSet = 2;
+			int offSet = 4;//this gives each car a 2-unit (extending from either side) "crash zone"
 			if(c1.start > c2.start - offSet && c1.start < c2.start + offSet){
 			//	System.out.println("Collision!");
 				return true;
@@ -232,19 +238,21 @@ public class Traffic {
 		}
 		
 		
-		public void crash(Car c1, Car c2,boolean intersection){
+		public void crash(Car c1, Car c2,int intersection){
 			//stop loop, kill listeners somehow
 		//	c.crashed[0] = c1;
 		//	c.crashed[1] = c2;
 			String message = "";
-			if(!intersection)
+			if(intersection == 0)
 				message = colorName(c1.color)+" car and "+colorName(c2.color)+" car crashed on" +
 				" road "+(c1.roadIndex+1)+ " at position "+c2.start+".";
-			else
+			else if (intersection == 1)
 				message = colorName(c1.color)+" car on road "+(c1.roadIndex+1)+" and "+colorName(c2.color)+" car on " +
 						"road "+(c2.roadIndex+1)+" crashed in the intersection.";
+			else
+				message = "Me Gusta";
 				
-			int pressed = -69;//=JOptionPane.showConfirmDialog(null,message+"\nDo you want to continue?",null,JOptionPane.YES_NO_OPTION);
+			int pressed = JOptionPane.showConfirmDialog(null,message+"\nDo you want to continue?",null,JOptionPane.YES_NO_OPTION);
 			
 			//JOptionPane.
 			if (pressed==JOptionPane.YES_OPTION){

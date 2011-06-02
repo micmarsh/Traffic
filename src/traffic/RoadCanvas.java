@@ -39,7 +39,7 @@ public class RoadCanvas extends Canvas {
 			
 			do{
 				int maxEnd = 0;
-				int minStart = 0;
+				int minStart = -1;
 				
 				Color[] colors = {Color.yellow,Color.blue,Color.green,Color.white,Color.magenta,
 						Color.orange,Color.cyan};
@@ -65,15 +65,18 @@ public class RoadCanvas extends Canvas {
 						roads[road].rCars.add(c);
 						if(c.finish > maxEnd)
 							maxEnd = c.finish;
-						if(minStart == 0 || c.start < minStart)
+						if(minStart == -1 || c.start < minStart)
 							minStart = c.start;
 						c.color = colors[i];
 						i = (i+1)%7;
 					}
 					
 				}while(!line.equals("endroad"));
-				if(road < roads.length)
+				if(road < roads.length){
 					roads[road].setLength(minStart,maxEnd);//Like all numbers in this loop, this is in UNITS.
+					for(Car car: roads[road].rCars)
+						car.normalize(this,road);
+				}
 				road++;
 			}while(line != null);
 			
