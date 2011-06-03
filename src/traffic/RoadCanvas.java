@@ -2,18 +2,21 @@ package traffic;
 
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.JOptionPane;
 
 public class RoadCanvas extends Canvas {
 	Road roads[];
 	int road;
+	int delta;
 	public boolean justPaintCars;
 	//public Car[] crashed;
 	//Graphics g;
@@ -25,25 +28,29 @@ public class RoadCanvas extends Canvas {
 		 try {
 			infile = new BufferedReader(new FileReader(input));
 			line = infile.readLine();//Read in number of roads
+			delta = Integer.parseInt(line);
+			line = infile.readLine();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
+		
+		
 		roads = new Road[Integer.parseInt(line)];
 		
 		road = 0;
 		
 		try {//Populates global road array and "super global" car array.
-			
+			int i = 0;
 			do{
 				int maxEnd = 0;
 				int minStart = -1;
 				
 				Color[] colors = {Color.yellow,Color.blue,Color.green,Color.white,Color.magenta,
 						Color.orange,Color.cyan};
-				int i = 0;
+				
 				
 				do{
 					
@@ -56,7 +63,7 @@ public class RoadCanvas extends Canvas {
 					if(lineElts[0].equals("road")){
 						//System.out.println("Road number: "+road);
 						roads[road] = new Road(lineElts);
-						i = 0;
+						//i = 0;
 					}
 					
 					if(lineElts[0].equals("car")){
@@ -110,7 +117,7 @@ public class RoadCanvas extends Canvas {
 		setSize(width,height);
 		road = 0;
 		for(Road r:roads){
-			r.adjust(this);//TODO: will take arguments eventually
+			r.adjust(this);
 			road++;
 		}
 		//repaint();
@@ -136,6 +143,12 @@ public class RoadCanvas extends Canvas {
 				}
 					
 			}
+			g.setColor(Color.black);
+		//	FontMetrics fm = g.getFontMetrics();
+		 //   int w = fm.stringWidth(""+(new Random()).nextInt());
+		 //   int h = fm.getAscent();
+	//	    System.out.println("yPos is:" +yPos);
+		    g.drawString("Delta: "+delta, 10,roads[0].sHeight/2);
 		//	if(crashed[1] != null){
 			//	System.out.println("String drawn?");
 				//g.setColor(Color.RED);

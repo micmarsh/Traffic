@@ -1,14 +1,16 @@
 package traffic;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 
 import traffic.Traffic.MainFrame;
 
-public class CanvasInterface implements MouseListener {
+public class CanvasInterface implements MouseListener,MouseMotionListener {
 	MainFrame frame;
 	ArrayList<CarAndBound> cars;
 	private int prevLoc,prevVel;
@@ -47,21 +49,19 @@ public class CanvasInterface implements MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		System.out.println("teh mouse was clicked!");
-		//boolean foundACar = false;//TODO: NOTE: if this is going to stay, implement it better
+		
 		if(clicked != null){
 			System.out.println("*******CLICKED IS NOT NULL*******\n");
 		//	foundACar = true;
-			clicked.velocity = prevVel;
+		//	clicked.velocity = prevVel;
 			
 			//SnapShot[] jump = new SnapShot[1];
-			int newLoc = (e.getPoint().x+ (clicked.getImage().xpoints[5]-clicked.getImage().xpoints[2]))/frame.c.roads[clicked.roadIndex].pixelsPerUnit ;
+			frame.b.carStats[5].setText("Selected: No");
+			int newLoc = (e.getPoint().x)/frame.c.roads[clicked.roadIndex].pixelsPerUnit ;
 			int diff = newLoc - clicked.start;
 			clicked.start = newLoc;
 			
-			/*
-			jump[0]= new SnapShot(diff,0,clicked);
-			frame.memory.add(jump);//TODO: these two lines need to be better executed
-			*/
+			
 			
 			SnapShot[] current = new SnapShot[frame.cars.size()];
 			
@@ -95,7 +95,9 @@ public class CanvasInterface implements MouseListener {
 			if(paused){
 				frame.b.mouseClicked(new MouseEvent(frame.b.play, prevLoc, prevLoc, prevLoc, prevLoc, prevLoc, prevLoc, false));
 				paused = false;
-			}
+				frame.b.status.setText("playing");
+			}else
+				frame.b.status.setText("paused");
 			
 			updateCars();
 			
@@ -112,21 +114,24 @@ public class CanvasInterface implements MouseListener {
 					System.out.println("*******CLICKED IS NULL********");
 			//		foundACar = true;
 					clicked = cb.car;
-					prevVel = clicked.velocity;
-					clicked.velocity = 0;
+				//	prevVel = clicked.velocity;
+					//clicked.velocity = 0;
 					prevLoc = clicked.start;
 					if(frame.play){
 						frame.b.mouseClicked(new MouseEvent(frame.b.play, prevLoc, prevLoc, prevLoc, prevLoc, prevLoc, prevLoc, false));
 						paused = true;
+						
 					}
+					frame.b.carStats[5].setText("Selected: Yes");
 					break;
 				}
+			frame.b.status.setText("car selected");
 		}
 	//	if(!foundACar)
 		//	mouseClicked(e);
 		
 	}
-
+	
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
@@ -148,6 +153,48 @@ public class CanvasInterface implements MouseListener {
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+		//String[] carStrings = {"Car: ","Road #: ", "Position: ","Velocity: ","Finish: "};
+		Point loc = arg0.getPoint();
+		for(CarAndBound cb : cars)
+			if(clicked == null && cb.boundary.contains(loc)){//TODO:"clicked == null" may not be needed for final version
+				Car c = cb.car;
+				frame.b.carStats[0].setText("Car: "+colorName(c.color));
+				frame.b.carStats[1].setText("Road #: "+(c.roadIndex+1));
+				frame.b.carStats[2].setText("Position: "+(c.start+frame.c.roads[c.roadIndex].start));
+				frame.b.carStats[3].setText("Velocity: "+c.velocity);
+				frame.b.carStats[4].setText("Finish: "+(c.finish+frame.c.roads[c.roadIndex].start));
+				
+			}
+	}
+	
+	public String colorName(Color c){
+		if(c.equals(Color.yellow))
+			return "Yellow";
+		if(c.equals(Color.blue))
+			return "Blue";
+		if(c.equals(Color.green))
+			return "Green";
+		if(c.equals(Color.white))
+			return "White";
+		if(c.equals(Color.magenta))
+			return "Pink";
+	//	if(c.equals(Color.pink))
+	//		return "Pink";
+		if(c.equals(Color.orange))
+			return "Orange";
+		if(c.equals(Color.cyan))
+			return "Cyan";
+		return "NONE";
 	}
 
 }

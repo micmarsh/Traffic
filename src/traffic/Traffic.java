@@ -49,7 +49,8 @@ public class Traffic {
 			
 			listener = new CanvasInterface(this);
 			
-			c.addListener(listener);
+			c.addMouseListener(listener);
+			c.addMouseMotionListener(listener);
 			
 			this.addComponentListener(this);
 			sizeComponents();
@@ -340,6 +341,7 @@ public class Traffic {
 			if(m.cars.isEmpty()){
 				m.play = false;
 				m.b.play.setText("Play");
+				m.b.status.setText("paused");
 			}
 			
 			if(m.play)

@@ -1,5 +1,6 @@
 package traffic;
 
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -19,11 +20,13 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 //	JButton buttons[];
 	JButton play;
 	JTextField fps;
+	JLabel status;
+	JLabel[] carStats;
 	ButtonPanel(MainFrame m){//,JComboCheckBox combo){
 		System.out.println("Constructing Button Panel...");
 		parent = m;
 		GridLayout L1 = new GridLayout();
-		L1.setRows(13);//TODO: get an actual number, probably from the arguments that don't yet exist
+		L1.setRows(14);//TODO: get an actual number, probably from the arguments that don't yet exist
 		setLayout(L1);
 	//	this.add(combo);
 		JButton next = new JButton("Step");
@@ -35,20 +38,35 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 		play = new JButton("Play");
 		play.addMouseListener(this);
 		
+		status = new JLabel("paused");
+		status.setFont(new Font("foo", Font.ITALIC,15));
+		
+		String[] carStrings = {"Car: ","Road #: ", "Position: ","Velocity: ","Finish: ","Selected: "};
+		int i = 0;
+		carStats = new JLabel[carStrings.length];
+		for(String s:carStrings){
+			carStats[i] = new JLabel(s+"N/A");
+			i++;
+		}
+		
 		fps = new JTextField("1");
 		
-		JButton update = new JButton("Update");
-		update.addMouseListener(this);
-		
+	
 		JButton reset = new JButton("Reset");
 		reset.addMouseListener(this);
 		
+		this.add(new JLabel("Status: "));
+		this.add(status);
 		this.add(next);
 		this.add(play);
 		this.add(new JLabel("FPS:"));
 		this.add(fps);
 		this.add(rewind);
 		this.add(reset);
+		for (JLabel j:carStats)
+			this.add(j);
+		
+		
 		
 		
 		//this.add(update); //doesn't seem may not be necesary
@@ -79,18 +97,25 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 			parent.miliSecondsPerFrame = 1000/Integer.parseInt(fps.getText());		
 			parent.play = true;
 			b.setText("Pause");
+			status.setText("playing");
 		}
 		if(text.equals("Pause")){
 			parent.play = false;
 			b.setText("Play");
+			status.setText("paused");
 		}
 		if(text.equals("Reset")){
 			parent.reset();
 			if(play.getText().equals("Pause")){
 				parent.play = false;
 				play.setText("Play");
+				status.setText("paused");
 			}
 		}
+	}
+	
+	public void updateInfo(Car c){
+		status.setText(c.color.toString());
 	}
 
 	@Override

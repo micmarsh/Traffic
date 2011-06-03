@@ -88,20 +88,29 @@ public class Car {
 	}
 	
 	public void adjust(RoadCanvas c){
-		int offSet = c.roads[roadIndex].sHeight*4/3;
-	//	System.out.println("c.WIDTH "+offSet);
-		int begin = start*c.roads[roadIndex].pixelsPerUnit - offSet;
-		//int end = start*c.roads[roadIndex].pixelsPerUnit + offSet;
-		
-		offSet /= 6;
-//		System.out.println("c.WIDTH divided by 20, then by six: "+offSet);
-		int[] Xs = {begin,begin+offSet,begin+offSet*3/2,begin+offSet*9/2,begin+offSet*5,begin+offSet*6,
-				begin+offSet*6,begin};
-		
-		wheelStats[1] = begin;
-		wheelStats[3] = begin+offSet*4;
 		
 		int yPos = c.roads[roadIndex].sYPos;
+		int ppu = c.roads[roadIndex].pixelsPerUnit;
+		int offSet = 2*ppu;
+		
+	//	System.out.println("c.WIDTH "+offSet);
+		int begin = start*ppu - offSet*3/2;
+		//int end = start*c.roads[roadIndex].pixelsPerUnit + offSet;
+		
+		offSet /= 3;
+		
+		crashRange = new Rectangle((start-2)*ppu,yPos,4*ppu,offSet*2);//the '2' and the '4' are b/c 2 is the crash range on either side
+//		System.out.println("c.WIDTH divided by 20, then by six: "+offSet);
+		//int[] Xs = {begin,begin+offSet,begin+offSet*3/2,begin+offSet*9/2,begin+offSet*5,begin+offSet*6,
+			//	begin+offSet*6,begin};
+		
+		int[] Xs = {begin,begin+offSet,begin+offSet*3/2,begin+offSet*3/2+4*ppu,begin+offSet*2+4*ppu,
+				begin+4*ppu+offSet*3,begin+4*ppu+offSet*3,begin};
+		
+		wheelStats[1] = begin + offSet/2;
+		wheelStats[3] = wheelStats[1]+4*ppu;
+		
+		
 		
 		offSet = c.roads[roadIndex].sHeight/3;
 	//	System.out.println("yPos: "+yPos+"\noffSet: "+offSet);
@@ -110,8 +119,7 @@ public class Car {
 		wheelStats[2] = yPos+2*offSet;
 		wheelStats[4] = yPos+2*offSet;
 		image.reset();
-		int ppu = c.roads[roadIndex].pixelsPerUnit;
-		crashRange = new Rectangle((start-2)*ppu,yPos,4*ppu,offSet*2);//the '2' and the '4' are b/c 2 is the crash range on either side
+		
 	
 		for(int i = 0; i<8;i++){
 			image.addPoint(Xs[i], Ys[i]);
@@ -146,8 +154,9 @@ public class Car {
 		
 		paintCar(g);
 		
-		//g.setColor(Color.darkGray);
-		//g.fillRect(crashRange.x, crashRange.y, crashRange.width, crashRange.height);
+	//	g.setColor(Color.darkGray);
+		//g.drawLine(start*pixelsPerUnit,wheelStats[2]-2*wheelStats[0] , start*pixelsPerUnit, wheelStats[2]+wheelStats[0]);
+	//	g.fillRect(crashRange.x, crashRange.y, crashRange.width, crashRange.height);
 		
 		//g.fillRect(image.getBounds().x, image.getBounds().y, image.getBounds().width, image.getBounds().height);
 	}
