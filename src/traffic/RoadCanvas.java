@@ -17,7 +17,8 @@ public class RoadCanvas extends Canvas {
 	Road roads[];
 	int road;
 	int delta;
-	public boolean justPaintCars;
+	public boolean justPaintCars,updateStatus;
+	String status;
 	//public Car[] crashed;
 	//Graphics g;
 	
@@ -36,7 +37,7 @@ public class RoadCanvas extends Canvas {
 			e.printStackTrace();
 		}
 		
-		
+		status = "paused";
 		
 		roads = new Road[Integer.parseInt(line)];
 		
@@ -127,7 +128,9 @@ public class RoadCanvas extends Canvas {
 		paint(g);
 	}*/
 	public void paint(Graphics g){
-		
+		if(updateStatus)
+			g.drawString("Delta: "+delta+"     Status: "+status, 10,roads[0].sHeight/2);
+		else{
 		//if(crashed[1] == null){
 			for(Road r:roads){
 				if(justPaintCars){
@@ -148,13 +151,13 @@ public class RoadCanvas extends Canvas {
 		 //   int w = fm.stringWidth(""+(new Random()).nextInt());
 		 //   int h = fm.getAscent();
 	//	    System.out.println("yPos is:" +yPos);
-		    g.drawString("Delta: "+delta, 10,roads[0].sHeight/2);
+		    g.drawString("Delta: "+delta+"     Status: "+status, 10,roads[0].sHeight/2);
 		//	if(crashed[1] != null){
 			//	System.out.println("String drawn?");
 				//g.setColor(Color.RED);
 				//g.drawString(colorName(crashed[0].color)+" car and "+colorName(crashed[1].color)+" car crashed on" +
 					//	" road "+(crashed[0].roadIndex+1)+ " at position "+crashed[0].start, 10, this.getHeight()/2);
-				
+		}	
 				
 	//		}
 	//	}

@@ -42,7 +42,6 @@ public class Traffic {
 			play = false;
 			miliSecondsPerFrame = 1000;
 			
-
 			
 			c = new RoadCanvas(input,cars);
 			b = new ButtonPanel(this);
@@ -341,7 +340,10 @@ public class Traffic {
 			if(m.cars.isEmpty()){
 				m.play = false;
 				m.b.play.setText("Play");
-				m.b.status.setText("paused");
+				m.c.status = "paused";
+				m.c.updateStatus = true;
+				m.c.repaint();
+				m.c.updateStatus = false;
 			}
 			
 			if(m.play)

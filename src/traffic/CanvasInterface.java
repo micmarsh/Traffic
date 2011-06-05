@@ -49,7 +49,7 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		System.out.println("teh mouse was clicked!");
-		
+		//boolean foundACar = false;//TODO: NOTE: if this is going to stay, implement it better
 		if(clicked != null){
 			System.out.println("*******CLICKED IS NOT NULL*******\n");
 		//	foundACar = true;
@@ -61,7 +61,7 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 			int diff = newLoc - clicked.start;
 			clicked.start = newLoc;
 			
-			
+			frame.b.carStats[2].setText("Position: "+(clicked.start+frame.c.roads[clicked.roadIndex].start));
 			
 			SnapShot[] current = new SnapShot[frame.cars.size()];
 			
@@ -95,9 +95,13 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 			if(paused){
 				frame.b.mouseClicked(new MouseEvent(frame.b.play, prevLoc, prevLoc, prevLoc, prevLoc, prevLoc, prevLoc, false));
 				paused = false;
-				frame.b.status.setText("playing");
+				frame.c.status = "playing";
 			}else
-				frame.b.status.setText("paused");
+				frame.c.status = "paused";
+			
+			/*frame.c.updateStatus = true;
+			frame.c.repaint();
+			frame.c.updateStatus = false;*/
 			
 			updateCars();
 			
@@ -123,10 +127,15 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 						
 					}
 					frame.b.carStats[5].setText("Selected: Yes");
+					frame.c.status = "car selected";
 					break;
 				}
-			frame.b.status.setText("car selected");
+			
 		}
+		
+		frame.c.updateStatus = true;
+		frame.c.repaint();
+		frame.c.updateStatus = false;
 	//	if(!foundACar)
 		//	mouseClicked(e);
 		
@@ -175,6 +184,13 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 				frame.b.carStats[4].setText("Finish: "+(c.finish+frame.c.roads[c.roadIndex].start));
 				
 			}
+		int i = 0;
+		for(Road r : frame.c.roads){
+			if(loc.y >= r.yPos && loc.y < r.yPos + r.height)
+				frame.b.carStats[6].setText("Mouse: "+(r.start + loc.x/frame.c.roads[i].pixelsPerUnit));
+			
+			i++;
+		}
 	}
 	
 	public String colorName(Color c){

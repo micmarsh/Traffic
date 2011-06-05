@@ -9,9 +9,9 @@ import java.util.Random;
 public class Road {
 	public int intLoc;//these are in "units"!
 	public int intLength;//these are in "units"!
-	private int height,width,xPos;
-	public int sYPos,sHeight;
-	private int sWidth,sXPos,yPos;
+	private int width,xPos;
+	public int height,yPos,sYPos,sHeight;
+	private int sWidth,sXPos;
 	public int start,finish;//these are in "units"!
 	public int pixelsPerUnit;
 	
@@ -132,11 +132,11 @@ public class Road {
 			    
 			    g.setColor(Color.black);
 */
-			    FontMetrics fm = g.getFontMetrics();
+			 /*   FontMetrics fm = g.getFontMetrics();
 			    int w = fm.stringWidth(""+(new Random()).nextInt());
 			    int h = fm.getAscent();
 		//	    System.out.println("yPos is:" +yPos);
-			    g.drawString((intLoc-start)+" "+pixelsPerUnit, yPos/2,yPos+h);
+			    g.drawString((intLoc-start)+" "+pixelsPerUnit, yPos/2,yPos+h);*/
 
 			
 		
