@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -109,7 +110,7 @@ public class Traffic {
 			for(Road r : c.roads){
 				if(inIntersection != null){
 					if(intTaken != null )//once there's a car in two intersections, it crashes
-					//	crash(inIntersection,intTaken,1);
+						crash(inIntersection,intTaken,1);
 					intTaken = inIntersection;
 					inIntersection = null;
 				}
@@ -119,18 +120,19 @@ public class Traffic {
 					//	System.out.println(colorName(r.rCars.get(i).color)+" car at position "+r.rCars.get(i).start+
 						//		" on road "+(r.rCars.get(i).roadIndex+1) +", finish line at "+r.rCars.get(i).finish);
 						toRemove.add(new RoadAndInt(i,r));
+						continue;
 					}
 					for(int j = i+1; j<r.rCars.size();j++)
 						if(collision(r.rCars.get(i),r.rCars.get(j))){
 			//				System.out.println("Index i: "+i+" Index j: "+j);
-						//	crash(r.rCars.get(i),r.rCars.get(j),0);
+							crash(r.rCars.get(i),r.rCars.get(j),0);
 						}
 						
 					if(r.rCars.get(i).start >= r.intLoc && r.rCars.get(i).start <= r.intLength + r.intLoc){
 						if(inIntersection == null)
 							inIntersection = r.rCars.get(i);
 						else
-						//	crash(inIntersection,r.rCars.get(i),42);
+							crash(inIntersection,r.rCars.get(i),42);
 						System.out.println(this.colorName(inIntersection.color)+" road #: "+(inIntersection.roadIndex+1));
 						NLneeded = true;
 					}
@@ -175,10 +177,7 @@ public class Traffic {
 	
 			Arrays.sort(absoluteIndices);
 			for(int i = absoluteIndices.length - 1; i >= 0;i--){
-		//		System.out.println("Size before: "+cars.size());
-				
 				cars.remove(absoluteIndices[i].intValue());
-			//	System.out.println("Size after: "+cars.size());
 			}
 			
 			if(!toRemove.isEmpty())
@@ -250,14 +249,16 @@ public class Traffic {
 				message = colorName(c1.color)+" car on road "+(c1.roadIndex+1)+" and "+colorName(c2.color)+" car on " +
 						"road "+(c2.roadIndex+1)+" crashed in the intersection.";
 			else
-				message = "Me Gusta";
+				message = colorName(c1.color)+ " car and "+colorName(c2.color)+" car cannot both be in road "+
+				(c1.roadIndex+1)+"'s intersection at once";
+			
 				
 			int pressed = JOptionPane.showConfirmDialog(null,message+"\nDo you want to continue?",null,JOptionPane.YES_NO_OPTION);
 			
 			//JOptionPane.
 			if (pressed==JOptionPane.YES_OPTION){
-			//		c.crashed[0] = null;
-			//		c.crashed[1] = null;
+				if(play)
+					b.mouseClicked(new MouseEvent(b.play, 0,0,0,0,0,0, false));
 			}
 			if(pressed == JOptionPane.NO_OPTION){
 				System.exit(0);

@@ -36,9 +36,12 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 	private ArrayList<CarAndBound> getCars(){
 		ArrayList<CarAndBound> c = new ArrayList<CarAndBound>();
 		
-		for (Road r:frame.c.roads)
-			for(Car car: r.rCars)
-				c.add(new CarAndBound(car));
+		for (Road r:frame.c.roads){
+			
+			for(int i = r.rCars.size()-1;i >=0; i--)
+				c.add(new CarAndBound(r.rCars.get(i)));
+			
+		}
 		return c;
 	}
 	
@@ -50,87 +53,101 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 	public void mouseClicked(MouseEvent e) {
 		System.out.println("teh mouse was clicked!");
 		//boolean foundACar = false;//TODO: NOTE: if this is going to stay, implement it better
-		if(clicked != null){
-			System.out.println("*******CLICKED IS NOT NULL*******\n");
-		//	foundACar = true;
-		//	clicked.velocity = prevVel;
-			
-			//SnapShot[] jump = new SnapShot[1];
+		if(e.getButton() == MouseEvent.BUTTON3){
 			frame.b.carStats[5].setText("Selected: No");
-			int newLoc = (e.getPoint().x)/frame.c.roads[clicked.roadIndex].pixelsPerUnit ;
-			int diff = newLoc - clicked.start;
-			clicked.start = newLoc;
-			
-			frame.b.carStats[2].setText("Position: "+(clicked.start+frame.c.roads[clicked.roadIndex].start));
-			
-			SnapShot[] current = new SnapShot[frame.cars.size()];
-			
-			int i = 0;
-			
-			for (Car car : frame.cars){
-					if(car.equals(clicked)){
-						current[i] = new SnapShot(diff,0,car);//TODO:going to need a better way to keep track of pos and vel changes
-						car.adjust(frame.c);
-					}
-					else
-						current[i] = new SnapShot(0,0,car);
-					//	System.out.println("Velocity: "+car.velocity);
-				//	car.move();
-					
-					i++;
-			}
-			
-			frame.c.justPaintCars = true;
-			frame.c.repaint();
-			frame.c.justPaintCars = false;
-
-			//checkLoop(current);
-			
-			frame.memory.add(current);	
-			
-			//clicked.adjust(frame.c);
-			
-			clicked = null;
-			
 			if(paused){
 				frame.b.mouseClicked(new MouseEvent(frame.b.play, prevLoc, prevLoc, prevLoc, prevLoc, prevLoc, prevLoc, false));
 				paused = false;
 				frame.c.status = "playing";
 			}else
 				frame.c.status = "paused";
-			
-			/*frame.c.updateStatus = true;
-			frame.c.repaint();
-			frame.c.updateStatus = false;*/
-			
-			updateCars();
-			
-			frame.c.justPaintCars = true;
-			frame.repaint();
-			frame.c.justPaintCars = false;
-			
-		}else{
-
-			Point loc = e.getPoint();
-			System.out.println(""+loc.x);
-			for(CarAndBound cb : cars)
-				if(cb.boundary.contains(loc)){
-					System.out.println("*******CLICKED IS NULL********");
-			//		foundACar = true;
-					clicked = cb.car;
-				//	prevVel = clicked.velocity;
-					//clicked.velocity = 0;
-					prevLoc = clicked.start;
-					if(frame.play){
-						frame.b.mouseClicked(new MouseEvent(frame.b.play, prevLoc, prevLoc, prevLoc, prevLoc, prevLoc, prevLoc, false));
-						paused = true;
+			clicked = null;
+		}
+		else{
+			if(clicked != null){
+				System.out.println("*******CLICKED IS NOT NULL*******\n");
+			//	foundACar = true;
+			//	clicked.velocity = prevVel;
+				
+				//SnapShot[] jump = new SnapShot[1];
+				frame.b.carStats[5].setText("Selected: No");
+				int newLoc = (e.getPoint().x)/frame.c.roads[clicked.roadIndex].pixelsPerUnit ;
+				int diff = newLoc - clicked.start;
+				clicked.start = newLoc;
+				
+				frame.b.carStats[2].setText("Position: "+(clicked.start+frame.c.roads[clicked.roadIndex].start));
+				
+				SnapShot[] current = new SnapShot[frame.cars.size()];
+				
+				int i = 0;
+				
+				for (Car car : frame.cars){
+						if(car.equals(clicked)){
+							current[i] = new SnapShot(diff,0,car);//TODO:going to need a better way to keep track of pos and vel changes
+							car.adjust(frame.c);
+						}
+						else
+							current[i] = new SnapShot(0,0,car);
+						//	System.out.println("Velocity: "+car.velocity);
+					//	car.move();
 						
-					}
-					frame.b.carStats[5].setText("Selected: Yes");
-					frame.c.status = "car selected";
-					break;
+						i++;
 				}
-			
+				
+				frame.c.justPaintCars = true;
+				frame.c.repaint();
+				frame.c.justPaintCars = false;
+	
+				//checkLoop(current);
+				
+				frame.memory.add(current);	
+				
+				//clicked.adjust(frame.c);
+				
+				clicked = null;
+				
+				if(paused){
+					frame.b.mouseClicked(new MouseEvent(frame.b.play, prevLoc, prevLoc, prevLoc, prevLoc, prevLoc, prevLoc, false));
+					paused = false;
+					frame.c.status = "playing";
+				}else
+					frame.c.status = "paused";
+				
+				/*frame.c.updateStatus = true;
+				frame.c.repaint();
+				frame.c.updateStatus = false;*/
+				
+				updateCars();
+				
+				frame.c.justPaintCars = true;
+				frame.repaint();
+				frame.c.justPaintCars = false;
+				
+			}else{
+	
+				Point loc = e.getPoint();
+				System.out.println(""+loc.x);
+				for(int i = cars.size()-1; i >= 0; i--){
+					CarAndBound cb = cars.get(i);
+					if(cb.boundary.contains(loc)){
+						System.out.println("*******CLICKED IS NULL********");
+				//		foundACar = true;
+						clicked = cb.car;
+					//	prevVel = clicked.velocity;
+						//clicked.velocity = 0;
+						prevLoc = clicked.start;
+						if(frame.play){
+							frame.b.mouseClicked(new MouseEvent(frame.b.play, prevLoc, prevLoc, prevLoc, prevLoc, prevLoc, prevLoc, false));
+							paused = true;
+							
+						}
+						frame.b.carStats[5].setText("Selected: Yes");
+						frame.c.status = "car selected  (right-click to cancel)";
+						break;
+					}
+				}
+				
+			}
 		}
 		
 		frame.c.updateStatus = true;
