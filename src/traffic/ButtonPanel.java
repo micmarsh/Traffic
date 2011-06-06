@@ -72,7 +72,6 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 		this.add(fps);
 		this.add(rewind);
 		this.add(reset);
-	//	this.add(new JButton("LOL"));
 		for (JLabel j:carStats)
 			this.add(j);
 		//add(new JLabel("Mouse: "));
