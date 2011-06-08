@@ -28,12 +28,10 @@ public class Traffic {
 		int miliSecondsPerFrame;
 		CanvasInterface listener;
 		
-		MainFrame(String title,String input){
+		MainFrame(String title,String input){//Most of the interesting stuff happens in the RoadCanvas constructor
 			super(title);
 			System.out.println("Contructing Main Window...");
 			setSize(500, 400);
-		//	JCheckBox[] checks = {new JCheckBox("foo"),new JCheckBox("bar"),new JCheckBox("bar")};
-			//JComboCheckBox foo = new JComboCheckBox(checks);
 			FlowLayout L = new FlowLayout();
 			L.setAlignment(L.LEFT);
 			setLayout(L);
@@ -60,31 +58,29 @@ public class Traffic {
 			System.out.println("Main Window Complete!");
 		}
 		
-		private void sizeComponents(){//int cHeight,int cWidth,int pHeight,int pWidth){
-			c.adjustSize(getWidth()-120,getHeight());//TODO:Add an "upause" to start of this function, 
-			b.adjustSize(100,getHeight());//TODO:continued: catch Road.adjust()'s exception, pause program
-		//	System.out.println(cars.size());
+		private void sizeComponents(){
+			c.adjustSize(getWidth()-120,getHeight());
+			b.adjustSize(100,getHeight());
 			for(Car car:cars)
 				car.adjust(c);
 			listener.updateCars();
 		}
 
-		public void next(){//TODO: this will take arguments
+		public void next(){//TODO: this will take arguments, and change accordingly
 			
 			SnapShot[] current = new SnapShot[cars.size()];
 			
 			int i = 0;
 			
 			for (Car car : cars){
-					current[i] = new SnapShot(car.velocity,0,car);//TODO:going to need a better way to keep track of pos and vel changes
-				//	System.out.println("Velocity: "+car.velocity);
+					current[i] = new SnapShot(car.velocity,0,car);//TODO:create a better way to keep track of pos and vel changes
 					car.move();
 					car.adjust(c);
 					i++;
 			}
 			
 			c.justPaintCars = true;
-			c.repaint();
+			c.repaint();//TODO: replace these three lines with the wrapper you'll write eventually
 			c.justPaintCars = false;
 
 			checkLoop(current);
@@ -92,7 +88,7 @@ public class Traffic {
 			memory.add(current);
 		}
 		
-		private class RoadAndInt{
+		private class RoadAndInt{//Helps, ultimately, to remove cars from "cars" arraylist in proper order, eliminating indexing issues
 			public Road road;
 			public int integer;
 			RoadAndInt(int num, Road r){
@@ -104,9 +100,8 @@ public class Traffic {
 		public void checkLoop(SnapShot[] array){
 			Car inIntersection = null;
 			Car intTaken = null;
-			boolean NLneeded = false;
 			ArrayList<RoadAndInt> toRemove = new ArrayList<RoadAndInt>();
-			//int index = 0;
+			
 			for(Road r : c.roads){
 				if(inIntersection != null){
 					if(intTaken != null )//once there's a car in two intersections, it crashes
@@ -117,74 +112,63 @@ public class Traffic {
 				
 				for(int i = 0; i < r.rCars.size();i++){
 					if(r.rCars.get(i).start >= r.rCars.get(i).finish){
-					//	System.out.println(colorName(r.rCars.get(i).color)+" car at position "+r.rCars.get(i).start+
-						//		" on road "+(r.rCars.get(i).roadIndex+1) +", finish line at "+r.rCars.get(i).finish);
-						toRemove.add(new RoadAndInt(i,r));
+						toRemove.add(new RoadAndInt(i,r));//records the road and the index in the road's array
 						continue;
 					}
 					for(int j = i+1; j<r.rCars.size();j++)
 						if(collision(r.rCars.get(i),r.rCars.get(j))){
-			//				System.out.println("Index i: "+i+" Index j: "+j);
 							crash(r.rCars.get(i),r.rCars.get(j),0);
 						}
 						
-					if(r.rCars.get(i).start >= r.intLoc && r.rCars.get(i).start <= r.intLength + r.intLoc){
-						if(inIntersection == null)
+					if(r.rCars.get(i).start +2 >= r.intLoc && r.rCars.get(i).start - 2 <= r.intLength + r.intLoc){
+						if(inIntersection == null)//the 2s above are because of the arbitrary "crash range" of 2 (units)
 							inIntersection = r.rCars.get(i);
 						else
 							crash(inIntersection,r.rCars.get(i),42);
-						System.out.println(this.colorName(inIntersection.color)+" road #: "+(inIntersection.roadIndex+1));
-						NLneeded = true;
 					}
 						
 				}
 				
 			
 			}
-			if(NLneeded)
-			System.out.println("\n\n");
 			
-			RoadAndInt [] toR = new RoadAndInt[toRemove.size()];//All of this new stuff: solved old problem, created new one.
+			RoadAndInt [] toR = new RoadAndInt[toRemove.size()];
+			
 			for(int i = 0; i< toR.length;i++)
 				toR[i] = toRemove.get(i);
 			
 			Comparator<RoadAndInt> intcomp = new IntComparator();
-			Arrays.sort(toR,intcomp);
-			Integer[] absoluteIndices = new Integer[toR.length];
+			Arrays.sort(toR,intcomp);//sorts the new "toRemove" array by the "integer" field
+			Integer[] absoluteIndices = new Integer[toR.length];//used to store the "cars" array index of each car to be removed
 			int j = 0;
 			
-			for (RoadAndInt r:toR){
-			//	System.out.println(r.integer+" "+toR.length);
+			for (RoadAndInt r:toR){//removes each element from road's car array in reverse index order.
 				int i = r.integer;
 				
 				Car c = r.road.rCars.get(i); 
-			//	if(c.start >= c.finish){
 					
 					int index = cars.indexOf(c);
 					array[index].changed = true;
 					array[index].road = array[index].source.roadIndex;
-					//array[index].source = null;
 					
-					//System.out.println("Lulz! "+r.rCars.get(i).finish);
-				//	System.out.println("Size before: "+r.road.rCars.size());
 					r.road.rCars.remove(i);
-				//	System.out.println("Size after: "+r.road.rCars.size());
-					//checkLoop(array);
+
 					absoluteIndices[j] = index;
 					j++;
 		//		}
 			}
 	
+			
 			Arrays.sort(absoluteIndices);
 			for(int i = absoluteIndices.length - 1; i >= 0;i--){
-				cars.remove(absoluteIndices[i].intValue());
+				cars.remove(absoluteIndices[i].intValue());//Does the same as above for "cars" ArrayList
 			}
 			
 			if(!toRemove.isEmpty())
 				listener.updateCars();
 		}
 		
-		public class IntComparator implements Comparator<RoadAndInt>{
+		public class IntComparator implements Comparator<RoadAndInt>{//allows Array.sort() to sort RoadAndInt's by the "integer" 
 
 			@Override
 			public int compare(RoadAndInt arg0, RoadAndInt arg1) {
@@ -201,10 +185,9 @@ public class Traffic {
 			if(!memory.isEmpty()){
 				SnapShot[] restore = memory.remove(memory.size()-1);
 				for(int i = 0; i < restore.length;i++){
-				//	System.out.println("Index when it all goes to shit: "+i);
+					
 					Car car = restore[i].source;
-				//	if(car == null)
-					//	System.out.println("aaaaaagh!");
+					
 					car.start -= restore[i].posChange;
 					car.velocity -= restore[i].velChange;
 					if(restore[i].changed){
@@ -214,7 +197,7 @@ public class Traffic {
 					car.adjust(c);
 				}
 				c.justPaintCars = true;
-				c.repaint();
+				c.repaint();//TODO: just use a wrapper function for "repaint()" that adjusts justPaintCars and updateStatus based on arguments
 				c.justPaintCars = false;
 				listener.updateCars();
 			}
@@ -238,9 +221,6 @@ public class Traffic {
 		
 		
 		public void crash(Car c1, Car c2,int intersection){
-			//stop loop, kill listeners somehow
-		//	c.crashed[0] = c1;
-		//	c.crashed[1] = c2;
 			String message = "";
 			if(intersection == 0)
 				message = colorName(c1.color)+" car and "+colorName(c2.color)+" car crashed on" +
@@ -263,11 +243,6 @@ public class Traffic {
 			if(pressed == JOptionPane.NO_OPTION){
 				System.exit(0);
 			}
-			//c.repaint();
-		//	System.out.println("Crash! "+c2.color.toString()+ " "+c.crashed[1].color.toString()+" Road1: "+c1.roadIndex+" Road2: "+
-			//		c2.roadIndex);
-		//	c.crashed[0] = null;
-		//	c.crashed[1] = null;
 		}
 		
 		public String colorName(Color c){
@@ -293,13 +268,13 @@ public class Traffic {
 		
 		@Override
 		public void componentHidden(ComponentEvent arg0) {
-			// TODO Auto-generated method stub
+			// Auto-generated method stub
 			
 		}
 
 		@Override
 		public void componentMoved(ComponentEvent arg0) {
-			// TODO Auto-generated method stub
+			// Auto-generated method stub
 			
 		}
 
@@ -310,7 +285,7 @@ public class Traffic {
 
 		@Override
 		public void componentShown(ComponentEvent arg0) {
-			// TODO Auto-generated method stub
+			// Auto-generated method stub
 			
 		}
 	}
@@ -322,7 +297,7 @@ public class Traffic {
 	public int run(String args[]){
 		//System.out.println(args[0]);
 		System.out.println("Initializing program...");
-		MainFrame m = new MainFrame("Traffic Simulator",args[0]);//TODO:this indexing is suspicious, investigate further
+		MainFrame m = new MainFrame("Traffic Simulator",args[0]);
 	
 		m.setVisible(true);
 		
@@ -333,7 +308,6 @@ public class Traffic {
 			try {
 				Thread.sleep(m.miliSecondsPerFrame);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				break;
 			}
@@ -342,8 +316,9 @@ public class Traffic {
 				m.play = false;
 				m.b.play.setText("Play");
 				m.c.status = "paused";
+				
 				m.c.updateStatus = true;
-				m.c.repaint();
+				m.c.repaint();//TODO: replace these three lines with the wrapper you'll write eventually
 				m.c.updateStatus = false;
 			}
 			
@@ -351,8 +326,7 @@ public class Traffic {
 				m.next();
 
 		}
-		//TODO: main loop and all other such things
-	
+		
 		return 0;
 		
 	}

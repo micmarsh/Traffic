@@ -9,9 +9,9 @@ import java.util.Random;
 public class Road {
 	public int intLoc;//these are in "units"!
 	public int intLength;//these are in "units"!
-	private int width,xPos;
-	public int height,yPos,sYPos,sHeight;
-	private int sWidth,sXPos;
+	private int width,xPos;//these are in pixels
+	public int height,yPos,sYPos,sHeight;//these are in pixels
+	private int sWidth,sXPos;//these are in pixels
 	public int start,finish;//these are in "units"!
 	public int pixelsPerUnit;
 	
@@ -20,13 +20,13 @@ public class Road {
 	Road(String lineElts[]){
 		intLoc = Integer.parseInt(lineElts[1]);
 		intLength = Integer.parseInt(lineElts[2]);
-		
+		//both of the above are in units
 		rCars = new ArrayList<Car>();
-		//adjust(c);
+		
 		
 	}
 	
-	public void setLength(int begin, int end){//this is in "units"!
+	public void setLength(int begin, int end){//this is all in "units"!
 		start = begin - 5;
 		finish = end;
 		intLoc -= start;
@@ -43,24 +43,15 @@ public class Road {
 		xPos = 0;
 		yPos = c.road * height;
 		
-	//	System.out.println("yPos just set to "+yPos+" and Road number is: "+c.road);
-		
 		sHeight = height/3;
 		sWidth = width;
 		sXPos = 0;
 		sYPos = yPos +(height/3);
 		
-		if(width > getLength())
+		if(width > getLength())//This check is probably unnecessary, as the window is usually going to be large enough
 			pixelsPerUnit = width/getLength();
-		else{}//TODO: Throw an exception up to "Traffic", which should pause program and say window is too small.
+		else{/*again, this whole check is probably unnecessary*/}
 		
-		
-		
-		
-	/*	for(int i = 0; i<4;i++){//TODO: these values do need to be normalized at some point, but not now
-			HWXY[i] /= 100;
-			sHWXY[i] /= 100;
-		}*/
 	}
 	
 
@@ -85,61 +76,13 @@ public class Road {
 				
 				int offSet = 0;
 				
-				while(finishes.contains(c.finish+offSet))
+				while(finishes.contains(c.finish+offSet))//this allows finish lines in the same location to be distinguished
 					offSet += 2;
 				
 				finishes.add(c.finish+offSet);
 				c.paintComponent(g,pixelsPerUnit,offSet);
-				
-				/*B += incr;
-				if(B > 250){
-					B = 0;
-					G += incr;
-					if(G > 250){
-						G = 0;
-						R += incr;
-						if(R > 250){
-							R = 0;
-							G = 0;
-							B = 0;
-						}
-					}
-				}*/
-				
-			}
-			/* g.setColor(Color.white);
-			    g.fillRect(0, 0, getWidth(), getHeight());
-
-			    // yellow circle
-			    g.setColor(Color.yellow);
-			    g.fillOval(0, 0, 240, 240);
-
-			    // magenta circle
-			    g.setColor(Color.magenta);
-			    g.fillOval(160, 160, 240, 240);
-
-
-			    // transparent red square
-			    g.setColor(Color.red);
-			    g.fillRect(width/4, 220, width/2, 120);
-
-			    // transparent green circle
-			    g.setColor(Color.blue);
-			    g.fillOval(140, 140, 120, 120);
-
-			    // transparent blue square
-			    g.setColor(Color.green);
-			    g.fillRect(220, 60, 120, height/3);
-			    
-			    g.setColor(Color.black);
-*/
-			 /*   FontMetrics fm = g.getFontMetrics();
-			    int w = fm.stringWidth(""+(new Random()).nextInt());
-			    int h = fm.getAscent();
-		//	    System.out.println("yPos is:" +yPos);
-			    g.drawString((intLoc-start)+" "+pixelsPerUnit, yPos/2,yPos+h);*/
-
 			
+			}
 		
 	}
 }

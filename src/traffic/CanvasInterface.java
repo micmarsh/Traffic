@@ -11,10 +11,10 @@ import java.util.ArrayList;
 import traffic.Traffic.MainFrame;
 
 public class CanvasInterface implements MouseListener,MouseMotionListener {
-	MainFrame frame;
-	ArrayList<CarAndBound> cars;
-	private int prevLoc,prevVel;
-	Car clicked;
+	MainFrame frame;//used to access the parent MainFrame, and, by extension, most of the rest of the program
+	ArrayList<CarAndBound> cars;//helps associate the car's image with the bounding rectangle the listener will use to keep track of it's location
+	private int prevLoc,prevVel;//^mostly just reduces amount of typing done
+	Car clicked;//curently "clicked on" car
 	boolean paused;
 	
 	private class CarAndBound{
@@ -33,13 +33,13 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 		
 	}
 	
-	private ArrayList<CarAndBound> getCars(){
+	private ArrayList<CarAndBound> getCars(){//used to generate/update the CarAndBound array list
 		ArrayList<CarAndBound> c = new ArrayList<CarAndBound>();
 		
 		for (Road r:frame.c.roads){
 			
-			for(int i = r.rCars.size()-1;i >=0; i--)
-				c.add(new CarAndBound(r.rCars.get(i)));
+			for(int i = r.rCars.size()-1;i >=0; i--)//reverse order due to issues with clicking on multiple cars in
+				c.add(new CarAndBound(r.rCars.get(i)));//similar locations at one point
 			
 		}
 		return c;
@@ -50,10 +50,8 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent e) {
-		System.out.println("teh mouse was clicked!");
-		//boolean foundACar = false;//TODO: NOTE: if this is going to stay, implement it better
-		if(e.getButton() == MouseEvent.BUTTON3){
+	public void mouseClicked(MouseEvent e) {//TODO: documentation of this WHEN: "tomorrow"
+		if(e.getButton() == MouseEvent.BUTTON3){//cancels a "clicking on" of a car
 			frame.b.carStats[5].setText("Selected: No");
 			if(paused){
 				frame.b.mouseClicked(new MouseEvent(frame.b.play, prevLoc, prevLoc, prevLoc, prevLoc, prevLoc, prevLoc, false));
@@ -65,11 +63,7 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 		}
 		else{
 			if(clicked != null){
-				System.out.println("*******CLICKED IS NOT NULL*******\n");
-			//	foundACar = true;
-			//	clicked.velocity = prevVel;
 				
-				//SnapShot[] jump = new SnapShot[1];
 				frame.b.carStats[5].setText("Selected: No");
 				int newLoc = (e.getPoint().x)/frame.c.roads[clicked.roadIndex].pixelsPerUnit ;
 				int diff = newLoc - clicked.start;
@@ -88,21 +82,16 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 						}
 						else
 							current[i] = new SnapShot(0,0,car);
-						//	System.out.println("Velocity: "+car.velocity);
-					//	car.move();
-						
 						i++;
 				}
 				
 				frame.c.justPaintCars = true;
-				frame.c.repaint();
+				frame.c.repaint();//TODO: replace with that wrapper you're going to write
 				frame.c.justPaintCars = false;
 	
-				//checkLoop(current);
+				
 				
 				frame.memory.add(current);	
-				
-				//clicked.adjust(frame.c);
 				
 				clicked = null;
 				
@@ -113,24 +102,20 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 				}else
 					frame.c.status = "paused";
 				
-				/*frame.c.updateStatus = true;
-				frame.c.repaint();
-				frame.c.updateStatus = false;*/
-				
 				updateCars();
 				
 				frame.c.justPaintCars = true;
-				frame.repaint();
+				frame.repaint();//TODO: replace with that wrapper you're going to write
 				frame.c.justPaintCars = false;
 				
 			}else{
 	
 				Point loc = e.getPoint();
-				System.out.println(""+loc.x);
+			//	System.out.println(""+loc.x);
 				for(int i = cars.size()-1; i >= 0; i--){
 					CarAndBound cb = cars.get(i);
 					if(cb.boundary.contains(loc)){
-						System.out.println("*******CLICKED IS NULL********");
+					//	System.out.println("*******CLICKED IS NULL********");
 				//		foundACar = true;
 						clicked = cb.car;
 					//	prevVel = clicked.velocity;
@@ -153,26 +138,21 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 		frame.c.updateStatus = true;
 		frame.c.repaint();
 		frame.c.updateStatus = false;
-	//	if(!foundACar)
-		//	mouseClicked(e);
 		
 	}
 	
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -183,13 +163,12 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
-		//String[] carStrings = {"Car: ","Road #: ", "Position: ","Velocity: ","Finish: "};
+		
 		Point loc = arg0.getPoint();
 		for(CarAndBound cb : cars)
 			if(clicked == null && cb.boundary.contains(loc)){//TODO:"clicked == null" may not be needed for final version

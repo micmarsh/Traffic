@@ -17,20 +17,19 @@ public class RoadCanvas extends Canvas {
 	Road roads[];
 	int road;
 	int delta;
-	public boolean justPaintCars,updateStatus;
+	public boolean justPaintCars,updateStatus;//these will be private once wrapper for "repaint()" is written
 	String status;
-	//public Car[] crashed;
-	//Graphics g;
 	
-	RoadCanvas(String input, ArrayList<Car> cars){
-		System.out.println("Constructing Road Canvas...");
+	
+	RoadCanvas(String input, ArrayList<Car> cars){//TODO: this could very well all be re-written once actual input file
+		System.out.println("Constructing Road Canvas...");//format is revealed, don't really need to document yet.
 		BufferedReader infile = null;
 		String line = null;
 		 try {
 			infile = new BufferedReader(new FileReader(input));
-			line = infile.readLine();//Read in number of roads
+			line = infile.readLine();//Read in "delta" value
 			delta = Integer.parseInt(line);
-			line = infile.readLine();
+			line = infile.readLine();//Read in number of roads
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -93,26 +92,12 @@ public class RoadCanvas extends Canvas {
 		}
 		
 		justPaintCars = false;
-		//crashed = new Car[2];
-		//crashed[0] = null;
-		//crashed[1] = null;
 		
 		
 		System.out.println("Road Canvas Complete!");
-		/*cars.get(cars.size()-1).finish = 69;
-		System.out.println(cars.get(cars.size()-1).finish);
-		System.out.println(roads[roads.length-1].rCars.get(roads[roads.length-1].rCars.size()-1).finish);
-		
-		roads[roads.length-1].rCars.get(roads[roads.length-1].rCars.size()-1).finish = 42;
-		System.out.println(cars.get(cars.size()-1).finish);
-		System.out.println(roads[roads.length-1].rCars.get(roads[roads.length-1].rCars.size()-1).finish);
-		
-		System.out.print(roads[2].getLength());*/
+
 	}
 	
-	public void addListener(CanvasInterface c){
-		this.addMouseListener(c);
-	}
 	
 	public void adjustSize(int width, int height){
 		setSize(width,height);
@@ -121,54 +106,31 @@ public class RoadCanvas extends Canvas {
 			r.adjust(this);
 			road++;
 		}
-		//repaint();
 	}
-	/*public void update(Graphics g){
-		super.update(g);
-		paint(g);
-	}*/
-	public void paint(Graphics g){
+	
+	public void paint(Graphics g){//TODO: this is likely not going to change, but it(repaint()) will get a nice wrapper function!
 		if(updateStatus)
 			g.drawString("Delta: "+delta+"     Status: "+status, 10,roads[0].sHeight/2);
 		else{
-		//if(crashed[1] == null){
-			for(Road r:roads){
-				if(justPaintCars){
-	//				System.out.println("painted!");
-
+			for(Road r:roads)
+				if(justPaintCars)
 					for(Car car : r.rCars)
-					//	if(!car.deleted)
 							car.paintCar(g);
-				}
-				else{
-
+				else
 					r.paintComponent(g);
-				}
+				
 					
-			}
+			
 			g.setColor(Color.black);
-		//	FontMetrics fm = g.getFontMetrics();
-		 //   int w = fm.stringWidth(""+(new Random()).nextInt());
-		 //   int h = fm.getAscent();
-	//	    System.out.println("yPos is:" +yPos);
+
 		    g.drawString("Delta: "+delta+"     Status: "+status, 10,roads[0].sHeight/2);
-		//	if(crashed[1] != null){
-			//	System.out.println("String drawn?");
-				//g.setColor(Color.RED);
-				//g.drawString(colorName(crashed[0].color)+" car and "+colorName(crashed[1].color)+" car crashed on" +
-					//	" road "+(crashed[0].roadIndex+1)+ " at position "+crashed[0].start, 10, this.getHeight()/2);
+		
+
 		}	
 				
-	//		}
-	//	}
-	//	else{
-		
-		//}
+
 	}
 	
-	
-	//Color[] colors = {Color.yellow,Color.blue,Color.green,Color.white,Color.magenta,Color.pink,
-	//Color.orange,Color.cyan};
-	
+		
 	
 }

@@ -74,8 +74,7 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 		this.add(reset);
 		for (JLabel j:carStats)
 			this.add(j);
-		//add(new JLabel("Mouse: "));
-	//	this.add(new JButton("CancelClic"));
+		
 		
 	/*	System.out.println(((JLabel) (this.getComponent(0))).getText());
 		
@@ -120,6 +119,15 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 			parent.play = true;
 			b.setText("Pause");
 			parent.c.status = "playing";
+			if(parent.listener.clicked != null){
+				parent.b.carStats[5].setText("Selected: No");
+			//	if(parent.listener.paused)
+				//	parent.listener.paused = false;
+			//	else if(!parent.c.status.equals("playing"))
+			//		parent.c.status = "paused";
+				
+				parent.listener.clicked = null;
+			}
 		}
 		if(text.equals("Pause")){
 			parent.play = false;

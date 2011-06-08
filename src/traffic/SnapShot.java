@@ -1,6 +1,6 @@
 package traffic;
 
-public class SnapShot {//Records changes in position, velocity, and whether or not the car finished in a given "turn
+public class SnapShot {//Records changes in position, velocity, and whether or not the car finished in a given "turn"
 	public int posChange,velChange,road;
 	boolean changed;
 	Car source;

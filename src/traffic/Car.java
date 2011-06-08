@@ -9,49 +9,12 @@ import java.awt.event.MouseListener;
 
 public class Car {
 	
-	/*public class Body extends Polygon implements MouseListener{
-		Body(){
-			super();
-		}
-		@Override
-		public void mouseClicked(MouseEvent arg0) {
-			// TODO Auto-generated method stub
-			
-		
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void mousePressed(MouseEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-	}*/
-	
 	public int start;//denoted in UNITS
 	int velocity;//denoted in UNITS
 	public int finish;//denoted in UNITS
-	int roadIndex;
+	int roadIndex;//pixels
 	
-	private Rectangle crashRange;
+	private Rectangle crashRange;//may not be necessary anymore due to re-structuring of car image
 
 	private Polygon image;
 	private int[] wheelStats;// index 0: size index, 1-4: locations of (1-2) first wheel, (3-4) second wheel, all in pixels
@@ -59,8 +22,8 @@ public class Car {
 	
 	public int minVel,maxVel;
 	public boolean controlled;
-//public boolean deleted;
-	Car(String lineElts[],RoadCanvas c,int r){
+
+	Car(String lineElts[],RoadCanvas c,int r){//Everything in units!
 		start = Integer.parseInt(lineElts[1]);
 		minVel = Integer.parseInt(lineElts[2]);
 		velocity = Integer.parseInt(lineElts[3]);
@@ -72,14 +35,13 @@ public class Car {
 			controlled = true;
 		roadIndex = r;
 		image = new Polygon();
-		wheelStats = new int[5];
+		wheelStats = new int[5];//Except for this, this will eventually be pixels
 	
-//		deleted = false;
 		adjust(c);
 		
 	}
 	
-	public void normalize(RoadCanvas c,int r){
+	public void normalize(RoadCanvas c,int r){//necessary in order for cars to be rendered in correct locations
 		start -= c.roads[r].start;
 		finish -= c.roads[r].start;
 	}
@@ -89,21 +51,17 @@ public class Car {
 	}
 	
 	public void adjust(RoadCanvas c){
-		
+		//TODO: document this mess "tomorrow"
 		int yPos = c.roads[roadIndex].sYPos;
 		int ppu = c.roads[roadIndex].pixelsPerUnit;
 		int offSet = 2*ppu;
 		
-	//	System.out.println("c.WIDTH "+offSet);
 		int begin = start*ppu - offSet*3/2;
-		//int end = start*c.roads[roadIndex].pixelsPerUnit + offSet;
-		
+				
 		offSet /= 3;
 		
 		crashRange = new Rectangle((start-2)*ppu,yPos,4*ppu,offSet*2);//the '2' and the '4' are b/c 2 is the crash range on either side
-//		System.out.println("c.WIDTH divided by 20, then by six: "+offSet);
-		//int[] Xs = {begin,begin+offSet,begin+offSet*3/2,begin+offSet*9/2,begin+offSet*5,begin+offSet*6,
-			//	begin+offSet*6,begin};
+
 		
 		int[] Xs = {begin,begin+offSet,begin+offSet*3/2,begin+offSet*3/2+4*ppu,begin+offSet*2+4*ppu,
 				begin+4*ppu+offSet*3,begin+4*ppu+offSet*3,begin};
@@ -114,7 +72,7 @@ public class Car {
 		
 		
 		offSet = c.roads[roadIndex].sHeight/3;
-	//	System.out.println("yPos: "+yPos+"\noffSet: "+offSet);
+	
 		int[] Ys = {yPos+offSet,yPos+offSet,yPos,yPos,yPos+offSet,yPos+offSet,yPos+2*offSet,yPos+2*offSet};
 		wheelStats[0] = offSet;
 		wheelStats[2] = yPos+2*offSet;
@@ -124,18 +82,14 @@ public class Car {
 	
 		for(int i = 0; i<8;i++){
 			image.addPoint(Xs[i], Ys[i]);
-			//System.out.println("Ys[i]: "+Ys[i]);
 		}
 		
 		
 	}
 	
-	//public void setColor(Color c){
-		//color = c;
-	//}
 	
 	public void paintCar(Graphics g){
-	//	System.out.println("Car Painted");
+
 		g.fillPolygon(image);
 		g.fillOval(wheelStats[1], wheelStats[2], wheelStats[0], wheelStats[0]);
 		g.fillOval(wheelStats[3], wheelStats[4], wheelStats[0], wheelStats[0]);
@@ -144,21 +98,14 @@ public class Car {
 	
 	public void move(){
 		start += velocity;
-		//System.out.println("This Car's position is: "+start);
 	}
 	
 	
 	public void paintComponent(Graphics g,int pixelsPerUnit,int offSet){
-	//	System.out.println("Approximate image X position: "+image.getBounds().width);
-	//	System.out.println("Approximate image Y position: "+image.getBounds().height);
+
 		g.drawLine(finish*pixelsPerUnit + offSet, wheelStats[2]-2*wheelStats[0], finish*pixelsPerUnit+offSet, wheelStats[2]+wheelStats[0]);
 		
 		paintCar(g);
 		
-	//	g.setColor(Color.darkGray);
-		//g.drawLine(start*pixelsPerUnit,wheelStats[2]-2*wheelStats[0] , start*pixelsPerUnit, wheelStats[2]+wheelStats[0]);
-	//	g.fillRect(crashRange.x, crashRange.y, crashRange.width, crashRange.height);
-		
-		//g.fillRect(image.getBounds().x, image.getBounds().y, image.getBounds().width, image.getBounds().height);
 	}
 }
