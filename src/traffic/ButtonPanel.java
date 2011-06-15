@@ -133,9 +133,7 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 			parent.play = false;
 			b.setText("Play");
 			parent.c.status = "paused";
-			parent.c.updateStatus = true;
-			parent.c.repaint();
-			parent.c.updateStatus = false;
+			parent.c.redraw(false,true);
 		}
 		if(text.equals("Reset")){
 			parent.reset();

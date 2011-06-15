@@ -35,7 +35,7 @@ public class Car {
 			controlled = true;
 		roadIndex = r;
 		image = new Polygon();
-		wheelStats = new int[5];//Except for this, this will eventually be pixels
+		wheelStats = new int[4];//Except for this, this will eventually be pixels
 	
 		adjust(c);
 		
@@ -54,20 +54,20 @@ public class Car {
 		//TODO: document this mess "tomorrow"
 		int yPos = c.roads[roadIndex].sYPos;
 		int ppu = c.roads[roadIndex].pixelsPerUnit;
-		int offSet = 2*ppu;
+		int offSet = Constants.CRASH_OFFSET*ppu;
 		
 		int begin = start*ppu - offSet*3/2;
 				
 		offSet /= 3;
-		
-		crashRange = new Rectangle((start-2)*ppu,yPos,4*ppu,offSet*2);//the '2' and the '4' are b/c 2 is the crash range on either side
+		int cRange = 2*Constants.CRASH_OFFSET*ppu;
+		crashRange = new Rectangle((start-2)*ppu,yPos,cRange,offSet*Constants.CRASH_OFFSET);
 
 		
-		int[] Xs = {begin,begin+offSet,begin+offSet*3/2,begin+offSet*3/2+4*ppu,begin+offSet*2+4*ppu,
-				begin+4*ppu+offSet*3,begin+4*ppu+offSet*3,begin};
+		int[] Xs = {begin,begin+offSet,begin+offSet*3/2,begin+offSet*3/2+cRange,begin+offSet*2+cRange,
+				begin+cRange+offSet*3,begin+cRange+offSet*3,begin};
 		
 		wheelStats[1] = begin + offSet/2;
-		wheelStats[3] = wheelStats[1]+4*ppu;
+		wheelStats[3] = wheelStats[1]+cRange;
 		
 		
 		
@@ -76,7 +76,6 @@ public class Car {
 		int[] Ys = {yPos+offSet,yPos+offSet,yPos,yPos,yPos+offSet,yPos+offSet,yPos+2*offSet,yPos+2*offSet};
 		wheelStats[0] = offSet;
 		wheelStats[2] = yPos+2*offSet;
-		wheelStats[4] = yPos+2*offSet;
 		image.reset();
 		
 	
@@ -92,7 +91,7 @@ public class Car {
 
 		g.fillPolygon(image);
 		g.fillOval(wheelStats[1], wheelStats[2], wheelStats[0], wheelStats[0]);
-		g.fillOval(wheelStats[3], wheelStats[4], wheelStats[0], wheelStats[0]);
+		g.fillOval(wheelStats[3], wheelStats[2], wheelStats[0], wheelStats[0]);
 		
 	}
 	

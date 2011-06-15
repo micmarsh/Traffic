@@ -85,9 +85,7 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 						i++;
 				}
 				
-				frame.c.justPaintCars = true;
-				frame.c.repaint();//TODO: replace with that wrapper you're going to write
-				frame.c.justPaintCars = false;
+				frame.c.redraw(true,false);
 	
 				
 				
@@ -104,9 +102,7 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 				
 				updateCars();
 				
-				frame.c.justPaintCars = true;
-				frame.repaint();//TODO: replace with that wrapper you're going to write
-				frame.c.justPaintCars = false;
+				frame.c.redraw(true,false);
 				
 			}else{
 	
@@ -135,9 +131,7 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 			}
 		}
 		
-		frame.c.updateStatus = true;
-		frame.c.repaint();
-		frame.c.updateStatus = false;
+		frame.c.redraw(false,true);
 		
 	}
 	

@@ -55,12 +55,15 @@ public class Traffic {
 			
 			add(c);
 			add(b);
+			this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+			
 			System.out.println("Main Window Complete!");
 		}
 		
 		private void sizeComponents(){
 			c.adjustSize(getWidth()-120,getHeight());
-			b.adjustSize(100,getHeight());
+			b.adjustSize(110,getHeight());
 			for(Car car:cars)
 				car.adjust(c);
 			listener.updateCars();
@@ -79,9 +82,7 @@ public class Traffic {
 					i++;
 			}
 			
-			c.justPaintCars = true;
-			c.repaint();//TODO: replace these three lines with the wrapper you'll write eventually
-			c.justPaintCars = false;
+			c.redraw(true,false);
 
 			checkLoop(current);
 			listener.updateCars();
@@ -196,9 +197,9 @@ public class Traffic {
 					}
 					car.adjust(c);
 				}
-				c.justPaintCars = true;
-				c.repaint();//TODO: just use a wrapper function for "repaint()" that adjusts justPaintCars and updateStatus based on arguments
-				c.justPaintCars = false;
+				
+				c.redraw(true,false);
+				
 				listener.updateCars();
 			}
 		}
@@ -210,7 +211,7 @@ public class Traffic {
 		
 		
 		public boolean collision(Car c1, Car c2){
-			int offSet = 4;//this gives each car a 2-unit (extending from either side) "crash zone"
+			int offSet = 2*Constants.CRASH_OFFSET;//this gives each car a 2-unit (extending from either side) "crash zone"
 			if(c1.start > c2.start - offSet && c1.start < c2.start + offSet){
 			//	System.out.println("Collision!");
 				return true;
@@ -317,9 +318,7 @@ public class Traffic {
 				m.b.play.setText("Play");
 				m.c.status = "paused";
 				
-				m.c.updateStatus = true;
-				m.c.repaint();//TODO: replace these three lines with the wrapper you'll write eventually
-				m.c.updateStatus = false;
+				m.c.redraw(false,true);
 			}
 			
 			if(m.play)

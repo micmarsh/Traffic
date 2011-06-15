@@ -17,7 +17,7 @@ public class RoadCanvas extends Canvas {
 	Road roads[];
 	int road;
 	int delta;
-	public boolean justPaintCars,updateStatus;//these will be private once wrapper for "repaint()" is written
+	private boolean justPaintCars,updateStatus;//these will be private once wrapper for "repaint()" is written
 	String status;
 	
 	
@@ -42,7 +42,7 @@ public class RoadCanvas extends Canvas {
 		
 		road = 0;
 		
-		try {//Populates global road array and "super global" car array.
+		try {//Populates global road array public and "super global" car array.
 			int i = 0;
 			do{
 				int maxEnd = 0;
@@ -98,6 +98,13 @@ public class RoadCanvas extends Canvas {
 
 	}
 	
+	public void redraw(boolean cars, boolean update){
+		updateStatus = update;
+		justPaintCars = cars;
+		repaint();
+		updateStatus = false;
+		justPaintCars = false;
+	}
 	
 	public void adjustSize(int width, int height){
 		setSize(width,height);
