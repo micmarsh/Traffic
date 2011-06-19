@@ -3,6 +3,7 @@ package traffic;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -21,7 +22,7 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 		Rectangle boundary;
 		Car car;
 		CarAndBound(Car c){
-			boundary = c.getImage().getBounds();
+			//boundary = c.getImage().getHeight(frame.c);//TODO: this is going to cause big problems, resolve it soon
 			car = c;
 		}
 	}
@@ -78,7 +79,7 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 				for (Car car : frame.cars){
 						if(car.equals(clicked)){
 							current[i] = new SnapShot(diff,0,car);//TODO:going to need a better way to keep track of pos and vel changes
-							car.adjust(frame.c);
+					//		car.adjust(frame.c);
 						}
 						else
 							current[i] = new SnapShot(0,0,car);
@@ -162,7 +163,7 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
-		
+		/*TODO: uncomment all this once "boundary" is fixed
 		Point loc = arg0.getPoint();
 		for(CarAndBound cb : cars)
 			if(clicked == null && cb.boundary.contains(loc)){//TODO:"clicked == null" may not be needed for final version
@@ -180,7 +181,9 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 				frame.b.carStats[6].setText("Mouse: "+(r.start + loc.x/frame.c.roads[i].pixelsPerUnit));
 			
 			i++;
-		}
+		}*/
+		Point loc = arg0.getPoint();
+		frame.b.carStats[6].setText("("+loc.x+","+loc.y+")");
 	}
 	
 	public String colorName(Color c){

@@ -40,7 +40,7 @@ public class Traffic {
 			memory = new ArrayList<SnapShot[]>();
 			play = false;
 			miliSecondsPerFrame = 1000;
-			
+	
 			
 			c = new RoadCanvas(input,cars);
 			b = new ButtonPanel(this);
@@ -56,7 +56,9 @@ public class Traffic {
 			add(c);
 			add(b);
 			this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+			
+			int[] points = {0,0};
+			
 			
 			System.out.println("Main Window Complete!");
 		}
@@ -65,7 +67,7 @@ public class Traffic {
 			c.adjustSize(getWidth()-120,getHeight());
 			b.adjustSize(110,getHeight());
 			for(Car car:cars)
-				car.adjust(c);
+		//		car.adjust(c);
 			listener.updateCars();
 		}
 
@@ -78,7 +80,7 @@ public class Traffic {
 			for (Car car : cars){
 					current[i] = new SnapShot(car.velocity,0,car);//TODO:create a better way to keep track of pos and vel changes
 					car.move();
-					car.adjust(c);
+			//		car.adjust(c);
 					i++;
 			}
 			
@@ -195,7 +197,7 @@ public class Traffic {
 						cars.add(i,car);
 						c.roads[car.roadIndex].rCars.add(car);
 					}
-					car.adjust(c);
+				//	car.adjust(c);
 				}
 				
 				c.redraw(true,false);
@@ -224,13 +226,13 @@ public class Traffic {
 		public void crash(Car c1, Car c2,int intersection){
 			String message = "";
 			if(intersection == 0)
-				message = colorName(c1.color)+" car and "+colorName(c2.color)+" car crashed on" +
+				message = Constants.colorName(c1.color)+" car and "+Constants.colorName(c2.color)+" car crashed on" +
 				" road "+(c1.roadIndex+1)+ " at position "+c2.start+".";
 			else if (intersection == 1)
-				message = colorName(c1.color)+" car on road "+(c1.roadIndex+1)+" and "+colorName(c2.color)+" car on " +
+				message = Constants.colorName(c1.color)+" car on road "+(c1.roadIndex+1)+" and "+Constants.colorName(c2.color)+" car on " +
 						"road "+(c2.roadIndex+1)+" crashed in the intersection.";
 			else
-				message = colorName(c1.color)+ " car and "+colorName(c2.color)+" car cannot both be in road "+
+				message = Constants.colorName(c1.color)+ " car and "+Constants.colorName(c2.color)+" car cannot both be in road "+
 				(c1.roadIndex+1)+"'s intersection at once";
 			
 				
@@ -246,25 +248,7 @@ public class Traffic {
 			}
 		}
 		
-		public String colorName(Color c){
-			if(c.equals(Color.yellow))
-				return "Yellow";
-			if(c.equals(Color.blue))
-				return "Blue";
-			if(c.equals(Color.green))
-				return "Green";
-			if(c.equals(Color.white))
-				return "White";
-			if(c.equals(Color.magenta))
-				return "Pink";
-		//	if(c.equals(Color.pink))
-		//		return "Pink";
-			if(c.equals(Color.orange))
-				return "Orange";
-			if(c.equals(Color.cyan))
-				return "Cyan";
-			return "NONE";
-		}
+		
 		
 		
 		@Override

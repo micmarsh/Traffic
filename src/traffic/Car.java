@@ -2,10 +2,15 @@ package traffic;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import javax.imageio.ImageIO;
 
 public class Car {
 	
@@ -16,12 +21,13 @@ public class Car {
 	
 	private Rectangle crashRange;//may not be necessary anymore due to re-structuring of car image
 
-	private Polygon image;
+	private BufferedImage image;
 	private int[] wheelStats;// index 0: size index, 1-4: locations of (1-2) first wheel, (3-4) second wheel, all in pixels
 	public Color color;
 	
 	public int minVel,maxVel;
 	public boolean controlled;
+	private RoadCanvas c;
 
 	Car(String lineElts[],RoadCanvas c,int r){//Everything in units!
 		start = Integer.parseInt(lineElts[1]);
@@ -34,25 +40,48 @@ public class Car {
 		else
 			controlled = true;
 		roadIndex = r;
-		image = new Polygon();
 		wheelStats = new int[4];//Except for this, this will eventually be pixels
-	
-		adjust(c);
+		
+		
+		this.c = c;
+		adjust();
 		
 	}
 	
-	public void normalize(RoadCanvas c,int r){//necessary in order for cars to be rendered in correct locations
+	public void normalize(int r){//necessary in order for cars to be rendered in correct locations
 		start -= c.roads[r].start;
 		finish -= c.roads[r].start;
+		Constants.p("Start: "+start+" Finish: "+finish);
+		try{
+		image = ImageIO.read(new File("car/"+Constants.colorName(color)+".png"));
+		
+		}catch(Exception e){
+			
+		}
 	}
 	
-	public Polygon getImage(){
+	public Image getImage(){
 		return image;
 	}
 	
-	public void adjust(RoadCanvas c){
+	public int[] translate(){//returns a "tuple" with the x and y position of the center of the car, in pixels
+		Road road = c.roads[roadIndex];
+		int ppu = road.pixelsPerUnit;
+		Constants.p("Pixels per unit is: "+ppu);
+		double x = Math.cos(road.startAngle)*(road.unitCenter-start);
+		x = c.getWidth()/2 - x*ppu;
+		
+		double y = Math.sin(road.startAngle)*(road.unitCenter-start);
+		y = c.getHeight()/2 - y*ppu;
+		int[] toRet = {(int)x,(int)y};
+		Constants.polarMove(toRet,road.startAngle-Math.PI/2,25);
+		return toRet;
+		
+	}
+	
+	public void adjust(){//All this shit is getting re-done!
 		//TODO: document this mess "tomorrow"
-		int yPos = c.roads[roadIndex].sYPos;
+		/*int yPos = c.roads[roadIndex].sYPos;
 		int ppu = c.roads[roadIndex].pixelsPerUnit;
 		int offSet = Constants.CRASH_OFFSET*ppu;
 		
@@ -81,17 +110,23 @@ public class Car {
 	
 		for(int i = 0; i<8;i++){
 			image.addPoint(Xs[i], Ys[i]);
-		}
-		
-		
+		}*/
 	}
 	
 	
 	public void paintCar(Graphics g){
-
-		g.fillPolygon(image);
-		g.fillOval(wheelStats[1], wheelStats[2], wheelStats[0], wheelStats[0]);
-		g.fillOval(wheelStats[3], wheelStats[2], wheelStats[0], wheelStats[0]);
+		Road road = c.roads[roadIndex];
+		Graphics2D g2 = (Graphics2D)g;
+		
+		int [] toPlace = translate();
+		
+		
+		g2.rotate(road.startAngle,toPlace[0],toPlace[1]);
+		
+		g2.drawImage(image,toPlace[0],toPlace[1],image.getWidth()/3,image.getHeight()/3,c);
+		g2.rotate(2*Math.PI-road.startAngle,toPlace[0],toPlace[1]);
+	//	g.fillOval(wheelStats[1], wheelStats[2], wheelStats[0], wheelStats[0]);
+	//	g.fillOval(wheelStats[3], wheelStats[2], wheelStats[0], wheelStats[0]);
 		
 	}
 	
@@ -102,7 +137,7 @@ public class Car {
 	
 	public void paintComponent(Graphics g,int pixelsPerUnit,int offSet){
 
-		g.drawLine(finish*pixelsPerUnit + offSet, wheelStats[2]-2*wheelStats[0], finish*pixelsPerUnit+offSet, wheelStats[2]+wheelStats[0]);
+	//	g.drawLine(finish*pixelsPerUnit + offSet, wheelStats[2]-2*wheelStats[0], finish*pixelsPerUnit+offSet, wheelStats[2]+wheelStats[0]);
 		
 		paintCar(g);
 		

@@ -4,6 +4,7 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -13,11 +14,10 @@ import java.util.Random;
 
 import javax.swing.JOptionPane;
 
-public class RoadCanvas extends Canvas {
+class RoadCanvas extends Canvas {
 	Road roads[];
-	int road;
 	int delta;
-	private boolean justPaintCars,updateStatus;//these will be private once wrapper for "repaint()" is written
+	private boolean justPaintCars,updateStatus;
 	String status;
 	
 	
@@ -40,7 +40,7 @@ public class RoadCanvas extends Canvas {
 		
 		roads = new Road[Integer.parseInt(line)];
 		
-		road = 0;
+		int road = 0;
 		
 		try {//Populates global road array public and "super global" car array.
 			int i = 0;
@@ -62,7 +62,7 @@ public class RoadCanvas extends Canvas {
 				//	System.out.println(line);
 					if(lineElts[0].equals("road")){
 						//System.out.println("Road number: "+road);
-						roads[road] = new Road(lineElts);
+						roads[road] = new Road(lineElts,road);
 						//i = 0;
 					}
 					
@@ -82,7 +82,7 @@ public class RoadCanvas extends Canvas {
 				if(road < roads.length){
 					roads[road].setLength(minStart,maxEnd);//Like all numbers in this loop, this is in UNITS.
 					for(Car car: roads[road].rCars)
-						car.normalize(this,road);
+						car.normalize(road);
 				}
 				road++;
 			}while(line != null);
@@ -108,14 +108,14 @@ public class RoadCanvas extends Canvas {
 	
 	public void adjustSize(int width, int height){
 		setSize(width,height);
-		road = 0;
-		for(Road r:roads){
+		for(Road r:roads)
 			r.adjust(this);
-			road++;
-		}
+			
 	}
 	
 	public void paint(Graphics g){//TODO: this is likely not going to change, but it(repaint()) will get a nice wrapper function!
+		g.setColor(Color.white);
+		g.fillRect(-2, -2, this.getWidth()+5,this.getHeight()+5);
 		if(updateStatus)
 			g.drawString("Delta: "+delta+"     Status: "+status, 10,roads[0].sHeight/2);
 		else{
@@ -124,9 +124,13 @@ public class RoadCanvas extends Canvas {
 					for(Car car : r.rCars)
 							car.paintCar(g);
 				else
-					r.paintComponent(g);
+					r.paintComponent(g,true);
 				
-					
+			for (Road r:roads)
+				r.paintComponent(g,false);
+			for (Road r:roads)
+				for (Car c: r.rCars)
+					c.paintCar(g);
 			
 			g.setColor(Color.black);
 
