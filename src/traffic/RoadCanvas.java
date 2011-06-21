@@ -20,7 +20,6 @@ class RoadCanvas extends Canvas {
 	private boolean justPaintCars,updateStatus;
 	String status;
 	
-	
 	RoadCanvas(String input, ArrayList<Car> cars){//TODO: this could very well all be re-written once actual input file
 		System.out.println("Constructing Road Canvas...");//format is revealed, don't really need to document yet.
 		BufferedReader infile = null;
@@ -35,6 +34,7 @@ class RoadCanvas extends Canvas {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 		
 		status = "paused";
 		
@@ -91,8 +91,6 @@ class RoadCanvas extends Canvas {
 			e.printStackTrace();
 		}
 		
-		justPaintCars = false;
-		
 		
 		System.out.println("Road Canvas Complete!");
 
@@ -131,7 +129,6 @@ class RoadCanvas extends Canvas {
 			for (Road r:roads)
 				for (Car c: r.rCars)
 					c.paintCar(g);
-			
 			g.setColor(Color.black);
 
 		    g.drawString("Delta: "+delta+"     Status: "+status, 10,roads[0].sHeight/2);

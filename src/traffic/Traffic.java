@@ -41,11 +41,11 @@ public class Traffic {
 			play = false;
 			miliSecondsPerFrame = 1000;
 	
-			
 			c = new RoadCanvas(input,cars);
 			b = new ButtonPanel(this);
 			
-			listener = new CanvasInterface(this);
+			
+			listener  = new CanvasInterface(this);
 			
 			c.addMouseListener(listener);
 			c.addMouseMotionListener(listener);
@@ -61,11 +61,13 @@ public class Traffic {
 			
 			
 			System.out.println("Main Window Complete!");
+			Constants.p(Math.sin(Math.PI+Math.PI/4)+"");
+			Constants.p(Math.sin(-1*Math.PI/2-Math.PI/4)+"");
 		}
 		
 		private void sizeComponents(){
-			c.adjustSize(getWidth()-120,getHeight());
-			b.adjustSize(110,getHeight());
+			c.adjustSize(getWidth()-130,getHeight());
+			b.adjustSize(120,getHeight());
 			for(Car car:cars)
 		//		car.adjust(c);
 			listener.updateCars();

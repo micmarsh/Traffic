@@ -5,6 +5,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -16,12 +17,11 @@ public class Road {
 	private int sWidth,sXPos;//these are in pixels
 	public int start,finish;//these are in "units"!
 	public int pixelsPerUnit;
-	private int index;//TODO: all of this^ shit is going to be changed
+	private int index;//TODO: most of this^ shit is going to be changed
 	
 	private Polygon pavement,intersection;
 	public double theta,startAngle;
 	public ArrayList<Car> rCars;
-
 	public int unitCenter;
 	
 	Road(String lineElts[],int i){//this looks pretty good right now
@@ -52,24 +52,22 @@ public class Road {
 	public void adjust(RoadCanvas c){//TODO: re-do all this shit to handle the shiny new polygons
 		int[] middle = {c.getWidth()/2,c.getHeight()/2};
 		makeRect(c,pavement,1000,middle);
-		makeRect(c,intersection,intLength*4,middle);
+		makeRect(c,intersection,intLength*pixelsPerUnit/2,middle);
 		
 		double ppu;
-		Constants.p("Unit center: "+unitCenter);
-		if(startAngle > Math.tanh(c.getHeight()/c.getWidth()) && startAngle <= Math.tanh(c.getHeight()/c.getWidth()) +Math.PI/2){
-			if(Math.sin(startAngle) == 0)
+	//	Constants.p("Starting Angle: "+startAngle);
+		if(startAngle > Math.atan(c.getHeight()/c.getWidth()) && startAngle <= Math.tanh(c.getHeight()/c.getWidth()) +Math.PI/2){
+			if(Math.abs(Math.sin(startAngle)) <= 1)
 				ppu = ( c.getHeight()/2)/(unitCenter);
-			else{
+			else
 				ppu = ( c.getHeight()/2)/(unitCenter * Math.abs(Math.sin(startAngle)));
-				Constants.p("Sine: "+Math.sin(startAngle));
-			}
+	//		Constants.p("Sine Used!");
 		}else{
-			if(Math.cos(startAngle) == 0)
+			if(Math.abs(Math.cos(startAngle)) <= 1)
 				ppu = ( c.getWidth()/2)/(unitCenter);
-			else{
+			else
 				ppu = ( c.getWidth()/2)/(unitCenter * Math.abs(Math.cos(startAngle)));
-				Constants.p("PPU: "+ppu);
-			}
+	//		Constants.p("Cosine Used!");
 		}
 		
 		
@@ -90,7 +88,7 @@ public class Road {
 		
 		double a = startAngle;
 		
-		int halfWidth = 20;//(c.getWidth()+c.getHeight())/100;
+		int halfWidth = Constants.ROAD_WIDTH/2;
 		for (int i = 0; i < 2; i++){
 
 			int[] center = middle.clone();
@@ -114,27 +112,27 @@ public class Road {
 			}else{
 				g.setColor(Color.red);
 				g.fillPolygon(intersection);
+			
+			
+			
+			
+			
+				ArrayList<Integer> finishes = new ArrayList<Integer>();
+				
+				if(!rCars.isEmpty())//Hopefully all of this can be unchanged, let the car class handle it
+				for(int i = rCars.size()-1;i >= 0;i--){
+					Car c = rCars.get(i);
+					g.setColor(c.color);
+					
+					int offSet = 0;
+					
+					while(finishes.contains(c.finish+offSet))//this allows finish lines in the same location to be distinguished
+						offSet += 2;
+					
+					finishes.add(c.finish+offSet);
+					c.paintComponent(g,this,offSet);
+				}
 			}
-			
-			
-			
-			
-			/*ArrayList<Integer> finishes = new ArrayList<Integer>();
-			
-			if(!rCars.isEmpty())//Hopefully all of this can be unchanged, let the car class handle it
-			for(int i = rCars.size()-1;i >= 0;i--){
-				Car c = rCars.get(i);
-				g.setColor(c.color);
-				
-				int offSet = 0;
-				
-				while(finishes.contains(c.finish+offSet))//this allows finish lines in the same location to be distinguished
-					offSet += 2;
-				
-				finishes.add(c.finish+offSet);
-				c.paintComponent(g,pixelsPerUnit,offSet);
-			
-			}*/
 		
 	}
 }

@@ -12,6 +12,7 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import javax.imageio.ImageIO;
 
+
 public class Car {
 	
 	public int start;//denoted in UNITS
@@ -35,13 +36,14 @@ public class Car {
 		velocity = Integer.parseInt(lineElts[3]);
 		maxVel = Integer.parseInt(lineElts[4]);
 		finish = Integer.parseInt(lineElts[5]);
+		
 		if(lineElts[6].equals("0"))
 			controlled = false;
 		else
 			controlled = true;
+		
 		roadIndex = r;
 		wheelStats = new int[4];//Except for this, this will eventually be pixels
-		
 		
 		this.c = c;
 		adjust();
@@ -51,7 +53,7 @@ public class Car {
 	public void normalize(int r){//necessary in order for cars to be rendered in correct locations
 		start -= c.roads[r].start;
 		finish -= c.roads[r].start;
-		Constants.p("Start: "+start+" Finish: "+finish);
+		//Constants.p("Start: "+start+" Finish: "+finish);
 		try{
 		image = ImageIO.read(new File("car/"+Constants.colorName(color)+".png"));
 		
@@ -67,7 +69,6 @@ public class Car {
 	public int[] translate(){//returns a "tuple" with the x and y position of the center of the car, in pixels
 		Road road = c.roads[roadIndex];
 		int ppu = road.pixelsPerUnit;
-		Constants.p("Pixels per unit is: "+ppu);
 		double x = Math.cos(road.startAngle)*(road.unitCenter-start);
 		x = c.getWidth()/2 - x*ppu;
 		
@@ -119,26 +120,48 @@ public class Car {
 		Graphics2D g2 = (Graphics2D)g;
 		
 		int [] toPlace = translate();
-		
+	//	Constants.p("Car's position: "+this.start+" Translated indices: ("+toPlace[0]+","+toPlace[1]+")");
 		
 		g2.rotate(road.startAngle,toPlace[0],toPlace[1]);
 		
 		g2.drawImage(image,toPlace[0],toPlace[1],image.getWidth()/3,image.getHeight()/3,c);
 		g2.rotate(2*Math.PI-road.startAngle,toPlace[0],toPlace[1]);
+		
+	//	Constants.p("("+image.getWidth()/3+","+image.getHeight()/3+")");
+		
+		int [] center = this.translate();
+		double startAngle = c.roads[this.roadIndex].startAngle;
+		Constants.polarMove(center, startAngle+Math.PI/2, Constants.ROAD_WIDTH/2);
+		Constants.polarMove(center, startAngle, 20);
+		
+		g2.drawRect(center[0]-23,center[1]-23,47,47);
+		
+	//	Constants.p("Adjusted center: ("+center[0]+","+center[1]+")");
+			
+		
 	//	g.fillOval(wheelStats[1], wheelStats[2], wheelStats[0], wheelStats[0]);
 	//	g.fillOval(wheelStats[3], wheelStats[2], wheelStats[0], wheelStats[0]);
 		
 	}
+	
 	
 	public void move(){
 		start += velocity;
 	}
 	
 	
-	public void paintComponent(Graphics g,int pixelsPerUnit,int offSet){
-
-	//	g.drawLine(finish*pixelsPerUnit + offSet, wheelStats[2]-2*wheelStats[0], finish*pixelsPerUnit+offSet, wheelStats[2]+wheelStats[0]);
+	public void paintComponent(Graphics g,Road r,int offSet){
 		
+		int[] point = translate();
+		
+		Constants.polarMove(point, r.startAngle,(finish-start)*r.pixelsPerUnit + offSet);
+		
+		int [] point1 = point.clone();
+		
+		//Constants.polarMove(point, r.startAngle - Math.PI/2, Constants.ROAD_WIDTH/2);
+		Constants.polarMove(point1, r.startAngle + Math.PI/2, Constants.ROAD_WIDTH);
+
+		g.drawLine(point[0], point[1], point1[0], point1[1]);
 		paintCar(g);
 		
 	}

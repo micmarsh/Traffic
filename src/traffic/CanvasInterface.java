@@ -7,6 +7,7 @@ import java.awt.Shape;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
 import traffic.Traffic.MainFrame;
@@ -18,11 +19,19 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 	Car clicked;//curently "clicked on" car
 	boolean paused;
 	
-	private class CarAndBound{
+	private class CarAndBound{//TODO: change to private in final version
 		Rectangle boundary;
 		Car car;
 		CarAndBound(Car c){
-			//boundary = c.getImage().getHeight(frame.c);//TODO: this is going to cause big problems, resolve it soon
+			int [] center = c.translate();
+			double startAngle = frame.c.roads[c.roadIndex].startAngle;
+			Constants.polarMove(center, startAngle+Math.PI/2, Constants.ROAD_WIDTH/2);
+			Constants.polarMove(center, startAngle, 25);
+			
+			boundary = new Rectangle(center[0]-23,center[1]-23,47,47);
+			
+			//Constants.p("Adjusted center: ("+center[0]+","+center[1]+")");
+			
 			car = c;
 		}
 	}
@@ -66,7 +75,7 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 			if(clicked != null){
 				
 				frame.b.carStats[5].setText("Selected: No");
-				int newLoc = (e.getPoint().x)/frame.c.roads[clicked.roadIndex].pixelsPerUnit ;
+				int newLoc = this.pointToPos(e.getX(), e.getY(), frame.c.roads[clicked.roadIndex])-frame.c.roads[clicked.roadIndex].start;
 				int diff = newLoc - clicked.start;
 				clicked.start = newLoc;
 				
@@ -163,7 +172,6 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
-		/*TODO: uncomment all this once "boundary" is fixed
 		Point loc = arg0.getPoint();
 		for(CarAndBound cb : cars)
 			if(clicked == null && cb.boundary.contains(loc)){//TODO:"clicked == null" may not be needed for final version
@@ -176,14 +184,106 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 				
 			}
 		int i = 0;
+		
+		double angle = Angle(loc.x,loc.y);
+		if(angle < 0)
+			angle += Math.PI;
+		//Constants.p("Angle!: "+angle);
+		
 		for(Road r : frame.c.roads){
-			if(loc.y >= r.yPos && loc.y < r.yPos + r.height)
-				frame.b.carStats[6].setText("Mouse: "+(r.start + loc.x/frame.c.roads[i].pixelsPerUnit));
+			//Constants.p("Start Angle: "+r.startAngle);
+		//	Constants.p("This zone is angle "+(r.startAngle - r.theta/2)+" through "+(r.startAngle + r.theta/2));
+			if(angle >= r.startAngle - r.theta/2 && angle < r.startAngle + r.theta/2)
+				frame.b.carStats[6].setText("Mouse: "+(pointToPos(loc.x,loc.y,r)));
 			
 			i++;
-		}*/
-		Point loc = arg0.getPoint();
-		frame.b.carStats[6].setText("("+loc.x+","+loc.y+")");
+		}
+	}
+	
+	private double Angle(int pointX, int pointY){
+		double x = pointX - frame.c.getWidth()/2;
+		double y = pointY - frame.c.getHeight()/2;
+		return Math.atan(y/x);
+	}
+	
+	private int pointToPos(int pointX, int pointY, Road r){
+		/*int[] toPrint = new int[2];
+		
+		int[] point = {pointX,pointY};
+		
+		Constants.polarMove(point, Math.PI/2 - r.startAngle , 25);
+		
+		double tempY = (frame.c.getHeight()/2 - pointY)/(double)r.pixelsPerUnit;
+		toPrint[0] =  (int)(r.unitCenter - tempY/Math.sin(r.startAngle));
+		
+		double tempX = (frame.c.getWidth()/2 - pointX)/(double)r.pixelsPerUnit;
+		toPrint[1] = (int)(r.unitCenter - tempX/Math.cos(r.startAngle));
+		Constants.p("The two position values!: ("+toPrint[1]+","+toPrint[0]+")");
+		return toPrint[1];*/
+		
+	//	double arcTan = Math.atan(frame.c.getHeight()/frame.c.getWidth());
+		
+	/*	if(r.startAngle >= Math.PI*3/2){
+			double tempY = (frame.c.getHeight()/2 - pointY)/(double)r.pixelsPerUnit;
+			return (int)(r.unitCenter - tempY/Math.sin(r.startAngle));
+		}else{
+			double tempX = (frame.c.getWidth()/2 - pointX)/(double)r.pixelsPerUnit;
+			return (int)(r.unitCenter - tempX/Math.cos(r.startAngle));
+		}*//*
+		
+		int [] ref = new int[2];
+		
+	//	if(r.rCars.isEmpty()){
+			ref[0] = frame.c.getWidth()/2;
+			ref[1] = frame.c.getHeight()/2;
+	//	}
+	//	else{
+	//		ref = r.rCars.get(0).translate();
+	//	}
+		
+		double distance = Point.distance(pointX, pointY, ref[0], ref[1]);
+		
+			int divisor = pointX - ref[0];
+		
+		double deviation;
+		
+		
+		
+		if (divisor == 0)
+			deviation = 0;
+		else{
+			deviation = Math.atan((pointY - ref[1])/divisor);
+		}
+		
+		double pixelDist = distance ;//* Math.cos(deviation);		
+		
+		double unitDist = pixelDist/r.pixelsPerUnit;
+		
+		if(pointY <= frame.c.getHeight()/2)
+			return (int)(r.unitCenter - unitDist + r.start);
+		else 
+			return (int)(r.unitCenter + unitDist + r.start);*/
+		
+		double hyp = Point.distance(pointX, pointY, frame.c.getWidth()/2,frame.c.getHeight()/2);
+		Constants.p("Hypotenuse: "+hyp);
+		int[] point = {frame.c.getWidth()/2,frame.c.getHeight()/2};
+		
+		int[] point1 = point.clone();
+		
+		Constants.polarMove(point, r.startAngle, 1000);
+		Constants.polarMove(point1, Math.PI+r.startAngle, 1000);
+		
+		Constants.p("Point 1: ("+point[0]+","+point[1]+") Point 2: ("+point1[0]+","+point1[1]+")");
+		
+		double distFromRoad = Line2D.ptLineDist(point[0], point[1], point1[0], point1[1], pointX, pointY);
+		Constants.p("Distance from road: "+distFromRoad);
+		double distance = Math.pow((Math.pow(hyp,2)-Math.pow(distFromRoad, 2)),0.5)/r.pixelsPerUnit;	
+		Constants.p("Distance: "+distance);
+		if(pointY <= frame.c.getHeight()/2)
+			return (int)(r.unitCenter - distance + r.start);
+		else 
+			return (int)(r.unitCenter + distance + r.start);
+		
 	}
 	
 	public String colorName(Color c){
