@@ -128,13 +128,13 @@ public class Car {
 		g2.rotate(2*Math.PI-road.startAngle,toPlace[0],toPlace[1]);
 		
 	//	Constants.p("("+image.getWidth()/3+","+image.getHeight()/3+")");
-		
+	/*	
 		int [] center = this.translate();
 		double startAngle = c.roads[this.roadIndex].startAngle;
 		Constants.polarMove(center, startAngle+Math.PI/2, Constants.ROAD_WIDTH/2);
 		Constants.polarMove(center, startAngle, 20);
 		
-		g2.drawRect(center[0]-23,center[1]-23,47,47);
+		g2.drawRect(center[0]-23,center[1]-23,47,47);*/
 		
 	//	Constants.p("Adjusted center: ("+center[0]+","+center[1]+")");
 			

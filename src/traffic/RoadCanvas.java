@@ -114,9 +114,12 @@ class RoadCanvas extends Canvas {
 	public void paint(Graphics g){//TODO: this is likely not going to change, but it(repaint()) will get a nice wrapper function!
 		g.setColor(Color.white);
 		g.fillRect(-2, -2, this.getWidth()+5,this.getHeight()+5);
-		if(updateStatus)
-			g.drawString("Delta: "+delta+"     Status: "+status, 10,roads[0].sHeight/2);
-		else{
+		if(updateStatus){
+			g.fillRect(10,10,500,13);
+			g.setColor(Color.black);
+			g.drawString("Delta: "+delta+"     Status: "+status,10,20);
+			
+		}else{
 			for(Road r:roads)
 				if(justPaintCars)
 					for(Car car : r.rCars)
@@ -129,9 +132,12 @@ class RoadCanvas extends Canvas {
 			for (Road r:roads)
 				for (Car c: r.rCars)
 					c.paintCar(g);
+			
+			g.setColor(Color.white);
+			g.fillRect(10,10,500,13);
+			
 			g.setColor(Color.black);
-
-		    g.drawString("Delta: "+delta+"     Status: "+status, 10,roads[0].sHeight/2);
+		    g.drawString("Delta: "+delta+"     Status: "+status, 10,20);
 		
 
 		}	

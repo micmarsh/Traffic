@@ -42,31 +42,32 @@ public class Road {
 		finish = end;
 		intLoc -= start;//TODO: re-think 'normalizing' at some point, this could be a problem if all cars start after intersection
 		unitCenter = intLoc + intLength/2;
-		
 	}
 	
-/*	public int getLength(){//this is in "units"!
+	public int getLength(){//this is in "units"!
 		return finish - start;
-	}*/
+	}
 	
 	public void adjust(RoadCanvas c){//TODO: re-do all this shit to handle the shiny new polygons
 		int[] middle = {c.getWidth()/2,c.getHeight()/2};
 		makeRect(c,pavement,1000,middle);
 		makeRect(c,intersection,intLength*pixelsPerUnit/2,middle);
 		
+		
+		
 		double ppu;
 	//	Constants.p("Starting Angle: "+startAngle);
 		if(startAngle > Math.atan(c.getHeight()/c.getWidth()) && startAngle <= Math.tanh(c.getHeight()/c.getWidth()) +Math.PI/2){
 			if(Math.abs(Math.sin(startAngle)) <= 1)
-				ppu = ( c.getHeight()/2)/(unitCenter);
+				ppu = ( c.getHeight())/(getLength());
 			else
-				ppu = ( c.getHeight()/2)/(unitCenter * Math.abs(Math.sin(startAngle)));
+				ppu = ( c.getHeight())/(getLength() * Math.abs(Math.sin(startAngle)));
 	//		Constants.p("Sine Used!");
 		}else{
 			if(Math.abs(Math.cos(startAngle)) <= 1)
-				ppu = ( c.getWidth()/2)/(unitCenter);
+				ppu = ( c.getWidth())/(getLength());
 			else
-				ppu = ( c.getWidth()/2)/(unitCenter * Math.abs(Math.cos(startAngle)));
+				ppu = ( c.getWidth())/(getLength() * Math.abs(Math.cos(startAngle)));
 	//		Constants.p("Cosine Used!");
 		}
 		

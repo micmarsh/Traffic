@@ -226,7 +226,7 @@ public class Traffic {
 		
 		
 		public void crash(Car c1, Car c2,int intersection){
-			String message = "";
+			/*String message = "";
 			if(intersection == 0)
 				message = Constants.colorName(c1.color)+" car and "+Constants.colorName(c2.color)+" car crashed on" +
 				" road "+(c1.roadIndex+1)+ " at position "+c2.start+".";
@@ -247,7 +247,7 @@ public class Traffic {
 			}
 			if(pressed == JOptionPane.NO_OPTION){
 				System.exit(0);
-			}
+			}*/
 		}
 		
 		
