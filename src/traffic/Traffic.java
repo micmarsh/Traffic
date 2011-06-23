@@ -68,7 +68,7 @@ public class Traffic {
 		private void sizeComponents(){
 			c.adjustSize(getWidth()-130,getHeight());
 			b.adjustSize(120,getHeight());
-			for(Car car:cars)
+		//	for(Car car:cars)
 		//		car.adjust(c);
 			listener.updateCars();
 		}
@@ -154,8 +154,7 @@ public class Traffic {
 					
 					int index = cars.indexOf(c);
 					array[index].changed = true;
-					array[index].road = array[index].source.roadIndex;
-					
+					array[index].road = array[index].source.road.index;
 					r.road.rCars.remove(i);
 
 					absoluteIndices[j] = index;
@@ -197,7 +196,7 @@ public class Traffic {
 					car.velocity -= restore[i].velChange;
 					if(restore[i].changed){
 						cars.add(i,car);
-						c.roads[car.roadIndex].rCars.add(car);
+						car.road.rCars.add(car);
 					}
 				//	car.adjust(c);
 				}

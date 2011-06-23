@@ -15,7 +15,7 @@ import java.util.Random;
 import javax.swing.JOptionPane;
 
 class RoadCanvas extends Canvas {
-	Road roads[];
+	ArrayList<Road> roads;
 	int delta;
 	private boolean justPaintCars,updateStatus;
 	String status;
@@ -28,7 +28,6 @@ class RoadCanvas extends Canvas {
 			infile = new BufferedReader(new FileReader(input));
 			line = infile.readLine();//Read in "delta" value
 			delta = Integer.parseInt(line);
-			line = infile.readLine();//Read in number of roads
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -38,18 +37,17 @@ class RoadCanvas extends Canvas {
 		
 		status = "paused";
 		
-		roads = new Road[Integer.parseInt(line)];
+		roads = new ArrayList<Road>();
 		
 		int road = 0;
 		
 		try {//Populates global road array public and "super global" car array.
 			int i = 0;
+			Color[] colors = {Color.yellow,Color.blue,Color.green,Color.white,Color.magenta,
+					Color.orange,Color.cyan};
 			do{
 				int maxEnd = 0;
 				int minStart = -1;
-				
-				Color[] colors = {Color.yellow,Color.blue,Color.green,Color.white,Color.magenta,
-						Color.orange,Color.cyan};
 				
 				
 				do{
@@ -59,17 +57,17 @@ class RoadCanvas extends Canvas {
 						break;
 					line = line.replaceAll(" ", "");
 					String[] lineElts = line.split(",");
-				//	System.out.println(line);
 					if(lineElts[0].equals("road")){
 						//System.out.println("Road number: "+road);
-						roads[road] = new Road(lineElts,road);
+						roads.add(new Road(lineElts,road));
+						Road lulz = roads.get(road);
 						//i = 0;
 					}
 					
 					if(lineElts[0].equals("car")){
-						Car c = new Car(lineElts,this,road);
+						Car c = new Car(lineElts,this,roads.get(road));
 						cars.add(c);
-						roads[road].rCars.add(c);
+						roads.get(road).rCars.add(c);
 						if(c.finish > maxEnd)
 							maxEnd = c.finish;
 						if(minStart == -1 || c.start < minStart)
@@ -79,10 +77,10 @@ class RoadCanvas extends Canvas {
 					}
 					
 				}while(!line.equals("endroad"));
-				if(road < roads.length){
-					roads[road].setLength(minStart,maxEnd);//Like all numbers in this loop, this is in UNITS.
-					for(Car car: roads[road].rCars)
-						car.normalize(road);
+				if(road < roads.size()){
+					roads.get(road).setLength(minStart,maxEnd);//Like all numbers in this loop, this is in UNITS.
+					for(Car car: roads.get(road).rCars)
+						car.normalize();
 				}
 				road++;
 			}while(line != null);
@@ -129,9 +127,9 @@ class RoadCanvas extends Canvas {
 				
 			for (Road r:roads)
 				r.paintComponent(g,false);
+				
 			for (Road r:roads)
-				for (Car c: r.rCars)
-					c.paintCar(g);
+				r.drawFinishes(g);
 			
 			g.setColor(Color.white);
 			g.fillRect(10,10,500,13);

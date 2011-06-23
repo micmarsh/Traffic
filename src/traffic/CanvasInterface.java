@@ -24,7 +24,7 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 		Car car;
 		CarAndBound(Car c){
 			int [] center = c.translate();
-			double startAngle = frame.c.roads[c.roadIndex].startAngle;
+			double startAngle = c.road.startAngle;
 			Constants.polarMove(center, startAngle+Math.PI/2, Constants.ROAD_WIDTH/2);
 			Constants.polarMove(center, startAngle, 25);
 			
@@ -75,11 +75,11 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 			if(clicked != null){
 				
 				frame.b.carStats[5].setText("Selected: No");
-				int newLoc = this.pointToPos(e.getX(), e.getY(), frame.c.roads[clicked.roadIndex])-frame.c.roads[clicked.roadIndex].start;
+				int newLoc = this.pointToPos(e.getX(), e.getY(), clicked.road)-clicked.road.start;
 				int diff = newLoc - clicked.start;
 				clicked.start = newLoc;
 				
-				frame.b.carStats[2].setText("Position: "+(clicked.start+frame.c.roads[clicked.roadIndex].start));
+				frame.b.carStats[2].setText("Position: "+(clicked.start+clicked.road.start));
 				
 				SnapShot[] current = new SnapShot[frame.cars.size()];
 				
@@ -177,10 +177,10 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 			if(clicked == null && cb.boundary.contains(loc)){//TODO:"clicked == null" may not be needed for final version
 				Car c = cb.car;
 				frame.b.carStats[0].setText("Car: "+colorName(c.color));
-				frame.b.carStats[1].setText("Road #: "+(c.roadIndex+1));
-				frame.b.carStats[2].setText("Position: "+(c.start+frame.c.roads[c.roadIndex].start));
+				frame.b.carStats[1].setText("Road #: "+(c.road.index+1));
+				frame.b.carStats[2].setText("Position: "+(c.start+c.road.start));
 				frame.b.carStats[3].setText("Velocity: "+c.velocity);
-				frame.b.carStats[4].setText("Finish: "+(c.finish+frame.c.roads[c.roadIndex].start));
+				frame.b.carStats[4].setText("Finish: "+(c.finish+c.road.start));
 				
 			}
 		int i = 0;

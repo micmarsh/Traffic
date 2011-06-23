@@ -12,12 +12,10 @@ import java.util.Random;
 public class Road {
 	public int intLoc;//these are in "units"!
 	public int intLength;//these are in "units"!
-	private int width,xPos;//these are in pixels
 	public int height,yPos,sYPos,sHeight;//these are in pixels
-	private int sWidth,sXPos;//these are in pixels
 	public int start,finish;//these are in "units"!
 	public int pixelsPerUnit;
-	private int index;//TODO: most of this^ shit is going to be changed
+	public int index;//TODO: most of this^ shit is going to be changed
 	
 	private Polygon pavement,intersection;
 	public double theta,startAngle;
@@ -38,8 +36,16 @@ public class Road {
 	
 	public void setLength(int begin, int end){//this is going to be changed according to that one style
 		
-		start = begin - 5;
+		start = begin;
 		finish = end;
+		int startToMid = intLoc - start;
+		int finToMid = finish - intLoc;
+		
+		if(finToMid > startToMid)
+			start = intLoc - finToMid;
+		else
+			finish = intLoc + startToMid;
+		
 		intLoc -= start;//TODO: re-think 'normalizing' at some point, this could be a problem if all cars start after intersection
 		unitCenter = intLoc + intLength/2;
 	}
@@ -51,7 +57,6 @@ public class Road {
 	public void adjust(RoadCanvas c){//TODO: re-do all this shit to handle the shiny new polygons
 		int[] middle = {c.getWidth()/2,c.getHeight()/2};
 		makeRect(c,pavement,1000,middle);
-		makeRect(c,intersection,intLength*pixelsPerUnit/2,middle);
 		
 		
 		
@@ -75,6 +80,9 @@ public class Road {
 		
 		pixelsPerUnit = (int)ppu;
 		
+
+		makeRect(c,intersection,intLength*pixelsPerUnit/2,middle);
+		
 	/*	for(Car car:rCars){
 			makeRect(c,car.getImage(),pixelsPerUnit*4,car.translate());
 		}*/
@@ -83,7 +91,7 @@ public class Road {
 	
 	private void makeRect(RoadCanvas c, Polygon subject, int halfLength,int[] middle){
 		subject.reset();
-		theta = 2*Math.PI/(2*c.roads.length);
+		theta = 2*Math.PI/(2*c.roads.size());
 		
 		startAngle = (index*theta) + theta/2;
 		
@@ -118,23 +126,27 @@ public class Road {
 			
 			
 			
-				ArrayList<Integer> finishes = new ArrayList<Integer>();
 				
-				if(!rCars.isEmpty())//Hopefully all of this can be unchanged, let the car class handle it
-				for(int i = rCars.size()-1;i >= 0;i--){
-					Car c = rCars.get(i);
-					g.setColor(c.color);
-					
-					int offSet = 0;
-					
-					while(finishes.contains(c.finish+offSet))//this allows finish lines in the same location to be distinguished
-						offSet += 2;
-					
-					finishes.add(c.finish+offSet);
-					c.paintComponent(g,this,offSet);
-				}
 			}
 		
+	}
+	
+	public void drawFinishes(Graphics g){
+		ArrayList<Integer> finishes = new ArrayList<Integer>();
+		
+		if(!rCars.isEmpty())//Hopefully all of this can be unchanged, let the car class handle it
+		for(int i = rCars.size()-1;i >= 0;i--){
+			Car c = rCars.get(i);
+			g.setColor(c.color);
+			
+			int offSet = 0;
+			
+			while(finishes.contains(c.finish+offSet))//this allows finish lines in the same location to be distinguished
+				offSet += 2;
+			
+			finishes.add(c.finish+offSet);
+			c.paintComponent(g,this,offSet);
+		}
 	}
 }
 

@@ -18,7 +18,7 @@ public class Car {
 	public int start;//denoted in UNITS
 	int velocity;//denoted in UNITS
 	public int finish;//denoted in UNITS
-	int roadIndex;//pixels
+	Road road;//pixels
 	
 	private Rectangle crashRange;//may not be necessary anymore due to re-structuring of car image
 
@@ -30,7 +30,7 @@ public class Car {
 	public boolean controlled;
 	private RoadCanvas c;
 
-	Car(String lineElts[],RoadCanvas c,int r){//Everything in units!
+	Car(String lineElts[],RoadCanvas c,Road r){//Everything in units!
 		start = Integer.parseInt(lineElts[1]);
 		minVel = Integer.parseInt(lineElts[2]);
 		velocity = Integer.parseInt(lineElts[3]);
@@ -42,7 +42,7 @@ public class Car {
 		else
 			controlled = true;
 		
-		roadIndex = r;
+		road = r;
 		wheelStats = new int[4];//Except for this, this will eventually be pixels
 		
 		this.c = c;
@@ -50,9 +50,9 @@ public class Car {
 		
 	}
 	
-	public void normalize(int r){//necessary in order for cars to be rendered in correct locations
-		start -= c.roads[r].start;
-		finish -= c.roads[r].start;
+	public void normalize(){//necessary in order for cars to be rendered in correct locations
+		start -= road.start;
+		finish -= road.start;
 		//Constants.p("Start: "+start+" Finish: "+finish);
 		try{
 		image = ImageIO.read(new File("car/"+Constants.colorName(color)+".png"));
@@ -67,7 +67,7 @@ public class Car {
 	}
 	
 	public int[] translate(){//returns a "tuple" with the x and y position of the center of the car, in pixels
-		Road road = c.roads[roadIndex];
+	
 		int ppu = road.pixelsPerUnit;
 		double x = Math.cos(road.startAngle)*(road.unitCenter-start);
 		x = c.getWidth()/2 - x*ppu;
@@ -76,6 +76,7 @@ public class Car {
 		y = c.getHeight()/2 - y*ppu;
 		int[] toRet = {(int)x,(int)y};
 		Constants.polarMove(toRet,road.startAngle-Math.PI/2,25);
+		Constants.polarMove(toRet, road.startAngle + Math.PI, 10);
 		return toRet;
 		
 	}
@@ -116,7 +117,6 @@ public class Car {
 	
 	
 	public void paintCar(Graphics g){
-		Road road = c.roads[roadIndex];
 		Graphics2D g2 = (Graphics2D)g;
 		
 		int [] toPlace = translate();
@@ -154,7 +154,7 @@ public class Car {
 		
 		int[] point = translate();
 		
-		Constants.polarMove(point, r.startAngle,(finish-start)*r.pixelsPerUnit + offSet);
+		Constants.polarMove(point, r.startAngle,(int)(finish-start+1.5)*r.pixelsPerUnit + offSet);//The 1.5 is an approximate offset to make the finish line show up in the right place
 		
 		int [] point1 = point.clone();
 		
