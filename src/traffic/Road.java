@@ -54,7 +54,7 @@ public class Road {
 		return finish - start;
 	}
 	
-	public void adjust(RoadCanvas c){//TODO: re-do all this shit to handle the shiny new polygons
+	public void adjust(RoadCanvas c){
 		int[] middle = {c.getWidth()/2,c.getHeight()/2};
 		makeRect(c,pavement,1000,middle);
 		
@@ -62,7 +62,7 @@ public class Road {
 		
 		double ppu;
 	//	Constants.p("Starting Angle: "+startAngle);
-		if(startAngle > Math.atan(c.getHeight()/c.getWidth()) && startAngle <= Math.tanh(c.getHeight()/c.getWidth()) +Math.PI/2){
+		if(startAngle > Math.atan(c.getHeight()/c.getWidth()) && startAngle <= Math.atan(c.getHeight()/c.getWidth()) +Math.PI/2){
 			if(Math.abs(Math.sin(startAngle)) <= 1)
 				ppu = ( c.getHeight())/(getLength());
 			else
@@ -81,11 +81,8 @@ public class Road {
 		pixelsPerUnit = (int)ppu;
 		
 
-		makeRect(c,intersection,intLength*pixelsPerUnit/2,middle);
-		
-	/*	for(Car car:rCars){
-			makeRect(c,car.getImage(),pixelsPerUnit*4,car.translate());
-		}*/
+		//makeRect(c,intersection,intLength*pixelsPerUnit/2,middle);
+
 		
 	}
 	
@@ -119,12 +116,8 @@ public class Road {
 				g.setColor(Color.black);
 				g.fillPolygon(pavement);
 			}else{
-				g.setColor(Color.red);
-				g.fillPolygon(intersection);
-			
-			
-			
-			
+			//	g.setColor(Color.red);
+			//	g.fillPolygon(intersection);
 			
 				
 			}

@@ -45,9 +45,10 @@ class RoadCanvas extends Canvas {
 			int i = 0;
 			Color[] colors = {Color.yellow,Color.blue,Color.green,Color.white,Color.magenta,
 					Color.orange,Color.cyan};
+			int maxEnd = 0;
+			int minStart = -1;
 			do{
-				int maxEnd = 0;
-				int minStart = -1;
+				
 				
 				
 				do{
@@ -60,7 +61,6 @@ class RoadCanvas extends Canvas {
 					if(lineElts[0].equals("road")){
 						//System.out.println("Road number: "+road);
 						roads.add(new Road(lineElts,road));
-						Road lulz = roads.get(road);
 						//i = 0;
 					}
 					
@@ -77,14 +77,19 @@ class RoadCanvas extends Canvas {
 					}
 					
 				}while(!line.equals("endroad"));
-				if(road < roads.size()){
+				/*if(road < roads.size()){
 					roads.get(road).setLength(minStart,maxEnd);//Like all numbers in this loop, this is in UNITS.
 					for(Car car: roads.get(road).rCars)
 						car.normalize();
-				}
+				}*/
 				road++;
 			}while(line != null);
 			
+			for (Road r:roads){
+				r.setLength(minStart,maxEnd);
+				for (Car c: r.rCars)
+					c.normalize();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

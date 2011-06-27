@@ -76,7 +76,7 @@ public class Car {
 		y = c.getHeight()/2 - y*ppu;
 		int[] toRet = {(int)x,(int)y};
 		Constants.polarMove(toRet,road.startAngle-Math.PI/2,25);
-		Constants.polarMove(toRet, road.startAngle + Math.PI, 10);
+		Constants.polarMove(toRet, road.startAngle + Math.PI, 20);
 		return toRet;
 		
 	}
@@ -154,12 +154,12 @@ public class Car {
 		
 		int[] point = translate();
 		
-		Constants.polarMove(point, r.startAngle,(int)(finish-start+1.5)*r.pixelsPerUnit + offSet);//The 1.5 is an approximate offset to make the finish line show up in the right place
+		Constants.polarMove(point, r.startAngle,(int)(finish-start+3)*r.pixelsPerUnit + offSet);//The 1.5 is an approximate offset to make the finish line show up in the right place
 		
 		int [] point1 = point.clone();
 		
-		//Constants.polarMove(point, r.startAngle - Math.PI/2, Constants.ROAD_WIDTH/2);
-		Constants.polarMove(point1, r.startAngle + Math.PI/2, Constants.ROAD_WIDTH);
+		Constants.polarMove(point, r.startAngle + Math.PI/2, (int)(Constants.ROAD_WIDTH/10));
+		Constants.polarMove(point1, r.startAngle + Math.PI/2, (int)(Constants.ROAD_WIDTH*10/9));
 
 		g.drawLine(point[0], point[1], point1[0], point1[1]);
 		paintCar(g);
