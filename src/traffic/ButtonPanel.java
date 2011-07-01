@@ -2,6 +2,7 @@ package traffic;
 
 import java.awt.ComponentOrientation;
 import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
@@ -25,26 +26,21 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 	JTextField fps;
 	JLabel status;
 	JLabel[] carStats;
-	ButtonPanel(MainFrame m){//,JComboCheckBox combo){
+	ButtonPanel(MainFrame m,boolean sim){
 		System.out.println("Constructing Button Panel...");
 		parent = m;
 		
-		GridLayout L1 = new GridLayout(14,1);
 		
 		
-	//	this.add(combo);
-		JButton next = new JButton("Step");
-		next.addMouseListener(this);
 		
-		JButton rewind = new JButton("Rewind");
-		rewind.addMouseListener(this);
+		loadPanel(sim);
 		
-		play = new JButton("Play");
-		play.addMouseListener(this);
 		
-		status = new JLabel("paused");
-		status.setFont(new Font("foo", Font.ITALIC,15));
-		
+		System.out.println("Button Panel Completed!");
+	}
+	
+	public void loadPanel(boolean sim){
+		this.removeAll();
 		String[] carStrings = {"Car: ","Road #: ", "Position: ","Velocity: ","Finish: ","Selected: ","Mouse: "};
 		int i = 0;
 		carStats = new JLabel[carStrings.length];
@@ -53,46 +49,67 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 			i++;
 		}
 		
-		fps = new JTextField("1");
+		if(sim){
+			GridLayout L1 = new GridLayout(14,1);
+			
+			
+			JButton next = new JButton("Step");
+			next.addMouseListener(this);
+			
+			JButton rewind = new JButton("Rewind");
+			rewind.addMouseListener(this);
+			
+			play = new JButton("Play");
+			play.addMouseListener(this);
+			
+			status = new JLabel("paused");
+			status.setFont(new Font("foo", Font.ITALIC,15));
+			
+			
+			fps = new JTextField(""+(1000/parent.miliSecondsPerFrame));
+			
 		
-	
-		JButton reset = new JButton("Reset");
-		reset.addMouseListener(this);
-		
-		JButton cancel = new JButton("Cancel Click");
-		
-		
-		setLayout(L1);
-		
-		//this.add(new JLabel("Status: "));
-		//this.add(status);
-		this.add(next);
-		this.add(play);
-		this.add(new JLabel("FPS:"));
-		this.add(fps);
-		this.add(rewind);
-		this.add(reset);
-		for (JLabel j:carStats)
-			this.add(j);
-		
-		
-	/*	System.out.println(((JLabel) (this.getComponent(0))).getText());
-		
-		//SpringUtilities.makeGrid(this, 15,1, // rows, cols
-		  //      0,0, // initialX, initialY
-		    //    0,0);// xPad, yPad
-		
-		L1.putConstraint(SpringLayout.EAST, this.getComponent(0), 1, SpringLayout.EAST, this);
-		L1.putConstraint(SpringLayout.NORTH, this.getComponent(0), 1, SpringLayout.NORTH, this);
-		
-		for(i = 0; i<this.getComponentCount()-1;i++){//TODO: this!
-			L1.putConstraint(SpringLayout.NORTH,this.getComponent(i+1),1,SpringLayout.SOUTH,this.getComponent(i));
-			L1.putConstraint(SpringLayout.EAST, this.getComponent(i+1), 1, SpringLayout.EAST, this);
-		}*/
-		
-		//this.add(update); //doesn't seem may not be necesary
-		//this.add(new JButton("heh"));
-		System.out.println("Button Panel Completed!");
+			JButton reset = new JButton("Reset");
+			reset.addMouseListener(this);
+			
+			
+			setLayout(L1);
+			
+			//this.add(new JLabel("Status: "));
+			//this.add(status);
+			this.add(next);
+			this.add(play);
+			this.add(new JLabel("FPS:"));
+			this.add(fps);
+			this.add(rewind);
+			this.add(reset);
+			for (JLabel j:carStats)
+				this.add(j);
+		}else{
+			GridLayout L1 = new GridLayout(10,1);
+			setLayout(L1);
+			
+			JButton newR = new JButton("New Road");
+			newR.addMouseListener(this);
+			this.add(newR);
+			
+			JButton newC = new JButton("New Car");
+		    newC.addMouseListener(this);
+			this.add(newC);
+			Constants.p("this function is running");
+			for (JLabel j:carStats)
+				this.add(j);
+			
+			JButton undo = new JButton("Undo");
+			undo.addMouseListener(this);
+			this.add(undo);
+			
+		}
+		if(parent.m != null){
+			parent.m.mode.setSelected(false);
+			parent.m.mode.setPopupMenuVisible(false);
+		}
+		revalidate();
 	}
 	
 	public void adjustSize(int width,int height){

@@ -10,6 +10,8 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
+import javax.swing.AbstractButton;
+
 import traffic.Traffic.MainFrame;
 
 public class CanvasInterface implements MouseListener,MouseMotionListener {
@@ -70,6 +72,7 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 			}else
 				frame.c.status = "paused";
 			clicked = null;
+			frame.m.adjCar.setEnabled(false);
 		}
 		else{
 			if(clicked != null){
@@ -113,6 +116,7 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 				updateCars();
 				
 				frame.c.redraw(true,false);
+				frame.m.adjCar.setEnabled(false);
 				
 			}else{
 	
@@ -133,6 +137,7 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 							
 						}
 						frame.b.carStats[5].setText("Selected: Yes");
+						frame.m.adjCar.setEnabled(true);
 						frame.c.status = "car selected  (right-click to cancel)";
 						break;
 					}
@@ -193,8 +198,10 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 		for(Road r : frame.c.roads){
 			//Constants.p("Start Angle: "+r.startAngle);
 		//	Constants.p("This zone is angle "+(r.startAngle - r.theta/2)+" through "+(r.startAngle + r.theta/2));
-			if(angle >= r.startAngle - r.theta/2 && angle < r.startAngle + r.theta/2)
+			if(angle >= r.startAngle - r.theta/2 && angle < r.startAngle + r.theta/2){
+			
 				frame.b.carStats[6].setText("Mouse: "+(pointToPos(loc.x,loc.y,r)));
+			}
 			
 			i++;
 		}

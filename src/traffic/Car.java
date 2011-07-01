@@ -29,24 +29,23 @@ public class Car {
 	public int minVel,maxVel;
 	public boolean controlled;
 	private RoadCanvas c;
-
+	
+	
 	Car(String lineElts[],RoadCanvas c,Road r){//Everything in units!
 		start = Integer.parseInt(lineElts[1]);
 		minVel = Integer.parseInt(lineElts[2]);
 		velocity = Integer.parseInt(lineElts[3]);
 		maxVel = Integer.parseInt(lineElts[4]);
 		finish = Integer.parseInt(lineElts[5]);
-		
 		if(lineElts[6].equals("0"))
 			controlled = false;
 		else
 			controlled = true;
-		
 		road = r;
 		wheelStats = new int[4];//Except for this, this will eventually be pixels
 		
 		this.c = c;
-		adjust();
+	//	adjust();
 		
 	}
 	
@@ -81,7 +80,7 @@ public class Car {
 		
 	}
 	
-	public void adjust(){//All this shit is getting re-done!
+	/*public void adjust(){
 		//TODO: document this mess "tomorrow"
 		/*int yPos = c.roads[roadIndex].sYPos;
 		int ppu = c.roads[roadIndex].pixelsPerUnit;
@@ -113,7 +112,7 @@ public class Car {
 		for(int i = 0; i<8;i++){
 			image.addPoint(Xs[i], Ys[i]);
 		}*/
-	}
+	//}
 	
 	
 	public void paintCar(Graphics g){

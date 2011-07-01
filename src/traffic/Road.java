@@ -110,7 +110,7 @@ public class Road {
 	}
 	
 
-	public void paintComponent(Graphics g,boolean firstPass) {
+	public void paintComponent(Graphics g,boolean firstPass,int centerX,int centerY) {
 			
 			if(firstPass){
 				g.setColor(Color.black);
@@ -118,8 +118,14 @@ public class Road {
 			}else{
 			//	g.setColor(Color.red);
 			//	g.fillPolygon(intersection);
-			
-				
+				int[] point = {centerX,centerY};
+				Constants.polarMove(point, startAngle+Math.PI,(int)((centerX+centerY)/3));
+				g.setColor(Color.white);
+				//g.fillRect(-2, -2, this.getWidth()+5,this.getHeight()+5);
+				g.fillRect(point[0],point[1]-13,50,13);
+				g.setColor(Color.black);
+				g.drawString("Road "+(index+1),point[0],point[1]);
+					
 			}
 		
 	}
