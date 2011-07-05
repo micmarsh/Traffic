@@ -14,17 +14,21 @@ import java.util.Random;
 
 import javax.swing.JOptionPane;
 
+import traffic.Traffic.MainFrame;
+
 class RoadCanvas extends Canvas {
 	ArrayList<Road> roads;
 	int delta,gamma;
 	private boolean justPaintCars,updateStatus;
-	String status;
+	String status,stat2ndLine;
+	MainFrame parent;
 	
-	RoadCanvas(String input, ArrayList<Car> cars){//TODO: this could very well all be re-written once actual input file
-		
+	RoadCanvas(String input, ArrayList<Car> cars, MainFrame m){//TODO: this could very well all be re-written once actual input file
+
 		status = "paused";
+		stat2ndLine = "";
 		roads = new ArrayList<Road>();
-		
+		parent = m;
 		if(!input.equals("NONE")){
 			System.out.println("Constructing Road Canvas...");//format is revealed, don't really need to document yet.
 			BufferedReader infile = null;
@@ -50,8 +54,7 @@ class RoadCanvas extends Canvas {
 			
 			try {//Populates global road array public and "super global" car array.
 				int i = 0;
-				Color[] colors = {Color.yellow,Color.blue,Color.green,Color.white,Color.magenta,
-						Color.orange,Color.cyan};
+				
 				int maxEnd = 0;
 				int minStart = -1;
 				do{
@@ -79,7 +82,7 @@ class RoadCanvas extends Canvas {
 								maxEnd = c.finish;
 							if(minStart == -1 || c.start < minStart)
 								minStart = c.start;
-							c.color = colors[i];
+							c.color = Constants.colors[i];
 							i = (i+1)%7;
 						}
 						
@@ -201,10 +204,7 @@ class RoadCanvas extends Canvas {
 		g.setColor(Color.white);
 		g.fillRect(-2, -2, this.getWidth()+5,this.getHeight()+5);
 		if(updateStatus){
-			g.fillRect(10,10,500,13);
-			g.setColor(Color.black);
-			g.drawString("Delta: "+delta+"     Status: "+status,10,20);
-			
+			drawStatus(g);			
 		}else{
 			for(Road r:roads)
 				if(justPaintCars)
@@ -219,16 +219,23 @@ class RoadCanvas extends Canvas {
 			for (Road r:roads)
 				r.drawFinishes(g);
 			
-			g.setColor(Color.white);
-			g.fillRect(10,10,500,13);
-			
-			g.setColor(Color.black);
-		    g.drawString("Delta: "+delta+"     Status: "+status, 10,20);
+			drawStatus(g);
 		
 
 		}	
 				
 
+	}
+	
+	private void drawStatus(Graphics g){
+		g.setColor(Color.white);
+		g.fillRect(10,10,500,26);
+		
+		
+		g.setColor(Color.black);
+		g.drawString("Delta: "+delta+"     Status: "+status,10,20);
+		g.drawString(stat2ndLine,10,33);
+		
 	}
 	
 		

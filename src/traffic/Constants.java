@@ -6,6 +6,10 @@ public final class Constants {
 	//TODO: crash offset is going to be stored somewhere other than here, as it's going to be read in.
 	static final int CRASH_OFFSET = 2;//The length of units (on both sides) that denotes the "crash range" of all cars
 	static final int ROAD_WIDTH = 40;
+	
+	static Color[] colors = {Color.yellow,Color.blue,Color.green,Color.white,Color.magenta,
+			Color.orange,Color.cyan};
+	
 	public static void polarMove(int[] point,double angle,int distance){
 		point[0] += (distance*Math.cos(angle));
 		point[1] += (distance*Math.sin(angle));

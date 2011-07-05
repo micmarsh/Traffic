@@ -19,7 +19,8 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 	ArrayList<CarAndBound> cars;//helps associate the car's image with the bounding rectangle the listener will use to keep track of it's location
 	private int prevLoc,prevVel;//^mostly just reduces amount of typing done
 	Car clicked;//curently "clicked on" car
-	boolean paused;
+	boolean paused,listen;
+	
 	
 	private class CarAndBound{//TODO: change to private in final version
 		Rectangle boundary;
@@ -42,7 +43,7 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 		frame = c;
 		cars = getCars();
 		clicked = null;
-		
+		listen = true;
 	}
 	
 	private ArrayList<CarAndBound> getCars(){//used to generate/update the CarAndBound array list
@@ -63,6 +64,9 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {//TODO: documentation of this WHEN: "tomorrow"
+		
+		if(!listen)
+			return;
 		if(e.getButton() == MouseEvent.BUTTON3){//cancels a "clicking on" of a car
 			frame.b.carStats[5].setText("Selected: No");
 			if(paused){
@@ -177,6 +181,8 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
+		if(!listen)
+			return;
 		Point loc = arg0.getPoint();
 		for(CarAndBound cb : cars)
 			if(clicked == null && cb.boundary.contains(loc)){//TODO:"clicked == null" may not be needed for final version

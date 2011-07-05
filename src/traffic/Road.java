@@ -34,7 +34,7 @@ public class Road {
 		
 	}
 	
-	public void setLength(int begin, int end){//this is going to be changed according to that one style
+	public void setLength(int begin, int end){
 		
 		start = begin;
 		finish = end;

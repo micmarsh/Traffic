@@ -27,10 +27,13 @@ public class Menu extends JMenuBar implements ActionListener {
 	JMenuItem load,save,adjCar,adjRoad;
 	JRadioButton sim,edit;
 	MainFrame parent;
+	Editor e;
+	boolean listen;
+	
 	Menu(MainFrame m,boolean simulator){
 		parent = m;
 		mainBar = new JMenuBar();
-		
+		e = parent.b.e;
 		//configure and add 'File' menu:
 		file = new JMenu("File");
 		load = new JMenuItem("Load");
@@ -71,11 +74,14 @@ public class Menu extends JMenuBar implements ActionListener {
 		edit.setSelected(!simulator);
 		adjRoad.setEnabled(!simulator);
 		
+		listen = true;
 	//	submenu.add(new JRadioButtonMenuItem("Another one"));
 	//	submenu.add(new JCheckBoxMenuItem("A check box menu item"));
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		if(!listen)
+			return;
 		Object source = null;
 		try{
 			source = (JMenuItem)e.getSource();
@@ -102,15 +108,20 @@ public class Menu extends JMenuBar implements ActionListener {
 		if(command.equals("Save")){
 			JFileChooser fc = new JFileChooser();
 			if(fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION){
+				String filePath = fc.getSelectedFile().getAbsolutePath();
 				try{
-				BufferedWriter writer = new BufferedWriter(new FileWriter(fc.getSelectedFile().getAbsolutePath()));
+				BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
 				saveFile(writer);
 				writer.close();
+				parent.lastOpened = filePath;
 				}catch(IOException ex){}
 			}
 			 
 		}
 		if(command.equals("Simulator")){
+			
+			
+			
 			parent.sim = true;
 			adjRoad.setEnabled(false);
 		//	Constants.p("Sim, muthafuckaaaaaaa!!!!!");
@@ -127,6 +138,10 @@ public class Menu extends JMenuBar implements ActionListener {
 				
 		}
 		
+		if(command.equals("Adjust Car")){
+			parent.m.e.carDialog(parent.listener.clicked);
+		}
+		
 	}
 	
 	private int boolToInt(boolean bool){
@@ -139,7 +154,7 @@ public class Menu extends JMenuBar implements ActionListener {
 	public void saveFile(BufferedWriter writer){
 		String toWrite = "";
 		
-		toWrite += parent.c.delta + "\n";
+		toWrite += parent.c.delta + "\n"+parent.c.gamma+"\n";
 		
 		for (Road r:parent.c.roads){
 			toWrite += "road,"+r.intLoc+","+r.intLength+"\n";

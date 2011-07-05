@@ -10,15 +10,19 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 import javax.imageio.ImageIO;
 
 
-public class Car {
+public class Car implements Cloneable {
 	
 	public int start;//denoted in UNITS
 	int velocity;//denoted in UNITS
 	public int finish;//denoted in UNITS
 	Road road;//pixels
+	public boolean deleted;
 	
 	private Rectangle crashRange;//may not be necessary anymore due to re-structuring of car image
 
@@ -28,7 +32,16 @@ public class Car {
 	
 	public int minVel,maxVel;
 	public boolean controlled;
-	private RoadCanvas c;
+	public RoadCanvas c;
+	
+	
+	public Object clone() {
+		try
+		{
+		return super.clone();
+		}
+		catch(Exception e){ return null; }
+	}
 	
 	
 	Car(String lineElts[],RoadCanvas c,Road r){//Everything in units!
@@ -45,8 +58,9 @@ public class Car {
 		wheelStats = new int[4];//Except for this, this will eventually be pixels
 		
 		this.c = c;
-	//	adjust();
 		
+		deleted = false;
+	//	adjust();
 	}
 	
 	public void normalize(){//necessary in order for cars to be rendered in correct locations
@@ -57,7 +71,7 @@ public class Car {
 		image = ImageIO.read(new File("car/"+Constants.colorName(color)+".png"));
 		
 		}catch(Exception e){
-			
+			Constants.p("lulzception!");
 		}
 	}
 	

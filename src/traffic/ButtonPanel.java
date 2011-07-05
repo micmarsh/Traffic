@@ -26,15 +26,16 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 	JTextField fps;
 	JLabel status;
 	JLabel[] carStats;
+	Editor e;
+	boolean listen;
+	
 	ButtonPanel(MainFrame m,boolean sim){
 		System.out.println("Constructing Button Panel...");
 		parent = m;
-		
-		
-		
-		
+		e = new Editor(m);
 		loadPanel(sim);
 		
+		listen = true;
 		
 		System.out.println("Button Panel Completed!");
 	}
@@ -96,7 +97,6 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 			JButton newC = new JButton("New Car");
 		    newC.addMouseListener(this);
 			this.add(newC);
-			Constants.p("this function is running");
 			for (JLabel j:carStats)
 				this.add(j);
 			
@@ -123,7 +123,8 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 	//	JButton b = (JButton) arg0.getComponent();
-		
+		if(!listen)
+			return;
 		JButton b = (JButton)arg0.getComponent();
 		String text = b.getText();
 		
@@ -159,6 +160,10 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 				play.setText("Play");
 				parent.c.status = "paused";
 			}
+		}
+		
+		if(text.equals("New Car")){
+		   e.carDialog(null);
 		}
 	}
 	

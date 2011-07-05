@@ -21,6 +21,7 @@ import java.util.Comparator;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import java.lang.reflect.Constructor;
 
 public class Traffic {
 	
@@ -50,7 +51,7 @@ public class Traffic {
 			
 			//TODO: this will vary with command line args
 			
-			con = new MController();
+			
 			
 			
 			
@@ -58,9 +59,11 @@ public class Traffic {
 			memory = new ArrayList<SnapShot[]>();
 			play = false;
 	
-			c = new RoadCanvas(lastOpened,cars);//"NONE" for now, will eventually remember last opened file
+			c = new RoadCanvas(lastOpened,cars,this);//"NONE" for now, will eventually remember last opened file
 			b = new ButtonPanel(this,sim);
 			m = new Menu(this,sim);
+			
+			con = new MController(cars, c.gamma, c.delta);
 			
 			listener  = new CanvasInterface(this);
 			
@@ -81,6 +84,7 @@ public class Traffic {
 			});
 			
 			this.setJMenuBar(m);
+
 			
 			System.out.println("Main Window Complete!");
 		}
@@ -102,7 +106,7 @@ public class Traffic {
 			}catch(IOException ex){}
 		}
 		
-		private void writeToConfig(){
+		void writeToConfig(){
 			try{
 				BufferedWriter  config = new BufferedWriter (new FileWriter("config"));
 				config.write(lastOpened+"\n");
@@ -125,6 +129,12 @@ public class Traffic {
 		public void next(){//TODO: this will take arguments, and change accordingly
 			
 			SnapShot[] current = new SnapShot[cars.size()];
+			if(!con.hasSolution(current))
+				c.status = "Calculating";
+			
+			
+		
+			
 			
 			int i = 0;
 			
@@ -137,12 +147,19 @@ public class Traffic {
 			
 			c.redraw(true,false);
 
-			checkLoop(current);
-			listener.updateCars();
+			String message = "";
+			if(memory.size() >= 1)
+				message = con.next(memory.get(memory.size()-1),current);
+			else
+				message = con.next(null, current);//this could be an issue, must discuss
+			
+			c.stat2ndLine = message;
+		//	checkLoop(current);
+		//	listener.updateCars();
 			memory.add(current);
 		}
 		
-		private class RoadAndInt{//Helps, ultimately, to remove cars from "cars" arraylist in proper order, eliminating indexing issues
+	/*	public class RoadAndInt{//Helps, ultimately, to remove cars from "cars" arraylist in proper order, eliminating indexing issues
 			public Road road;
 			public int integer;
 			RoadAndInt(int num, Road r){
@@ -176,7 +193,7 @@ public class Traffic {
 							crash(r.rCars.get(i),r.rCars.get(j),0);
 						}
 						
-					if(r.rCars.get(i).start +2 >= r.intLoc && r.rCars.get(i).start - 2 <= r.intLength + r.intLoc){
+					if(r.rCars.get(i).start>= r.intLoc && r.rCars.get(i).start  <= r.intLength + r.intLoc){
 						if(inIntersection == null)//the 2s above are because of the arbitrary "crash range" of 2 (units)
 							inIntersection = r.rCars.get(i);
 						else
@@ -234,7 +251,7 @@ public class Traffic {
 				return -1;
 			}
 			
-		}
+		}*/
 		
 		public void rewind(){
 			if(!memory.isEmpty()){
@@ -263,9 +280,14 @@ public class Traffic {
 				rewind();
 		}
 		
+		public void toggleListeners(){
+			m.listen = !m.listen;
+			b.listen = !b.listen;
+			listener.listen = !listener.listen;
+		}
 		
 		public boolean collision(Car c1, Car c2){
-			int offSet = 2*Constants.CRASH_OFFSET;//this gives each car a 2-unit (extending from either side) "crash zone"
+			int offSet = c.gamma;
 			if(c1.start > c2.start - offSet && c1.start < c2.start + offSet){
 			//	System.out.println("Collision!");
 				return true;
