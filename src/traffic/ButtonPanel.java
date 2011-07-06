@@ -165,6 +165,10 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 		if(text.equals("New Car")){
 		   e.carDialog(null);
 		}
+		
+		if(text.equals("New Road")){
+			e.roadDialog(null);
+		}
 	}
 	
 	public void updateInfo(Car c){

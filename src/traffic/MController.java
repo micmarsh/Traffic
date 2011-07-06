@@ -183,8 +183,12 @@ public class MController extends Controller {
 			Car car = r.road.rCars.get(i); 
 				
 				int index = cars.indexOf(car);
+				Constants.p("A whole lotta stuff: \ni: "+i+"\nColor: "+Constants.colorName(car.color)+
+						"\nPosition: "+car.start+"\nVelocity: "+car.velocity+"\nFinish: "+
+						car.finish);
+				Constants.p("Index of car to be removed: "+index);
 				nextSS[index].changed = true;
-				nextSS[index].road = nextSS[index].source.road.index;
+				//nextSS[index].road = nextSS[index].source.road.index;
 				r.road.rCars.remove(i);
 
 				absoluteIndices[j] = index;

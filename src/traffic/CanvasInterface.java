@@ -22,7 +22,7 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 	boolean paused,listen;
 	
 	
-	private class CarAndBound{//TODO: change to private in final version
+	public class CarAndBound{//TODO: change to private in final version
 		Rectangle boundary;
 		Car car;
 		CarAndBound(Car c){

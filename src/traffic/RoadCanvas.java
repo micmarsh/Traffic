@@ -24,7 +24,7 @@ class RoadCanvas extends Canvas {
 	MainFrame parent;
 	
 	RoadCanvas(String input, ArrayList<Car> cars, MainFrame m){//TODO: this could very well all be re-written once actual input file
-
+		
 		status = "paused";
 		stat2ndLine = "";
 		roads = new ArrayList<Road>();
@@ -78,6 +78,7 @@ class RoadCanvas extends Canvas {
 							Car c = new Car(lineElts,this,roads.get(road));
 							cars.add(c);
 							roads.get(road).rCars.add(c);
+							
 							if(c.finish > maxEnd)
 								maxEnd = c.finish;
 							if(minStart == -1 || c.start < minStart)

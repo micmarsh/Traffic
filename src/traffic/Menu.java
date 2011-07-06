@@ -14,17 +14,20 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 
 
+import traffic.CanvasInterface.CarAndBound;
 import traffic.Traffic.MainFrame;
 public class Menu extends JMenuBar implements ActionListener {
 	JMenuBar mainBar;
 	JMenu file,mode,adjust;
-	JMenuItem load,save,adjCar,adjRoad;
+	JMenuItem newC,load,save,adjCar,adjRoad;
 	JRadioButton sim,edit;
 	MainFrame parent;
 	Editor e;
@@ -36,11 +39,13 @@ public class Menu extends JMenuBar implements ActionListener {
 		e = parent.b.e;
 		//configure and add 'File' menu:
 		file = new JMenu("File");
+		newC = new JMenuItem("New");
+		newC.addActionListener(this);
 		load = new JMenuItem("Load");
 		load.addActionListener(this);
 		save = new JMenuItem("Save");
 		save.addActionListener(this);
-		
+		file.add(newC);
 		file.add(load);
 		file.add(save);
 		add(file);
@@ -89,6 +94,28 @@ public class Menu extends JMenuBar implements ActionListener {
 			source = (JRadioButton)e.getSource();
 		}
 		String command = (String)((AbstractButton) source).getText();
+		if(command.equals("New")){
+			int n = JOptionPane.showConfirmDialog(
+				    this,
+				    "If you create a new canvas, you will"+
+				    "\nlose any unsaved changes to this one."+
+				    "\nAre you sure you want to continue?",
+				    "Continue?",
+				    JOptionPane.YES_NO_OPTION);
+			if(n == JOptionPane.YES_OPTION){
+				parent.cars = new ArrayList<Car>();
+				parent.memory = new ArrayList<SnapShot[]>();
+				parent.c.roads = new ArrayList<Road>();
+				parent.listener.cars = new ArrayList<CarAndBound>();
+				parent.memory = new ArrayList<SnapShot[]>();
+				parent.con = new MController(parent.cars,parent.c.gamma,parent.c.delta);//TODO: this will most def change once actual gamma and delta changability is implemented
+				//also TODO^:make this choose the appropriate controller
+				parent.play = false;
+				parent.miliSecondsPerFrame = 1000;
+				parent.c.adjustSize(parent.c.getWidth(), parent.c.getHeight());
+				parent.c.redraw(false,false);
+			}
+		}
 		if(command.equals("Load")){
 			JFileChooser fc = new JFileChooser();
 			 
@@ -124,13 +151,11 @@ public class Menu extends JMenuBar implements ActionListener {
 			
 			parent.sim = true;
 			adjRoad.setEnabled(false);
-		//	Constants.p("Sim, muthafuckaaaaaaa!!!!!");
 			parent.b.loadPanel(true);
 		}
 		if(command.equals("Editor")){
 			parent.sim = false;
 			adjRoad.setEnabled(true);
-		//	Constants.p("Edit, muthafuckaaaaaaa!!!!!");
 			if(parent.play)
 				parent.b.mouseClicked(new MouseEvent(parent.b.play, 0,0,0,0,0,0,false));
 			parent.b.loadPanel(false);
@@ -142,7 +167,30 @@ public class Menu extends JMenuBar implements ActionListener {
 			parent.m.e.carDialog(parent.listener.clicked);
 		}
 		
+		if(command.equals("Adjust Road")){
+			Object[] possibilities = new Object[parent.c.roads.size()];
+			for (int i = 1; i <= possibilities.length; i++)
+				possibilities[i-1] = ("Road "+i);
+			
+			String s = (String)JOptionPane.showInputDialog(
+			                    parent,
+			                    "Choose a road to edit:",
+			                    "Customized Dialog",
+			                    JOptionPane.PLAIN_MESSAGE,
+			                    null,
+			                    possibilities,
+			                    null);
+			
+			if(s != null){
+				int roadIndex = Integer.parseInt(s.substring(5, s.length()))-1;
+				
+				parent.m.e.roadDialog(parent.c.roads.get(roadIndex));
+			}
+			
+		}
+		
 	}
+	
 	
 	private int boolToInt(boolean bool){
 		if(bool)

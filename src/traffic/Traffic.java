@@ -303,7 +303,7 @@ public class Traffic {
 				message = Constants.colorName(c1.color)+" car "+ctrlStr(c1.controlled)+" and "+Constants.colorName(c2.color)+" car "+ctrlStr(c2.controlled)+" crashed on" +
 				" road "+(c1.road.index+1)+ " at position "+(c2.start+c2.road.start)+".";
 			else if (intersection == 1)
-				message = Constants.colorName(c1.color)+" car "+ctrlStr(c1.controlled)+"on road "+(c1.road.index+1)+ "and "+Constants.colorName(c2.color)+" car "+ctrlStr(c2.controlled)+" on" +
+				message = Constants.colorName(c1.color)+" car "+ctrlStr(c1.controlled)+"on road "+(c1.road.index+1)+ " and "+Constants.colorName(c2.color)+" car "+ctrlStr(c2.controlled)+" on" +
 				" road "+(c2.road.index+1)+" crashed in the intersection.";
 			else
 				message = Constants.colorName(c1.color)+ " car "+ctrlStr(c1.controlled)+" and "+Constants.colorName(c2.color)+" car "+(c2.controlled)+" cannot both be in road "+
@@ -379,7 +379,7 @@ public class Traffic {
 				break;
 			}
 			
-			if(m.cars.isEmpty()){
+			if(m.cars.isEmpty() && m.b.play != null){
 				m.play = false;
 				m.b.play.setText("Play");
 				m.c.status = "paused";
