@@ -130,7 +130,7 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 		
 		if(text.equals("Step"))
 			parent.next();
-		if(text.equals("Rewind"))
+		if(text.equals("Rewind") || text.equals("Undo"))
 			parent.rewind();
 		if(text.equals("Play")){
 			parent.miliSecondsPerFrame = 1000/Integer.parseInt(fps.getText());		
@@ -169,6 +169,7 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 		if(text.equals("New Road")){
 			e.roadDialog(null);
 		}
+		
 	}
 	
 	public void updateInfo(Car c){

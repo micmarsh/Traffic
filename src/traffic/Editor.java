@@ -96,7 +96,7 @@ public class Editor{
 		    contentPane.add(new JTextField(""+curVal, 15));
 		    
 	        if(toEdit != null)
-	        	curVal = ""+toEdit.start;
+	        	curVal = ""+(toEdit.start+toEdit.road.start);
 	        else 
 	        	curVal = "";
 	        
@@ -126,7 +126,7 @@ public class Editor{
 	        
 	        contentPane.add(new JLabel("Finish Line: "));
 	        if(toEdit != null)
-	        	curVal = ""+toEdit.finish;
+	        	curVal = ""+(toEdit.finish+toEdit.road.start);
 	        else 
 	        	curVal = "";
 	        contentPane.add(new JTextField(""+curVal,15));
@@ -166,7 +166,31 @@ public class Editor{
 		
 	}
 
-	
+	private int[] initChanges(Object o){
+			Road road;
+			Car car;
+			int[] startVals = new int[8];
+		
+			for (int i = 0; i < 8; i++)
+				startVals[i] = 0;
+		if(o != null){
+			try{
+				car = (Car)o;
+				startVals[0] = car.road.index;
+				startVals[1] = car.start;
+				startVals[2] = car.minVel;
+				startVals[3] = car.velocity;
+				startVals[4] = car.maxVel;
+				startVals[5] = car.finish;
+			}catch(Exception e){
+				road = (Road)o;
+				startVals[6] = road.intLoc;
+				startVals[7] = road.intLength;
+			}
+		}
+		return startVals;
+		
+	}
 	
 	
 	class CarDialogListener implements ActionListener{
@@ -182,6 +206,8 @@ public class Editor{
 		public void actionPerformed(ActionEvent arg0) {
 			
 			JButton source = (JButton) arg0.getSource();
+			
+			int[] changes = initChanges(car);
 			
 			if(source.getText().equals("Ok")){
 				int start, minVel, velocity, maxVel,finish,controlled;
@@ -204,7 +230,12 @@ public class Editor{
 					
 					String [] safeVals = {"",""+start,""+minVel,""+velocity,""+maxVel,""+finish,""+controlled};
 					
+					boolean [] bools = new boolean[2];
+					
+					
+					
 					if(car == null){
+						bools[0] = true;
 						Car toAdd = new Car(safeVals,m.c,road);
 						toAdd.color = Constants.colors[colorInd];
 						
@@ -226,7 +257,7 @@ public class Editor{
 
 						toAdd.normalize();
 						
-						
+						car = toAdd;
 						//m.repaint();
 				/*		m.componentResized(new ComponentEvent(contentPane, controlled));
 						m.c.redraw(false, false);
@@ -234,20 +265,51 @@ public class Editor{
 						m.toggleListeners();
 						this.source.dispose();*/
 					}else{
-						car.road = m.c.roads.get(Integer.parseInt(values[0])-1);
-						car.start = start;
+						bools[0] = false;
+						int prevRoad = car.road.index;
+						int newRoad = Integer.parseInt(values[0])-1;
+						car.road = m.c.roads.get(newRoad);
+						
+						if(newRoad != prevRoad){
+							car.road.rCars.add(car);
+							m.c.roads.get(prevRoad).rCars.remove(car);
+						}
+						
+						car.start = start - car.road.start;
 						car.minVel = minVel;
 						car.velocity = velocity;
 						car.maxVel = maxVel;
-						car.finish = finish;
+						car.finish = finish - car.road.start;
 						if(controlled == 1)
 							car.controlled = true;
 						else
 							car.controlled = false;
 						
+						if(car.start < car.road.start){
+							car.road.setLength(car.start,car.road.finish);
+						}
+						if(car.finish > car.road.finish + car.road.start){
+							car.road.setLength(car.road.start,car.finish +car.road.start);
+						}
+						
+						
 						
 						
 					}
+					changes[0] -= car.road.index;
+					changes[1] -= car.start;
+					changes[2] -= car.minVel;
+					changes[3] -= car.velocity;
+					changes[4] -= car.maxVel;
+					changes[5] -= car.finish;
+					
+					bools[1] = car.controlled;
+					
+					EditShot[] pretendArray = {new EditShot(changes,bools,car,m.cars,null)};
+					
+					m.memory.add(pretendArray);
+					
+					
 					m.componentResized(new ComponentEvent(contentPane, controlled));
 					m.c.redraw(false, false);
 					m.toggleListeners();
@@ -261,11 +323,13 @@ public class Editor{
 			                  false,
 			                  MouseEvent.BUTTON3));
 					this.source.dispose();
+				
 					
-				}catch(Exception e){JOptionPane.showMessageDialog(this.source,
+				}catch(Exception e){JOptionPane.showMessageDialog(source,
 					    "You have one or more errors in your input.\n" +
 					    "Please make sure you're using whole numbers,\n" +
 					    "and the specified road actually exists.","Input Error",2);}
+				//e.printStackTrace();}
 					
 						
 				
@@ -298,6 +362,8 @@ public class Editor{
 				int intLoc,intLen;
 				
 				String[] values = new String[2];
+				
+				boolean[] bools = {false,false};
 				try{
 					
 					for(int i = 1 ; i < 5;i += 2)
@@ -308,24 +374,17 @@ public class Editor{
 					
 					String [] safeVals = {"",""+intLoc,""+intLen};
 					
+					int [] changes = initChanges(road);
+					
 					if(road == null){
 						Road toAdd = new Road(safeVals,m.c.roads.size());
 					
 						m.c.roads.add(toAdd);
 						
-						toAdd.setLength(0,intLoc + 50);//These are quit arbitrary right now
+						toAdd.setLength(0,intLoc + 50);//These are quite arbitrary right now
+						road = toAdd;
+						bools[0] = true;
 						
-						
-
-					
-						
-						
-						//m.repaint();
-				/*		m.componentResized(new ComponentEvent(contentPane, controlled));
-						m.c.redraw(false, false);
-					//	m.repaint();
-						m.toggleListeners();
-						this.source.dispose();*/
 					}else{
 						road.intLoc = (Integer.parseInt(values[0])-road.start);
 						road.intLength = (Integer.parseInt(values[1]));
@@ -333,6 +392,14 @@ public class Editor{
 						
 						
 					}
+					
+					road.intLoc -= changes[6];
+					road.intLength -= changes[7];
+					
+					EditShot[] pretendArray = {new EditShot(changes,bools,null,null,road)};
+					
+					m.memory.add(pretendArray);
+					
 					m.componentResized(new ComponentEvent(contentPane, 2));
 					m.c.redraw(false, false);
 					m.toggleListeners();

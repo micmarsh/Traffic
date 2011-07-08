@@ -187,7 +187,7 @@ public class MController extends Controller {
 						"\nPosition: "+car.start+"\nVelocity: "+car.velocity+"\nFinish: "+
 						car.finish);
 				Constants.p("Index of car to be removed: "+index);
-				nextSS[index].changed = true;
+				nextSS[index].deleted = true;
 				//nextSS[index].road = nextSS[index].source.road.index;
 				r.road.rCars.remove(i);
 

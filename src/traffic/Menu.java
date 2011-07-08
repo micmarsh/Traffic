@@ -207,7 +207,7 @@ public class Menu extends JMenuBar implements ActionListener {
 		for (Road r:parent.c.roads){
 			toWrite += "road,"+r.intLoc+","+r.intLength+"\n";
 			for(Car car:r.rCars)
-				toWrite += "car,"+car.start+","+car.minVel+","+car.velocity+","+car.maxVel
+				toWrite += " car,"+car.start+","+car.minVel+","+car.velocity+","+car.maxVel
 				+","+car.finish+","+boolToInt(car.controlled)+"\n";
 			toWrite += "endroad"+"\n";
 		}

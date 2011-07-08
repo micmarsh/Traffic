@@ -144,7 +144,7 @@ public class Road {
 				offSet += 2;
 			
 			finishes.add(c.finish+offSet);
-			c.paintComponent(g,this,offSet);
+			c.paintComponent(g,offSet);
 		}
 	}
 }

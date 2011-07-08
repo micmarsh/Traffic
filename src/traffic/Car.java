@@ -163,16 +163,16 @@ public class Car implements Cloneable {
 	}
 	
 	
-	public void paintComponent(Graphics g,Road r,int offSet){
+	public void paintComponent(Graphics g,int offSet){
 		
 		int[] point = translate();
 		
-		Constants.polarMove(point, r.startAngle,(int)(finish-start+3)*r.pixelsPerUnit + offSet);//The 1.5 is an approximate offset to make the finish line show up in the right place
+		Constants.polarMove(point, road.startAngle,(int)(finish-start+5)*road.pixelsPerUnit + offSet);//The 5 is an approximate offset to make the finish line show up in the right place
 		
 		int [] point1 = point.clone();
 		
-		Constants.polarMove(point, r.startAngle + Math.PI/2, (int)(Constants.ROAD_WIDTH/10));
-		Constants.polarMove(point1, r.startAngle + Math.PI/2, (int)(Constants.ROAD_WIDTH*10/9));
+		Constants.polarMove(point, road.startAngle + Math.PI/2, (int)(Constants.ROAD_WIDTH/10));
+		Constants.polarMove(point1, road.startAngle + Math.PI/2, (int)(Constants.ROAD_WIDTH*10/9));
 
 		g.drawLine(point[0], point[1], point1[0], point1[1]);
 		paintCar(g);

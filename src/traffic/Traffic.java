@@ -1,6 +1,7 @@
 package traffic;
 
 
+import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -50,10 +51,6 @@ public class Traffic {
 			setLayout(L);
 			
 			//TODO: this will vary with command line args
-			
-			
-			
-			
 			
 			cars = new ArrayList<Car>();
 			memory = new ArrayList<SnapShot[]>();
@@ -256,16 +253,56 @@ public class Traffic {
 		public void rewind(){
 			if(!memory.isEmpty()){
 				SnapShot[] restore = memory.remove(memory.size()-1);
-				for(int i = 0; i < restore.length;i++){
-					
-					Car car = restore[i].source;
-					
-					car.start -= restore[i].posChange;
-					car.velocity -= restore[i].velChange;
-					if(restore[i].changed){
-						cars.add(i,car);
-						car.road.rCars.add(car);
+				
+				try{
+					EditShot changes = (EditShot) restore[0];
+					if(changes.road != null){//we're rolling back the changes to a road
+						if(changes.created){
+							c.roads.remove(changes.road);
+							this.componentResized(new ComponentEvent(new Container(), 2));//TODO: re-adjust startAngles after deletion (don't think this will be such a big deal)
+						}
+						else{
+							changes.road.intLoc -= changes.locChange;
+							changes.road.intLength -= changes.lenChange;
+						}
+					}else{//rolling back the changes to a car
+						if(changes.created){
+							cars.remove(changes.source);
+							changes.source.road.rCars.remove(changes.source);
+							
+							MController Mcon = (MController)con;//TODO: this specificity is obviously a big issue, resolve later
+							Mcon.cars.remove(changes.source);
+							
+							listener.updateCars();
+						}
+						else{
+							Car car = changes.source;
+							car.road = c.roads.get(car.road.index - changes.rChange);
+							car.minVel -= changes.minVchange;
+							car.maxVel -= changes.maxVchange;
+							car.finish -= changes.finChange;
+							car.controlled = changes.controlled;
+							car.start -= changes.posChange;
+							car.velocity -= changes.velChange;
+							if(changes.deleted){
+								cars.add(changes.place,car);
+								car.road.rCars.add(car);
+							}
+						}
 					}
+				}catch(Exception e){
+					
+					for(int i = 0; i < restore.length;i++){
+							Car car = restore[i].source;
+							if(car != null){
+								car.start -= restore[i].posChange;
+								car.velocity -= restore[i].velChange;
+								if(restore[i].deleted){
+									cars.add(i,car);
+									car.road.rCars.add(car);
+								}
+							}
+						}
 				//	car.adjust(c);
 				}
 				
