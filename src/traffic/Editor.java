@@ -1,5 +1,6 @@
 package traffic;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.GridLayout;
@@ -7,7 +8,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.File;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -61,14 +66,17 @@ public class Editor{
 		JButton ok = new JButton("Ok");
 	    JButton cancel = new JButton("Cancel");
 	        
-	    ActionListener newCar = new RoadDialogListener(contentPane,toEdit,toDisplay);
+	    RoadDialogListener newRoad = new RoadDialogListener(contentPane,toEdit,toDisplay);
 	        
-	    ok.addActionListener(newCar);
-	    cancel.addActionListener(newCar);
+	    ok.addActionListener(newRoad);
+	    cancel.addActionListener(newRoad);
 	        
 	    contentPane.add(ok);
 	    contentPane.add(cancel);
 		
+	    toDisplay.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+	    toDisplay.addWindowListener(newRoad);
+	    
 	    toDisplay.pack();
         m.toggleListeners();
         toDisplay.setVisible(true);
@@ -146,7 +154,10 @@ public class Editor{
 	        JButton ok = new JButton("Ok");
 	        JButton cancel = new JButton("Cancel");
 	        
-	        ActionListener newCar = new CarDialogListener(contentPane,toEdit,toDisplay);
+	        CarDialogListener newCar = new CarDialogListener(contentPane,toEdit,toDisplay);
+	        
+	        toDisplay.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+	        toDisplay.addWindowListener(newCar);
 	        
 	        ok.addActionListener(newCar);
 	        cancel.addActionListener(newCar);
@@ -154,18 +165,65 @@ public class Editor{
 	        contentPane.add(ok);
 	        contentPane.add(cancel);
 	        
-	        
-	        
-	     //   setCarConstraints(layout,contentPane);
-
 	        toDisplay.pack();
 	        m.toggleListeners();
 	        toDisplay.setVisible(true);
-	        
-	        
-		
+	       
 	}
 
+	public void deleteDialog(){
+		JFrame toDisplay = new JFrame("Delete a Car or Road");
+		
+		toDisplay.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		
+		
+	    Container contentPane = toDisplay.getContentPane();
+	       // SpringLayout layout = new SpringLayout();
+	    GridLayout layout = new GridLayout(3,2);
+	    contentPane.setLayout(layout);
+	   
+	   toDisplay.add(new JLabel("Select Road:"));
+	   
+	   String [] roads = new String[m.c.roads.size()];
+	   
+	   for (int i = 1; i<= roads.length;i++)
+		   roads[i-1] = ("Road "+i);
+	   
+	   DeletionListener listen = new DeletionListener(contentPane,toDisplay);
+	   
+	   toDisplay.addWindowListener(listen);
+	   
+	   JComboBox roadBox = new JComboBox(roads);
+	   toDisplay.add(roadBox);
+	   roadBox.addActionListener(listen);
+	   
+	   toDisplay.add(new JLabel("Select Car:"));
+	   
+	  // String [] DERT = {"(Delete Entire Road)"};
+	   JComboBox cars = new JComboBox();
+	   String [] strings = populateCars("1");
+	   for (String s:strings)
+		   cars.addItem(s);
+	   
+	   
+	   
+	   toDisplay.add(cars);
+	   cars.addActionListener(listen);
+	   
+	   JButton ok = new JButton("Ok");
+	   JButton cancel = new JButton("Cancel");
+	   toDisplay.add(ok);
+	   toDisplay.add(cancel);
+	   ok.addActionListener(listen);
+	   cancel.addActionListener(listen);
+	   
+	   
+	   
+	   toDisplay.pack();
+       m.toggleListeners();
+       toDisplay.setVisible(true);
+	}
+	
 	private int[] initChanges(Object o){
 			Road road;
 			Car car;
@@ -193,7 +251,7 @@ public class Editor{
 	}
 	
 	
-	class CarDialogListener implements ActionListener{
+	class CarDialogListener implements ActionListener,WindowListener{
 		Container contentPane;
 		Car car;
 		JFrame source;
@@ -208,6 +266,8 @@ public class Editor{
 			JButton source = (JButton) arg0.getSource();
 			
 			int[] changes = initChanges(car);
+			
+			int startRoad;
 			
 			if(source.getText().equals("Ok")){
 				int start, minVel, velocity, maxVel,finish,controlled;
@@ -239,7 +299,7 @@ public class Editor{
 						Car toAdd = new Car(safeVals,m.c,road);
 						toAdd.color = Constants.colors[colorInd];
 						
-						colorInd = (colorInd+1)%7;
+						startRoad = -1;//so "color check" loop will trigger
 						
 						m.cars.add(toAdd);
 						road.rCars.add(toAdd);
@@ -267,6 +327,7 @@ public class Editor{
 					}else{
 						bools[0] = false;
 						int prevRoad = car.road.index;
+						startRoad = prevRoad;
 						int newRoad = Integer.parseInt(values[0])-1;
 						car.road = m.c.roads.get(newRoad);
 						
@@ -296,6 +357,9 @@ public class Editor{
 						
 						
 					}
+					
+					int newRoad = car.road.index;
+					
 					changes[0] -= car.road.index;
 					changes[1] -= car.start;
 					changes[2] -= car.minVel;
@@ -304,6 +368,29 @@ public class Editor{
 					changes[5] -= car.finish;
 					
 					bools[1] = car.controlled;
+					
+					Color first = car.color;
+					
+					if(startRoad != newRoad){
+						while(road.colors.contains(car.color)){
+							Constants.p("lulz");
+							colorInd = (colorInd+1)%7;
+							car.color = Constants.colors[colorInd];
+							try{
+								car.image = ImageIO.read(new File("car/"+Constants.colorName(car.color)+".png"));
+								
+								}catch(Exception e){
+									Constants.p("lulzception!");
+								}
+							if(first.equals(car.color))
+								break;
+							
+						}
+						road.colors.add(car.color);
+						if(startRoad != -1)
+							m.c.roads.get(startRoad).colors.remove(car.color);
+					}
+					
 					
 					EditShot[] pretendArray = {new EditShot(changes,bools,car,m.cars,null)};
 					
@@ -341,10 +428,47 @@ public class Editor{
 			
 			Constants.p("Size of car array after added: "+m.cars.size());
 		}
+		@Override
+		public void windowActivated(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void windowClosed(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void windowClosing(WindowEvent e) {
+			if(!m.b.listen)
+				m.toggleListeners();
+			source.dispose();
+			
+		}
+		@Override
+		public void windowDeactivated(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void windowDeiconified(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void windowIconified(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void windowOpened(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
 	
-	class RoadDialogListener implements ActionListener{
+	class RoadDialogListener implements ActionListener,WindowListener{
 		Container contentPane;
 		Road road;
 		JFrame frame;
@@ -409,7 +533,7 @@ public class Editor{
 					    "You have one or more errors in your input.\n" +
 					    "Please make sure you're using whole numbers.\n",
 					    "Input Error",2);
-						e.printStackTrace();}
+				}//	e.printStackTrace();}
 					
 						
 				
@@ -419,7 +543,187 @@ public class Editor{
 			}
 			
 		}
+		@Override
+		public void windowActivated(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void windowClosed(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void windowClosing(WindowEvent e) {
+			if(!m.b.listen)
+				m.toggleListeners();
+			frame.dispose();
+			
+		}
+		@Override
+		public void windowDeactivated(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void windowDeiconified(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void windowIconified(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void windowOpened(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
 	
 	}
 	
+	class DeletionListener implements ActionListener,WindowListener {
+
+		Container contentPane;
+		JFrame frame;
+		
+		DeletionListener(Container c, JFrame f){
+			contentPane = c;
+			frame = f;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			
+			try{
+				JButton source = (JButton) arg0.getSource();
+				
+				String text = source.getText();
+				
+				if(text.equals("Ok")){
+					Object toDelete = parseCombos((JComboBox)frame.getContentPane().getComponent(1),(JComboBox)frame.getContentPane().getComponent(3));
+					try{
+						Car car = (Car)toDelete;
+						//if(car == null)
+					//		Constants.p("nullzLulz");
+						SnapShot[] carDel ={ new SnapShot(0,0,car)};
+						carDel[0].deleted = true;
+						car.road.rCars.remove(car);
+						m.cars.remove(car);
+						m.memory.add(carDel);
+				//		Constants.p("Car Deleted?");
+						
+					}catch(Exception e){
+					//	e.printStackTrace();
+						Road road = (Road)toDelete;
+						int[] ints = {0,0,0,0,0,0,0,0};
+						boolean[] bools = {false,false};
+						EditShot[] roadDel = {new EditShot(ints,bools,null,null,road)};
+						m.c.roads.remove(road);
+						roadDel[0].deleted = true;
+						m.memory.add(roadDel);
+						
+					}
+					m.componentResized(new ComponentEvent(contentPane, 2));
+					m.c.redraw(false, false);				
+					m.toggleListeners();
+					frame.dispose();
+				}
+				else{
+					m.toggleListeners();
+					frame.dispose();
+				}
+			}catch(Exception e){
+				JComboBox box = (JComboBox) arg0.getSource();
+				
+				if(box.equals(frame.getContentPane().getComponent(1))){
+					JComboBox cars = (JComboBox) frame.getContentPane().getComponent(3);
+					cars.removeAllItems();
+					String [] strings = populateCars(""+((JComboBox) frame.getContentPane().getComponent(1)).getSelectedItem().toString().charAt(5));
+					   for (String s:strings)
+						   cars.addItem(s);
+					
+				}
+			}
+			
+		}
+
+		@Override
+		public void windowActivated(WindowEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void windowClosed(WindowEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void windowClosing(WindowEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void windowDeactivated(WindowEvent arg0) {
+			if(!m.b.listen)
+				m.toggleListeners();
+			frame.dispose();
+			
+		}
+
+		@Override
+		public void windowDeiconified(WindowEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void windowIconified(WindowEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void windowOpened(WindowEvent arg0) {
+			// TODO Auto-generated method s  tub
+			
+		}
+		
+	}
+	
+	private String [] populateCars(String roadStr){
+			int road = Integer.parseInt(roadStr);
+			Road roadObj = m.c.roads.get(road-1);
+			String[] toRet = new String[roadObj.rCars.size()+1];
+			
+			toRet[0] = "(Delete Entire Road)";
+			for(int i = 1; i < toRet.length; i++)
+				toRet[i]  = Constants.colorName(roadObj.rCars.get(i-1).color);
+			
+			return toRet;
+		
+	}
+	
+	public Object parseCombos(JComboBox roads, JComboBox cars){
+		char roadChar = roads.getSelectedItem().toString().charAt(5);
+		int roadInt = Integer.parseInt(""+roadChar);
+		String carString = cars.getSelectedItem().toString();
+		
+		Road road = m.c.roads.get(roadInt-1);
+		
+		if(carString.charAt(0) == '('){
+			return road;
+		}else{
+			Color toComp = Constants.nameToColor(carString);
+			
+			for( Car c: road.rCars)
+				if(c.color.equals(toComp))
+					return c;
+		}
+		return null;
+	}
 }

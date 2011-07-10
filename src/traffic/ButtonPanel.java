@@ -87,7 +87,7 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 			for (JLabel j:carStats)
 				this.add(j);
 		}else{
-			GridLayout L1 = new GridLayout(10,1);
+			GridLayout L1 = new GridLayout(11,1);
 			setLayout(L1);
 			
 			JButton newR = new JButton("New Road");
@@ -103,6 +103,10 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 			JButton undo = new JButton("Undo");
 			undo.addMouseListener(this);
 			this.add(undo);
+			
+			JButton remove = new JButton("Remove");
+			remove.addMouseListener(this);
+			this.add(remove);
 			
 		}
 		if(parent.m != null){
@@ -163,6 +167,7 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 		}
 		
 		if(text.equals("New Car")){
+			Constants.p("Lulzbar");
 		   e.carDialog(null);
 		}
 		
@@ -170,6 +175,10 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 			e.roadDialog(null);
 		}
 		
+		if(text.equals("Remove")){
+			if(!parent.c.roads.isEmpty())
+				e.deleteDialog();
+		}
 	}
 	
 	public void updateInfo(Car c){

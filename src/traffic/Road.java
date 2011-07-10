@@ -1,13 +1,10 @@
 package traffic;
 
 import java.awt.Color;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Polygon;
-import java.awt.Rectangle;
-import java.awt.geom.Line2D;
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.HashSet;
 
 public class Road {
 	public int intLoc;//these are in "units"!
@@ -22,6 +19,8 @@ public class Road {
 	public ArrayList<Car> rCars;
 	public int unitCenter;
 	
+	HashSet<Color> colors;
+	
 	Road(String lineElts[],int i){//this looks pretty good right now
 		intLoc = Integer.parseInt(lineElts[1]);
 		intLength = Integer.parseInt(lineElts[2]);
@@ -30,6 +29,7 @@ public class Road {
 		index = i;
 		pavement = new Polygon();
 		intersection = new Polygon();
+		colors = new HashSet<Color>();
 		
 		
 	}

@@ -45,7 +45,7 @@ public class Traffic {
 			super(title);
 			configure();
 			System.out.println("Contructing Main Window...");
-			setSize(500, 400);
+			setSize(900, 600);
 			FlowLayout L = new FlowLayout();
 			L.setAlignment(L.LEFT);
 			setLayout(L);
@@ -116,8 +116,8 @@ public class Traffic {
 		}
 		
 		private void sizeComponents(){
-			c.adjustSize(getWidth()-135,getHeight());
-			b.adjustSize(130,getHeight());
+			c.adjustSize(getWidth()-135,getHeight());//135
+			b.adjustSize(130,getHeight());//130
 		//	for(Car car:cars)
 		//		car.adjust(c);
 			listener.updateCars();
@@ -259,11 +259,17 @@ public class Traffic {
 					if(changes.road != null){//we're rolling back the changes to a road
 						if(changes.created){
 							c.roads.remove(changes.road);
-							this.componentResized(new ComponentEvent(new Container(), 2));//TODO: re-adjust startAngles after deletion (don't think this will be such a big deal)
+							this.componentResized(new ComponentEvent(new Container(), 2));
 						}
 						else{
 							changes.road.intLoc -= changes.locChange;
 							changes.road.intLength -= changes.lenChange;
+							if(changes.deleted){
+								c.roads.add(changes.road.index,changes.road);
+								this.componentResized(new ComponentEvent(new Container(), 2));
+								c.repaint();
+							}
+							
 						}
 					}else{//rolling back the changes to a car
 						if(changes.created){

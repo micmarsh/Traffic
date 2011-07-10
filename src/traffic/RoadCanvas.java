@@ -83,7 +83,10 @@ class RoadCanvas extends Canvas {
 								maxEnd = c.finish;
 							if(minStart == -1 || c.start < minStart)
 								minStart = c.start;
+							
 							c.color = Constants.colors[i];
+							roads.get(road).colors.add(Constants.colors[i]);
+							
 							i = (i+1)%7;
 						}
 						
@@ -97,7 +100,10 @@ class RoadCanvas extends Canvas {
 				}while(line != null);
 				
 				for (Road r:roads){
-					r.setLength(minStart,maxEnd);
+					if(minStart == -1 && maxEnd == 0)
+						r.setLength(0,r.intLoc+50);//still arbitrary
+					else
+						r.setLength(minStart,maxEnd);
 					for (Car c: r.rCars)
 						c.normalize();
 				}
@@ -160,7 +166,11 @@ class RoadCanvas extends Canvas {
 							maxEnd = c.finish;
 						if(minStart == -1 || c.start < minStart)
 							minStart = c.start;
+						
 						c.color = colors[i];
+						roads.get(road).colors.add(colors[i]);//Keeping track of the colors of cars on the road
+						
+						
 						i = (i+1)%7;
 					}
 					
@@ -174,7 +184,10 @@ class RoadCanvas extends Canvas {
 			}while(line != null);
 			
 			for (Road r:roads){
-				r.setLength(minStart,maxEnd);
+				if(minStart == -1 && maxEnd == 0)
+					r.setLength(0,r.intLoc+50);//still arbitrary
+				else
+					r.setLength(minStart,maxEnd);
 				for (Car c: r.rCars)
 					c.normalize();
 			}

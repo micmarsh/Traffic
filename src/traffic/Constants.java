@@ -34,6 +34,27 @@ public final class Constants {
 			return "Cyan";
 		return "NONE";
 	}
+	
+	public static Color nameToColor(String s){
+		if(s.equals("Yellow"))
+			return Color.yellow;
+		if(s.equals("Blue"))
+			return Color.blue;
+		if(s.equals("Green"))
+			return Color.green;
+		if(s.equals("White"))
+			return Color.white;
+		if(s.equals("Pink"))
+			return Color.magenta;
+	//	if(c.equals(Color.pink))
+	//		return "Pink";
+		if(s.equals("Orange"))
+			return Color.orange;
+		if(s.equals("Cyan"))
+			return Color.cyan;
+		Constants.p("Returning null");
+		return null;
+	}
 	public static void p(String s){
 		System.out.println(s);
 	}

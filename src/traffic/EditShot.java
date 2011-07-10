@@ -24,6 +24,7 @@ public class EditShot extends SnapShot {
 		
 		if(c != null)
 			place = cars.indexOf(c);
+		
 	}
 
 }

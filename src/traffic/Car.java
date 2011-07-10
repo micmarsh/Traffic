@@ -26,7 +26,7 @@ public class Car implements Cloneable {
 	
 	private Rectangle crashRange;//may not be necessary anymore due to re-structuring of car image
 
-	private BufferedImage image;
+	BufferedImage image;
 	private int[] wheelStats;// index 0: size index, 1-4: locations of (1-2) first wheel, (3-4) second wheel, all in pixels
 	public Color color;
 	

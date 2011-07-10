@@ -286,7 +286,7 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 		Constants.polarMove(point, r.startAngle, 1000);
 		Constants.polarMove(point1, Math.PI+r.startAngle, 1000);
 		
-		//Constants.p("Point 1: ("+point[0]+","+point[1]+") Point 2: ("+point1[0]+","+point1[1]+")");
+		//Constants.p("PPU: "+r.pixelsPerUnit);
 		
 		double distFromRoad = Line2D.ptLineDist(point[0], point[1], point1[0], point1[1], pointX, pointY);
 	//	Constants.p("Distance from road: "+distFromRoad);
