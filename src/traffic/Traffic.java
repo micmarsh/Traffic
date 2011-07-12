@@ -130,9 +130,6 @@ public class Traffic {
 				c.status = "Calculating";
 			
 			
-		
-			
-			
 			int i = 0;
 			
 			for (Car car : cars){
@@ -265,7 +262,9 @@ public class Traffic {
 							changes.road.intLoc -= changes.locChange;
 							changes.road.intLength -= changes.lenChange;
 							if(changes.deleted){
-								c.roads.add(changes.road.index,changes.road);
+								c.roads.add(changes.road.index+1,changes.road);
+								for(int i = changes.road.index+1; i < c.roads.size();i++)
+									c.roads.get(i).index++;
 								this.componentResized(new ComponentEvent(new Container(), 2));
 								c.repaint();
 							}
@@ -275,6 +274,7 @@ public class Traffic {
 						if(changes.created){
 							cars.remove(changes.source);
 							changes.source.road.rCars.remove(changes.source);
+							changes.source.road.colors.remove(changes.source.color);
 							
 							MController Mcon = (MController)con;//TODO: this specificity is obviously a big issue, resolve later
 							Mcon.cars.remove(changes.source);
@@ -293,6 +293,7 @@ public class Traffic {
 							if(changes.deleted){
 								cars.add(changes.place,car);
 								car.road.rCars.add(car);
+								car.road.colors.add(car.color);
 							}
 						}
 					}
@@ -306,6 +307,7 @@ public class Traffic {
 								if(restore[i].deleted){
 									cars.add(i,car);
 									car.road.rCars.add(car);
+									car.road.colors.add(car.color);
 								}
 							}
 						}

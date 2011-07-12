@@ -620,6 +620,10 @@ public class Editor{
 						int[] ints = {0,0,0,0,0,0,0,0};
 						boolean[] bools = {false,false};
 						EditShot[] roadDel = {new EditShot(ints,bools,null,null,road)};
+						
+						for (int i = road.index; i < m.c.roads.size(); i++)
+							m.c.roads.get(i).index--;
+						
 						m.c.roads.remove(road);
 						roadDel[0].deleted = true;
 						m.memory.add(roadDel);
