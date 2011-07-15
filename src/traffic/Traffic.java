@@ -135,7 +135,16 @@ public class Traffic {
 			
 			String message = "";
 			
-			message = con.next(oldCars,cars);
+
+			for (Car car : cars){
+					
+					Car oldCar = car.copy();
+					car.move();
+					oldCars.add(oldCar);
+			
+			}
+			
+			message = con.next(cars);
 			
 			for (int i = 0; i < cars.size(); i++){
 				Car oldCar = oldCars.get(i);

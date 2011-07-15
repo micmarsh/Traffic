@@ -127,7 +127,7 @@ public class MController extends Controller {
 			return false;
 	}
 	@Override
-	public String next(ArrayList<Car> ALCcur, ArrayList<Car> ALnext)  {
+	public String next(ArrayList<Car> ALnext)  {
 	//	Car inIntersection = null;
 	//	Car intTaken = null;
 		
@@ -136,17 +136,6 @@ public class MController extends Controller {
 		
 	//	ArrayList<RoadAndInt> toRemove = new ArrayList<RoadAndInt>();
 		
-		int i = 0;
-		
-		for (Car car : ALnext){
-				
-				Car oldCar = car.copy();
-				car.move();
-				ALCcur.add(oldCar);
-				
-		//		car.adjust(c);
-				i++;
-		}
 	
 		/*for(Road r : c.roads){
 			if(inIntersection != null){

@@ -222,7 +222,7 @@ public class SimpComp extends Controller {
 	}
 
 	@Override
-	public String next(ArrayList<Car> ALCcur, ArrayList<Car> ALnext) {
+	public String next(ArrayList<Car> ALnext) {
 		// TODO Auto-generated method stub
 		return null;
 	}
