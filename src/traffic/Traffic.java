@@ -60,7 +60,10 @@ public class Traffic {
 			b = new ButtonPanel(this,sim);
 			m = new Menu(this,sim);
 			
-			con = new MController(cars, c.gamma, c.delta);
+			if(input.equals("SimpComp"))
+				con = new SimpComp(cars,c.gamma,c.delta);
+			else
+				con = new MController(cars, c.gamma, c.delta);
 			
 			listener  = new CanvasInterface(this);
 			
@@ -406,7 +409,13 @@ public class Traffic {
 	public int run(String args[]){
 		//System.out.println(args[0]);
 		System.out.println("Initializing program...");
-		MainFrame m = new MainFrame("Traffic Simulator",args[0]);
+		String input = "";
+		try{
+			input = args[0];
+		}catch(Exception e){
+			
+		}
+		MainFrame m = new MainFrame("Traffic Simulator",input);
 	
 		m.setVisible(true);
 		
