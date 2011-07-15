@@ -1,6 +1,8 @@
 package traffic;
 
+import java.util.ArrayList;
+
 abstract class Controller {
-	abstract public boolean hasSolution(SnapShot [] curSS);
-	abstract public String next(SnapShot[] curSS,SnapShot[] nextSS);
+	abstract public boolean hasSolution(ArrayList<Car> cars);
+	abstract public String next(ArrayList<Car> ALCcur, ArrayList<Car> ALnext);
 }

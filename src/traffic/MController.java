@@ -21,7 +21,7 @@ public class MController extends Controller {
 		delta = d;
 	}
 	@Override
-	public boolean hasSolution(SnapShot [] curSS) {
+	public boolean hasSolution(ArrayList<Car> cars) {
 		
 	/*	ArrayList<Car> cars = new ArrayList<Car>();
 		
@@ -127,16 +127,28 @@ public class MController extends Controller {
 			return false;
 	}
 	@Override
-	public String next(SnapShot[] curSS,SnapShot [] nextSS ) {
-		Car inIntersection = null;
-		Car intTaken = null;
+	public String next(ArrayList<Car> ALCcur, ArrayList<Car> ALnext)  {
+	//	Car inIntersection = null;
+	//	Car intTaken = null;
 		
-		RoadCanvas c = cars.get(0).c;
-		MainFrame parent = c.parent;
+	//	RoadCanvas c = this.cars.get(0).c;
+	//	MainFrame parent = c.parent;
 		
-		ArrayList<RoadAndInt> toRemove = new ArrayList<RoadAndInt>();
+	//	ArrayList<RoadAndInt> toRemove = new ArrayList<RoadAndInt>();
+		
+		int i = 0;
+		
+		for (Car car : ALnext){
+				
+				Car oldCar = car.copy();
+				car.move();
+				ALCcur.add(oldCar);
+				
+		//		car.adjust(c);
+				i++;
+		}
 	
-		for(Road r : c.roads){
+		/*for(Road r : c.roads){
 			if(inIntersection != null){
 				if(intTaken != null )//once there's a car in two intersections, it crashes
 					crash(inIntersection,intTaken,1,parent);
@@ -145,11 +157,11 @@ public class MController extends Controller {
 			}
 			
 			for(int i = 0; i < r.rCars.size();i++){
-				if(r.rCars.get(i).start >= r.rCars.get(i).finish){
+				/*if(r.rCars.get(i).start >= r.rCars.get(i).finish){
 					toRemove.add(new RoadAndInt(i,r));//records the road and the index in the road's array
 					
 					continue;
-				}
+				}*//*
 				for(int j = i+1; j<r.rCars.size();j++)
 					if(collision(r.rCars.get(i),r.rCars.get(j))){
 						crash(r.rCars.get(i),r.rCars.get(j),0,parent);
@@ -166,7 +178,7 @@ public class MController extends Controller {
 			
 		
 		}
-		
+		/*
 		RoadAndInt [] toR = new RoadAndInt[toRemove.size()];
 		
 		for(int i = 0; i< toR.length;i++)
@@ -182,7 +194,7 @@ public class MController extends Controller {
 			
 			Car car = r.road.rCars.get(i); 
 				
-				int index = cars.indexOf(car);
+				int index = this.cars.indexOf(car);
 				Constants.p("A whole lotta stuff: \ni: "+i+"\nColor: "+Constants.colorName(car.color)+
 						"\nPosition: "+car.start+"\nVelocity: "+car.velocity+"\nFinish: "+
 						car.finish);
@@ -199,11 +211,11 @@ public class MController extends Controller {
 		
 		Arrays.sort(absoluteIndices);
 		for(int i = absoluteIndices.length - 1; i >= 0;i--){
-			cars.remove(absoluteIndices[i].intValue());//Does the same as above for "cars" ArrayList
+			this.cars.remove(absoluteIndices[i].intValue());//Does the same as above for "cars" ArrayList
 		}
 		
 		if(!toRemove.isEmpty())
-			parent.listener.updateCars();
+			parent.listener.updateCars();*/
 		return "I did it for the lulz";
 	}
 	

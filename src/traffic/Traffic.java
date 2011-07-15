@@ -126,34 +126,32 @@ public class Traffic {
 		public void next(){//TODO: this will take arguments, and change accordingly
 			
 			SnapShot[] current = new SnapShot[cars.size()];
-			if(!con.hasSolution(current))
+			ArrayList<Car> oldCars = new ArrayList<Car>();
+			if(!con.hasSolution(cars))
 				c.status = "Calculating";
 			
+			String message = "";
 			
-			int i = 0;
+			message = con.next(oldCars,cars);
 			
-			for (Car car : cars){
-					current[i] = new SnapShot(car.velocity,0,car);//TODO:create a better way to keep track of pos and vel changes
-					car.move();
-			//		car.adjust(c);
-					i++;
+			for (int i = 0; i < cars.size(); i++){
+				Car oldCar = oldCars.get(i);
+				Car car = cars.get(i);
+				current[i] = new SnapShot(car.start - oldCar.start,car.velocity - oldCar.velocity, car  );
+			
 			}
 			
+			
+			
 			c.redraw(true,false);
-
-			String message = "";
-			if(memory.size() >= 1)
-				message = con.next(memory.get(memory.size()-1),current);
-			else
-				message = con.next(null, current);//this could be an issue, must discuss
 			
 			c.stat2ndLine = message;
-		//	checkLoop(current);
+			checkLoop(current);//now just checks for "finished" cars
 		//	listener.updateCars();
 			memory.add(current);
 		}
 		
-	/*	public class RoadAndInt{//Helps, ultimately, to remove cars from "cars" arraylist in proper order, eliminating indexing issues
+		public class RoadAndInt{//Helps, ultimately, to remove cars from "cars" arraylist in proper order, eliminating indexing issues
 			public Road road;
 			public int integer;
 			RoadAndInt(int num, Road r){
@@ -169,20 +167,19 @@ public class Traffic {
 			ArrayList<RoadAndInt> toRemove = new ArrayList<RoadAndInt>();
 		
 			for(Road r : c.roads){
-				if(inIntersection != null){
+				/*if(inIntersection != null){
 					if(intTaken != null )//once there's a car in two intersections, it crashes
 						crash(inIntersection,intTaken,1);
 					intTaken = inIntersection;
 					inIntersection = null;
-				}
+				}*/
 				
 				for(int i = 0; i < r.rCars.size();i++){
 					if(r.rCars.get(i).start >= r.rCars.get(i).finish){
 						toRemove.add(new RoadAndInt(i,r));//records the road and the index in the road's array
 						
-						continue;
 					}
-					for(int j = i+1; j<r.rCars.size();j++)
+				}/*	for(int j = i+1; j<r.rCars.size();j++)
 						if(collision(r.rCars.get(i),r.rCars.get(j))){
 							crash(r.rCars.get(i),r.rCars.get(j),0);
 						}
@@ -195,7 +192,7 @@ public class Traffic {
 					}
 						
 				}
-				
+				*/
 			
 			}
 			
@@ -215,8 +212,8 @@ public class Traffic {
 				Car c = r.road.rCars.get(i); 
 					
 					int index = cars.indexOf(c);
-					array[index].changed = true;
-					array[index].road = array[index].source.road.index;
+					array[index].deleted = true;
+			//		array[index].road = array[index].source.road.index;
 					r.road.rCars.remove(i);
 
 					absoluteIndices[j] = index;
@@ -245,7 +242,7 @@ public class Traffic {
 				return -1;
 			}
 			
-		}*/
+		}
 		
 		public void rewind(){
 			if(!memory.isEmpty()){

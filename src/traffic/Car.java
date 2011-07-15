@@ -75,6 +75,18 @@ public class Car implements Cloneable {
 		}
 	}
 	
+	public Car copy(){
+		String[] stats = {"",""+start,""+minVel,""+velocity,""+maxVel,""+finish,""};
+		if(controlled)
+			stats[6] = "1";
+		else
+			stats[6] = "0";
+		Car toRet = new Car(stats,c,road);
+		toRet.image = image;
+		toRet.color = color;
+		return toRet;
+	}
+	
 	public Image getImage(){
 		return image;
 	}
