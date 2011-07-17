@@ -87,6 +87,12 @@ public class Car implements Cloneable {
 		return toRet;
 	}
 	
+	public String toString() {
+				String s = start + "," + minVel + "," + velocity + "," + maxVel + "," + finish + "," + (controlled ? 1 : 0) + "\n";
+		 		return s;
+	}
+
+	
 	public Image getImage(){
 		return image;
 	}

@@ -101,6 +101,27 @@ public class Traffic {
 				sim = false;
 			line = infile.readLine();
 			miliSecondsPerFrame = (int)(1000/Double.parseDouble(line));
+			ArrayList<String> names = new ArrayList<String>();
+			ArrayList<String> contents = new ArrayList<String>();
+			boolean boolDebug = false;
+			while((line = infile.readLine()) != null){
+				if(line.equals("DEBUG")){boolDebug = true;}
+				else{
+					names.add(line);
+					BufferedReader debug = new BufferedReader(new FileReader("line"));
+					String fileLine = "";
+					String full = "";
+					while((fileLine = debug.readLine()) != null)
+						full += (fileLine+'\n');
+					contents.add(full);
+				}
+			}
+			
+			if(boolDebug){
+				Debug.debug = (String[]) names.toArray();
+				Debug.debugfiles = (String[]) contents.toArray();
+			}
+				
 			}catch(FileNotFoundException ex){
 			
 			}catch(IOException ex){}
@@ -130,26 +151,23 @@ public class Traffic {
 			
 			SnapShot[] current = new SnapShot[cars.size()];
 			ArrayList<Car> oldCars = new ArrayList<Car>();
+			
 			if(!con.hasSolution(cars))
 				c.status = "Calculating";
 			
 			String message = "";
 			
 
-			for (Car car : cars){
-					
-					Car oldCar = car.copy();
-					car.move();
-					oldCars.add(oldCar);
+			for (Car car : cars)
+					oldCars.add(car.copy());
 			
-			}
 			
 			message = con.next(cars);
 			
 			for (int i = 0; i < cars.size(); i++){
 				Car oldCar = oldCars.get(i);
 				Car car = cars.get(i);
-				current[i] = new SnapShot(car.start - oldCar.start,car.velocity - oldCar.velocity, car  );
+				current[i] = new SnapShot(car.start - oldCar.start,car.velocity - oldCar.velocity, car );
 			
 			}
 			

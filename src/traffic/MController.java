@@ -61,7 +61,7 @@ public class MController extends Controller {
 		
 		rewind(i);*/
 		
-		return true;
+		return false;//true;
 		
 	}
 
@@ -205,6 +205,9 @@ public class MController extends Controller {
 		
 		if(!toRemove.isEmpty())
 			parent.listener.updateCars();*/
+		
+		for (Car car: cars)
+			car.move();
 		return "I did it for the lulz";
 	}
 	

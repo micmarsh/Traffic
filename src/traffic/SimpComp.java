@@ -39,7 +39,8 @@ public class SimpComp extends Controller {
 	}
 	
 	public SimpComp(ArrayList<Car> cars, int gamma, int delta) {
-		this.cars = cars.toArray(this.cars);
+		this.cars = new Car[cars.size()];
+		for (int i = 0; i < cars.size(); i++) this.cars[i] = cars.get(i).copy();
 		Arrays.sort(this.cars, new CarComp());
 		this.gamma = gamma;
 		this.delta = delta;
@@ -83,10 +84,11 @@ public class SimpComp extends Controller {
 		}
 		CarComp cc = new CarComp();
 		Arrays.sort(carAR, 0, carAL.size(), cc);
-		for (int i = 0, j = 0, k = carAL.size(); i < carAL.size() && j < cars.length; i++, j++) {
-			while (cc.compare(carAR[i], cars[j]) != 0) {
+		for (int i = 0, j = 0, k = carAL.size(); i < carAL.size() || j < cars.length; i++, j++) {
+			while (j < cars.length && (i >= carAL.size() || cc.compare(carAL.get(i), cars[j]) != 0)) {
 				carAR[k] = cars[j];
 				carAR[k].start = carAR[k].finish;
+				j++;
 				k++;
 			}
 		}
@@ -104,14 +106,15 @@ public class SimpComp extends Controller {
 		return nodes.containsKey(pos);
 	}
 
-	public String next(ArrayList<Car> carAL, SnapShot[] nextSS) {
+	public String next(ArrayList<Car> carAL) {
 		int[] pos = GetPos(carAL);
 		Compute(pos);
+		if (Terminal(pos)) return "Safe\n";
 		Node node = nodes.get(pos);
 		Random generator = new Random();
 		if (node.safe) { // Choose a random safe control action
 			int r = generator.nextInt(node.edges.size());
-			nextSS = GetSnapShots(carAL, pos, node.edges.get(r).vel);
+			Update(carAL, pos, node.edges.get(r).vel);
 			return "Safe\n";
 		} // Choose a random feasible control action.
 		int[] vel = new int[cars.length];
@@ -119,13 +122,12 @@ public class SimpComp extends Controller {
 			if (pos[i] == cars[i].finish) vel[i] = 0;
 			else vel[i] = cars[i].minVel + generator.nextInt(cars[i].maxVel - cars[i].minVel + 1);
 		}
-		nextSS = GetSnapShots(carAL, pos, vel);
+		Update(carAL, pos, vel);
 		return "Unsafe\n";
 	}
 	
 	// Computes the new SnapShots array. 
-	SnapShot[] GetSnapShots(ArrayList<Car> carAL, int[] pos, int[] vel) {
-		SnapShot[] nextSS = new SnapShot[carAL.size()];
+	void Update(ArrayList<Car> carAL, int[] pos, int[] vel) {
 		CarComp cc = new CarComp();
 		boolean[] done = new boolean[pos.length];
 		for (int i = 0; i < done.length; i++) done[i] = false;
@@ -133,15 +135,12 @@ public class SimpComp extends Controller {
 			for (int j = 0; j < done.length; j++) {
 				if (done[j]) continue;
 				if (cc.compare(carAL.get(i), cars[j]) == 0 && carAL.get(i).start == pos[j]) {
-					nextSS[i].source = carAL.get(i);
-					nextSS[i].posChange = vel[j];
-					nextSS[i].velChange = vel[j] - carAL.get(i).velocity;
-					nextSS[i].deleted = (pos[j] + vel[j] >= cars[j].finish ? true : false);
+					carAL.get(i).start = pos[j] + vel[j];
 					carAL.get(i).velocity = vel[j];
+					done[j] = true;
 				}
 			}
 		}
-		return nextSS;
 	}
 	
 	/* Checks if the node is terminal (return true) or if I've already computed safety properties (return node.safe).
@@ -174,7 +173,7 @@ public class SimpComp extends Controller {
 			done = true;
 			for (int i = 0; i < vel.length; i++) {
 				if (vel[i] == 0) continue;
-				if (vel[i] == cars[i].maxVel || pos[i] + vel[i] == cars[i].finish) {
+				if (vel[i] == cars[i].maxVel || pos[i] + vel[i] >= cars[i].finish) {
 					vel[i] = cars[i].minVel;
 					continue;
 				}
@@ -183,6 +182,7 @@ public class SimpComp extends Controller {
 				break;
 			}
 		}
+		n.edges.trimToSize();
 		return n.safe;
 	}
 	
@@ -200,7 +200,9 @@ public class SimpComp extends Controller {
 	boolean SafeEdge(Edge e) {
 		double Aij1, Aij2, Aij3, Aij4, Aij12, Aij34, Cij1, Cij2;
 		for (int i = 0; i < cars.length; i++) {
+			if (e.vel[i] == 0) continue;
 			for (int j = i + 1; j < cars.length; j++) {
+				if (e.vel[j] == 0) continue;
 				if (cars[i].road.index == cars[j].road.index) {
 					Cij1 = ((double)(-gamma - e.in[i] - e.in[j]))/((double)(e.vel[i] - e.vel[j]));
 					Cij2 = ((double)(gamma - e.in[i] - e.in[j]))/((double)(e.vel[i] - e.vel[j]));
@@ -219,11 +221,5 @@ public class SimpComp extends Controller {
 			}
 		}
 		return true;
-	}
-
-	@Override
-	public String next(ArrayList<Car> ALnext) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }
