@@ -102,24 +102,26 @@ public class Traffic {
 			line = infile.readLine();
 			miliSecondsPerFrame = (int)(1000/Double.parseDouble(line));
 			ArrayList<String> names = new ArrayList<String>();
-			ArrayList<String> contents = new ArrayList<String>();
+			ArrayList<String> files = new ArrayList<String>();
 			boolean boolDebug = false;
 			while((line = infile.readLine()) != null){
 				if(line.equals("DEBUG")){boolDebug = true;}
 				else{
-					names.add(line);
-					BufferedReader debug = new BufferedReader(new FileReader("line"));
-					String fileLine = "";
-					String full = "";
-					while((fileLine = debug.readLine()) != null)
-						full += (fileLine+'\n');
-					contents.add(full);
+					String[] optFile = line.split(" ");
+					
+					names.add(optFile[0]);
+					
+					files.add(optFile[1]);
 				}
 			}
 			
 			if(boolDebug){
-				Debug.debug = (String[]) names.toArray();
-				Debug.debugfiles = (String[]) contents.toArray();
+				Debug.debug = new String[names.size()];
+				Debug.debugfiles = new String[names.size()];
+				for(int i = 0; i < names.size(); i++){
+					Debug.debug[i] = names.get(i);
+					Debug.debugfiles[i] = files.get(i);
+				}
 			}
 				
 			}catch(FileNotFoundException ex){
@@ -133,7 +135,14 @@ public class Traffic {
 				config.write(lastOpened+"\n");
 				config.write(sim+"\n");
 				config.write(((double)1000/(double)miliSecondsPerFrame)+"\n");
+				if(Debug.debug != null){
+					config.write("DEBUG\n");
+					for(int i = 0; i < Debug.debug.length; i++)
+						config.write(Debug.debug[i]+" "+Debug.debugfiles[i]+"\n");
+				}
+				
 				config.close();
+				
 				}catch(FileNotFoundException ex){
 				
 				}catch(IOException ex){}
@@ -151,7 +160,7 @@ public class Traffic {
 			
 			SnapShot[] current = new SnapShot[cars.size()];
 			ArrayList<Car> oldCars = new ArrayList<Car>();
-			
+			String oldStat = c.status;
 			if(!con.hasSolution(cars))
 				c.status = "Calculating";
 			
@@ -163,6 +172,8 @@ public class Traffic {
 			
 			
 			message = con.next(cars);
+			
+			c.status = oldStat;
 			
 			for (int i = 0; i < cars.size(); i++){
 				Car oldCar = oldCars.get(i);
