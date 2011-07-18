@@ -81,7 +81,7 @@ public class Road {
 		pixelsPerUnit = (int)ppu;
 		
 
-		makeRect(c,intersection,intLength*pixelsPerUnit/2,middle);
+	//	makeRect(c,intersection,intLength*pixelsPerUnit/2,middle);
 
 		
 	}
@@ -116,8 +116,8 @@ public class Road {
 				g.setColor(Color.black);
 				g.fillPolygon(pavement);
 			}else{
-				g.setColor(Color.red);
-				g.fillPolygon(intersection);
+				//g.setColor(Color.red);
+				//g.fillPolygon(intersection);
 				int[] point = {centerX,centerY};
 				Constants.polarMove(point, startAngle+Math.PI,(int)((centerX+centerY)/3));
 				g.setColor(Color.white);

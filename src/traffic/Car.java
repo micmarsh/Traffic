@@ -158,6 +158,22 @@ public class Car implements Cloneable {
 		g2.drawImage(image,toPlace[0],toPlace[1],image.getWidth()/3,image.getHeight()/3,c);
 		g2.rotate(2*Math.PI-road.startAngle,toPlace[0],toPlace[1]);
 		
+		g.setColor(Color.red);
+		toPlace = translate();
+		
+		Constants.polarMove(toPlace, road.startAngle*.8 + Math.PI/2, 30);
+		Constants.polarMove(toPlace, road.startAngle, 20);
+		
+		String toDraw;
+		
+		if(start < road.intLoc)
+			toDraw = ""+(road.intLoc - start);
+		else if(start >= road.intLoc && start < (road.intLoc + road.intLength))
+			toDraw = "0";
+		else
+			toDraw = ""+(start - road.intLoc);
+		
+		g.drawString(toDraw, toPlace[0],toPlace[1]);
 	//	Constants.p("("+image.getWidth()/3+","+image.getHeight()/3+")");
 	/*	
 		int [] center = this.translate();

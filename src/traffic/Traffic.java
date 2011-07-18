@@ -208,32 +208,34 @@ public class Traffic {
 			ArrayList<RoadAndInt> toRemove = new ArrayList<RoadAndInt>();
 		
 			for(Road r : c.roads){
-				/*if(inIntersection != null){
-					if(intTaken != null )//once there's a car in two intersections, it crashes
-						crash(inIntersection,intTaken,1);
-					intTaken = inIntersection;
-					inIntersection = null;
-				}*/
 				
 				for(int i = 0; i < r.rCars.size();i++){
 					if(r.rCars.get(i).start >= r.rCars.get(i).finish){
 						toRemove.add(new RoadAndInt(i,r));//records the road and the index in the road's array
 						
 					}
-				}/*	for(int j = i+1; j<r.rCars.size();j++)
+					for(int j = i+1; j<r.rCars.size();j++)
 						if(collision(r.rCars.get(i),r.rCars.get(j))){
 							crash(r.rCars.get(i),r.rCars.get(j),0);
 						}
 						
 					if(r.rCars.get(i).start>= r.intLoc && r.rCars.get(i).start  <= r.intLength + r.intLoc){
-						if(inIntersection == null)//the 2s above are because of the arbitrary "crash range" of 2 (units)
+						if(inIntersection == null)
 							inIntersection = r.rCars.get(i);
 						else
 							crash(inIntersection,r.rCars.get(i),42);
 					}
 						
 				}
-				*/
+				
+				if(inIntersection != null){
+					if(intTaken != null )//once there's a car in two intersections, it crashes
+						crash(inIntersection,intTaken,1);
+					
+					intTaken = inIntersection;
+					inIntersection = null;
+				}
+				
 			
 			}
 			

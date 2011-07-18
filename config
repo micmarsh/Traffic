@@ -1,3 +1,6 @@
 /home/michael/threeRoads
 true
-10.0
+5.0
+DEBUG
+debug_option_1 debug_file_1
+debug_option_2 debug_file_2
