@@ -103,17 +103,7 @@ public class Menu extends JMenuBar implements ActionListener {
 				    "Continue?",
 				    JOptionPane.YES_NO_OPTION);
 			if(n == JOptionPane.YES_OPTION){
-				parent.cars = new ArrayList<Car>();
-				parent.memory = new ArrayList<SnapShot[]>();
-				parent.c.roads = new ArrayList<Road>();
-				parent.listener.cars = new ArrayList<CarAndBound>();
-				parent.memory = new ArrayList<SnapShot[]>();
-				parent.con = new MController(parent.cars,parent.c.gamma,parent.c.delta);//TODO: this will most def change once actual gamma and delta changability is implemented
-				//also TODO^:make this choose the appropriate controller
-				parent.play = false;
-				parent.miliSecondsPerFrame = 1000;
-				parent.c.adjustSize(parent.c.getWidth(), parent.c.getHeight());
-				parent.c.redraw(false,false);
+				wipe();
 			}
 		}
 		if(command.equals("Load")){
@@ -214,6 +204,20 @@ public class Menu extends JMenuBar implements ActionListener {
 		try{
 		writer.write(toWrite);
 		}catch(IOException ex){}
+	}
+	
+	public void wipe(){
+		parent.cars = new ArrayList<Car>();
+		parent.memory = new ArrayList<SnapShot[]>();
+		parent.c.roads = new ArrayList<Road>();
+		parent.listener.cars = new ArrayList<CarAndBound>();
+		parent.memory = new ArrayList<SnapShot[]>();
+		parent.con = new MController(parent.cars,parent.c.gamma,parent.c.delta);//TODO: this will most def change once actual gamma and delta changability is implemented
+		//also TODO^:make this choose the appropriate controller
+		parent.play = false;
+		parent.miliSecondsPerFrame = 1000;
+		parent.c.adjustSize(parent.c.getWidth(), parent.c.getHeight());
+		parent.c.redraw(false,false);
 	}
 
 }

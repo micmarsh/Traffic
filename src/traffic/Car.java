@@ -99,7 +99,7 @@ public class Car implements Cloneable {
 	
 	public int[] translate(){//returns a "tuple" with the x and y position of the center of the car, in pixels
 	
-		int ppu = road.pixelsPerUnit;
+		double ppu = road.pixelsPerUnit;
 		double x = Math.cos(road.startAngle)*(road.unitCenter-start);
 		x = c.getWidth()/2 - x*ppu;
 		
@@ -201,7 +201,7 @@ public class Car implements Cloneable {
 		
 		int[] point = translate();
 		
-		Constants.polarMove(point, road.startAngle,(int)(finish-start+5)*road.pixelsPerUnit + offSet);//The 5 is an approximate offset to make the finish line show up in the right place
+		Constants.polarMove(point, road.startAngle,(int)((finish-start+5)*road.pixelsPerUnit + offSet));//The 5 is an approximate offset to make the finish line show up in the right place
 		
 		int [] point1 = point.clone();
 		

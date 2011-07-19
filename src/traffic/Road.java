@@ -11,7 +11,7 @@ public class Road {
 	public int intLength;//these are in "units"!
 	public int height,yPos,sYPos,sHeight;//these are in pixels
 	public int start,finish;//these are in "units"!
-	public int pixelsPerUnit;
+	public double pixelsPerUnit;
 	public int index;//TODO: most of this^ shit is going to be changed
 	
 	private Polygon pavement,intersection;
@@ -48,6 +48,8 @@ public class Road {
 		
 		intLoc -= start;//TODO: re-think 'normalizing' at some point, this could be a problem if all cars start after intersection
 		unitCenter = intLoc + intLength/2;
+		
+	//	Constants.p("Road: "+index+" beginning: "+begin+" end: "+end);
 	}
 	
 	public int getLength(){//this is in "units"!
@@ -64,21 +66,22 @@ public class Road {
 	//	Constants.p("Starting Angle: "+startAngle);
 		if(startAngle > Math.atan(c.getHeight()/c.getWidth()) && startAngle <= Math.atan(c.getHeight()/c.getWidth()) +Math.PI/2){
 			if(Math.abs(Math.sin(startAngle)) <= 1)
-				ppu = ( c.getHeight())/(getLength());
+				ppu = ( (double)c.getHeight())/(getLength());
 			else
-				ppu = ( c.getHeight())/(getLength() * Math.abs(Math.sin(startAngle)));
+				ppu = ( (double)c.getHeight())/(getLength() * Math.abs(Math.sin(startAngle)));
 	//		Constants.p("Sine Used!");
 		}else{
 			if(Math.abs(Math.cos(startAngle)) <= 1)
-				ppu = ( c.getWidth())/(getLength());
+				ppu = ( (double)c.getWidth())/(getLength());
 			else
-				ppu = ( c.getWidth())/(getLength() * Math.abs(Math.cos(startAngle)));
+				ppu = ((double) c.getWidth())/(getLength() * Math.abs(Math.cos(startAngle)));
 	//		Constants.p("Cosine Used!");
+			
 		}
 		
 		
 		
-		pixelsPerUnit = (int)ppu;
+		pixelsPerUnit = ppu;
 		
 
 	//	makeRect(c,intersection,intLength*pixelsPerUnit/2,middle);

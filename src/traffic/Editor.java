@@ -10,7 +10,11 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
@@ -310,6 +314,7 @@ public class Editor{
 							road.setLength(toAdd.start,road.finish);
 						}
 						if(toAdd.finish > road.finish + road.start){
+							
 							road.setLength(road.start,toAdd.finish +road.start);
 						}
 						
@@ -350,6 +355,7 @@ public class Editor{
 							car.road.setLength(car.start,car.road.finish);
 						}
 						if(car.finish > car.road.finish + car.road.start){
+							Constants.p("Bad shit about to happen?");
 							car.road.setLength(car.road.start,car.finish +car.road.start);
 						}
 						
@@ -409,6 +415,7 @@ public class Editor{
 			                  3,
 			                  false,
 			                  MouseEvent.BUTTON3));
+					//reloadCanvas();
 					this.source.dispose();
 				
 					
@@ -527,6 +534,7 @@ public class Editor{
 					m.componentResized(new ComponentEvent(contentPane, 2));
 					m.c.redraw(false, false);
 					m.toggleListeners();
+					//reloadCanvas();
 					frame.dispose();
 					
 				}catch(Exception e){JOptionPane.showMessageDialog(frame,
@@ -730,4 +738,17 @@ public class Editor{
 		}
 		return null;
 	}
+	
+/*private void reloadCanvas(){
+		try{
+		BufferedWriter writer = new BufferedWriter(new FileWriter("tmp"));
+		m.m.saveFile(writer);
+		writer.close();
+		m.m.wipe();
+		BufferedReader infile = new BufferedReader(new FileReader("tmp"));
+		m.c.loadCanvas(infile, m.cars);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}*/
 }

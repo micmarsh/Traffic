@@ -278,7 +278,7 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 			return (int)(r.unitCenter + unitDist + r.start);*/
 		
 		double hyp = Point.distance(pointX, pointY, frame.c.getWidth()/2,frame.c.getHeight()/2);
-	//	Constants.p("Hypotenuse: "+hyp);
+		Constants.p("Hypotenuse: "+hyp);
 		int[] point = {frame.c.getWidth()/2,frame.c.getHeight()/2};
 		
 		int[] point1 = point.clone();
@@ -286,12 +286,12 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 		Constants.polarMove(point, r.startAngle, 1000);
 		Constants.polarMove(point1, Math.PI+r.startAngle, 1000);
 		
-		//Constants.p("PPU: "+r.pixelsPerUnit);
+		Constants.p("PPU: "+r.pixelsPerUnit);
 		
 		double distFromRoad = Line2D.ptLineDist(point[0], point[1], point1[0], point1[1], pointX, pointY);
-	//	Constants.p("Distance from road: "+distFromRoad);
+		Constants.p("Distance from road: "+distFromRoad);
 		double distance = Math.pow((Math.pow(hyp,2)-Math.pow(distFromRoad, 2)),0.5)/r.pixelsPerUnit;	
-	//	Constants.p("Distance: "+distance);
+		Constants.p("Distance: "+distance);
 		if(pointY <= frame.c.getHeight()/2)
 			return (int)(r.unitCenter - distance + r.start);
 		else 
