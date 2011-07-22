@@ -107,7 +107,7 @@ public class Menu extends JMenuBar implements ActionListener {
 			}
 		}
 		if(command.equals("Load")){
-			JFileChooser fc = new JFileChooser();
+			JFileChooser fc = new JFileChooser(parent.lastOpened);
 			 
 			 if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
 				 try{
@@ -123,7 +123,7 @@ public class Menu extends JMenuBar implements ActionListener {
 			
 		}
 		if(command.equals("Save")){
-			JFileChooser fc = new JFileChooser();
+			JFileChooser fc = new JFileChooser(parent.lastOpened);
 			if(fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION){
 				String filePath = fc.getSelectedFile().getAbsolutePath();
 				try{

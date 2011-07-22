@@ -309,7 +309,7 @@ public class Editor{
 						road.rCars.add(toAdd);
 						
 						
-						Constants.p("Index right after added: "+m.cars.indexOf(road.rCars.get(0)));
+						//Constants.p("Index right after added: "+m.cars.indexOf(road.rCars.get(0)));
 						if(toAdd.start < road.start){
 							road.setLength(toAdd.start,road.finish);
 						}
@@ -354,10 +354,9 @@ public class Editor{
 						if(car.start < car.road.start){
 							car.road.setLength(car.start,car.road.finish);
 						}
-						if(car.finish > car.road.finish + car.road.start){
-							Constants.p("Bad shit about to happen?");
+						if(car.finish > car.road.finish + car.road.start)
 							car.road.setLength(car.road.start,car.finish +car.road.start);
-						}
+						
 						
 						
 						
@@ -379,14 +378,14 @@ public class Editor{
 					
 					if(startRoad != newRoad){
 						while(road.colors.contains(car.color)){
-							Constants.p("lulz");
+							//Constants.p("lulz");
 							colorInd = (colorInd+1)%7;
 							car.color = Constants.colors[colorInd];
 							try{
 								car.image = ImageIO.read(new File("car/"+Constants.colorName(car.color)+".png"));
 								
 								}catch(Exception e){
-									Constants.p("lulzception!");
+						//			Constants.p("lulzception!");
 								}
 							if(first.equals(car.color))
 								break;
@@ -433,7 +432,7 @@ public class Editor{
 				
 			}
 			
-			Constants.p("Size of car array after added: "+m.cars.size());
+		//	Constants.p("Size of car array after added: "+m.cars.size());
 		}
 		@Override
 		public void windowActivated(WindowEvent e) {

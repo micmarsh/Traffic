@@ -56,6 +56,8 @@ public class Traffic {
 			memory = new ArrayList<SnapShot[]>();
 			play = false;
 	
+			//Constants.p(lastOpened);
+			
 			c = new RoadCanvas(lastOpened,cars,this);//"NONE" for now, will eventually remember last opened file
 			b = new ButtonPanel(this,sim);
 			m = new Menu(this,sim);

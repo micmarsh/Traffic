@@ -1,6 +1,5 @@
 To Run:
-Make sure Eclipse (http://www.eclipse.org/downloads/) is installed open this directory as an existing project in Eclipse (File: new: Java Project). Before running go to Run: Run Configurations, then to the "arguments" tab to ensure "sample.in" (w/o quotes) is listed as the program's first argument.
-
+Make sure Eclipse (http://www.eclipse.org/downloads/) is installed open this directory as an existing project in Eclipse (File: new: Java Project).
 Buttons: 
 
 -Step: Moves each car forward by it's velocity
@@ -8,9 +7,18 @@ Buttons:
 -Rewind: Moves cars backwards one step, or undoes the most recent jump
 -Reset: Resets all cars to their original starting position
 
+Editing:
+
+-You can edit a car at any time by clicking on the car and selecting "adjust car" in the menubar
+
+-"Undo" is the same as "Rewind".
+
+
 Tips/Warnings:
 
--To make a car jump, click on the "body"(not the wheels), then click on the location you want it to jump to (you can click outside of the road, the car will jump to that X coordinate).
+-Be very careful when editing and pressing "Reset": you'll undo any changes, new cars, and new roads (this will be made "safer" soon)
+
+-You don't yet get an alert if you try to quit without saving: it will just quit.
 
 -To adjust frame per second, pause the program *by pressing pause*, enter the new fps, then hit play
 
