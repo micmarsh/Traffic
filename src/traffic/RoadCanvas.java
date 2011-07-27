@@ -19,6 +19,7 @@ import traffic.Traffic.MainFrame;
 class RoadCanvas extends Canvas {
 	ArrayList<Road> roads;
 	int delta,gamma;
+	double epsilon;
 	private boolean justPaintCars,updateStatus;
 	String status,stat2ndLine;
 	MainFrame parent;
@@ -39,6 +40,8 @@ class RoadCanvas extends Canvas {
 				delta = Integer.parseInt(line);
 				line = infile.readLine();//Read in "gamma" value
 				gamma= Integer.parseInt(line);
+				line = infile.readLine();//Read in "epsilon" value
+				epsilon = Double.parseDouble(line);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -129,6 +132,8 @@ class RoadCanvas extends Canvas {
 					delta = Integer.parseInt(line);
 					line = infile.readLine();
 					gamma = Integer.parseInt(line);
+					line = infile.readLine();//Read in "epsilon" value
+					epsilon = Double.parseDouble(line);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

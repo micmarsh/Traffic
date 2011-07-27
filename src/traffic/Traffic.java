@@ -63,7 +63,7 @@ public class Traffic {
 			m = new Menu(this,sim);
 			
 			if(input.equals("SimpComp"))
-				con = new SimpComp(cars,c.gamma,c.delta);
+				con = new SimpComp(cars,c.gamma,c.delta,c.epsilon);
 			else
 				con = new MController(cars, c.gamma, c.delta);
 			

@@ -68,7 +68,7 @@ public class Menu extends JMenuBar implements ActionListener {
 		//Add 'Adjust Car' and 'Adjust Road' buttons
 		adjCar = new JMenuItem("Adjust Car");
 		adjCar.addActionListener(this);
-		adjCar.setEnabled(false);
+	//	adjCar.setEnabled(false);
 		adjRoad = new JMenuItem("Adjust Road");
 		adjRoad.addActionListener(this);
 		add(adjCar);
@@ -154,7 +154,10 @@ public class Menu extends JMenuBar implements ActionListener {
 		}
 		
 		if(command.equals("Adjust Car")){
-			parent.m.e.carDialog(parent.listener.clicked);
+			if(parent.listener.clicked == null)
+				parent.m.e.carSelector();
+			else
+				parent.m.e.carDialog(parent.listener.clicked);
 		}
 		
 		if(command.equals("Adjust Road")){
@@ -192,13 +195,13 @@ public class Menu extends JMenuBar implements ActionListener {
 	public void saveFile(BufferedWriter writer){
 		String toWrite = "";
 		
-		toWrite += parent.c.delta + "\n"+parent.c.gamma+"\n";
+		toWrite += parent.c.delta + "\n"+parent.c.gamma+"\n"+parent.c.epsilon+"\n";
 		
 		for (Road r:parent.c.roads){
 			toWrite += "road,"+r.intLoc+","+r.intLength+"\n";
 			for(Car car:r.rCars)
 				toWrite += " car,"+car.start+","+car.minVel+","+car.velocity+","+car.maxVel
-				+","+car.finish+","+boolToInt(car.controlled)+"\n";
+				+","+car.maxAccel+","+car.finish+","+boolToInt(car.controlled)+"\n";
 			toWrite += "endroad"+"\n";
 		}
 		try{

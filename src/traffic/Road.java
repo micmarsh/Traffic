@@ -35,20 +35,21 @@ public class Road {
 	}
 	
 	public void setLength(int begin, int end){
-		
+		Constants.p("Road: "+(index+1));
 		start = begin;
 		finish = end;
 		int startToMid = intLoc - start;
 		int finToMid = finish - intLoc;
-		
-		if(finToMid > startToMid)
-			start = intLoc - finToMid;
-		else
-			finish = intLoc + startToMid;
+		Constants.p("Start begins at: "+start+" Finish begins at: "+finish);
+	//	if(finToMid > startToMid)
+	//		start = intLoc - finToMid;
+	//	else
+	//		finish = intLoc + startToMid;
 		
 		intLoc -= start;//TODO: re-think 'normalizing' at some point, this could be a problem if all cars start after intersection
 		unitCenter = intLoc + intLength/2;
-		
+		Constants.p("Start ends at: "+start+" Finish ends at: "+finish);
+		Constants.p("\n\n\n");
 	//	Constants.p("Road: "+index+" beginning: "+begin+" end: "+end);
 	}
 	

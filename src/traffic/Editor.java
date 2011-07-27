@@ -96,7 +96,7 @@ public class Editor{
 			JFrame toDisplay = new JFrame(title);
 		    Container contentPane = toDisplay.getContentPane();
 		       // SpringLayout layout = new SpringLayout();
-		    GridLayout layout = new GridLayout(8,2);
+		    GridLayout layout = new GridLayout(10,2);
 		    contentPane.setLayout(layout);
 		    String curVal ="";
 		    
@@ -136,6 +136,13 @@ public class Editor{
 	        	curVal = "";
 	        contentPane.add(new JTextField(""+curVal,15));
 	        
+	        contentPane.add(new JLabel("Maximum Acceleration: "));
+	        if(toEdit != null)
+	        	curVal = ""+toEdit.maxAccel;
+	        else 
+	        	curVal = "";
+	        contentPane.add(new JTextField(""+curVal,15));
+	        	        	        	        
 	        contentPane.add(new JLabel("Finish Line: "));
 	        if(toEdit != null)
 	        	curVal = ""+(toEdit.finish+toEdit.road.start);
@@ -228,6 +235,57 @@ public class Editor{
        toDisplay.setVisible(true);
 	}
 	
+	
+	public void carSelector(){
+		JFrame toDisplay = new JFrame("Select a Car to Adjust");
+				
+	    Container contentPane = toDisplay.getContentPane();
+	       // SpringLayout layout = new SpringLayout();
+	    GridLayout layout = new GridLayout(3,2);
+	    contentPane.setLayout(layout);
+	   
+	   toDisplay.add(new JLabel("Select Road:"));
+	   
+	   String [] roads = new String[m.c.roads.size()];
+	   
+	   for (int i = 1; i<= roads.length;i++)
+		   roads[i-1] = ("Road "+i);
+	   
+	   SelectionListener listen = new SelectionListener(contentPane,toDisplay);
+	
+	   toDisplay.addWindowListener(listen);
+	   
+	   JComboBox roadBox = new JComboBox(roads);
+	   toDisplay.add(roadBox);
+	   roadBox.addActionListener(listen);
+	   
+	   toDisplay.add(new JLabel("Select Car:"));
+	   
+	  // String [] DERT = {"(Delete Entire Road)"};
+	   JComboBox cars = new JComboBox();
+	   String [] strings = populateCars("1");
+	   for (int i = 1; i < strings.length; i++)
+		   cars.addItem(strings[i]);
+	   
+	   
+	   
+	   toDisplay.add(cars);
+	   cars.addActionListener(listen);
+	   
+	   JButton ok = new JButton("Ok");
+	   JButton cancel = new JButton("Cancel");
+	   toDisplay.add(ok);
+	   toDisplay.add(cancel);
+	   ok.addActionListener(listen);
+	   cancel.addActionListener(listen);
+	   
+	   toDisplay.setSize(200,400);
+	   
+	   toDisplay.pack();
+       m.toggleListeners();
+       toDisplay.setVisible(true);
+	}
+	
 	private int[] initChanges(Object o){
 			Road road;
 			Car car;
@@ -275,13 +333,14 @@ public class Editor{
 			
 			if(source.getText().equals("Ok")){
 				int start, minVel, velocity, maxVel,finish,controlled;
+				double maxAccel;
 				Road road;
-				String[] values = new String[7];
+				String[] values = new String[8];
 				try{
 					
-					for(int i = 1 ; i < 13;i += 2)
+					for(int i = 1 ; i < 15;i += 2)
 						values[i/2] = ((JTextField)contentPane.getComponents()[i]).getText();
-					if(((JComboBox)contentPane.getComponents()[13]).getSelectedItem().equals("Yes"))
+					if(((JComboBox)contentPane.getComponents()[15]).getSelectedItem().equals("Yes"))
 						controlled = 1;
 					else
 						controlled = 0;
@@ -290,9 +349,10 @@ public class Editor{
 					minVel = Integer.parseInt(values[2]);
 					velocity = Integer.parseInt(values[3]);
 					maxVel = Integer.parseInt(values[4]);
-					finish = Integer.parseInt(values[5]);
+					maxAccel = Double.parseDouble(values[5]);
+					finish = Integer.parseInt(values[6]);
 					
-					String [] safeVals = {"",""+start,""+minVel,""+velocity,""+maxVel,""+finish,""+controlled};
+					String [] safeVals = {"",""+start,""+minVel,""+velocity,""+maxVel,""+maxAccel,""+finish,""+controlled};
 					
 					boolean [] bools = new boolean[2];
 					
@@ -330,11 +390,14 @@ public class Editor{
 						m.toggleListeners();
 						this.source.dispose();*/
 					}else{
+						
 						bools[0] = false;
 						int prevRoad = car.road.index;
 						startRoad = prevRoad;
 						int newRoad = Integer.parseInt(values[0])-1;
 						car.road = m.c.roads.get(newRoad);
+						
+						//Constants.p("Checkpoint 1: "+car.start);
 						
 						if(newRoad != prevRoad){
 							car.road.rCars.add(car);
@@ -345,17 +408,28 @@ public class Editor{
 						car.minVel = minVel;
 						car.velocity = velocity;
 						car.maxVel = maxVel;
+						car.maxAccel = maxAccel;
 						car.finish = finish - car.road.start;
+						
 						if(controlled == 1)
 							car.controlled = true;
 						else
 							car.controlled = false;
 						
+						
 						if(car.start < car.road.start){
 							car.road.setLength(car.start,car.road.finish);
 						}
-						if(car.finish > car.road.finish + car.road.start)
-							car.road.setLength(car.road.start,car.finish +car.road.start);
+
+						//Constants.p("Road start: "+car.road.start);
+					
+						if(car.finish  > car.road.finish){
+						//	Constants.p("Hell yeah!");
+						//	car.road.intLoc += car.road.start;
+							car.road.setLength(car.road.start,car.finish);// +car.road.start);
+						}
+
+					//	Constants.p("Road start: "+car.road.start);
 						
 						
 						
@@ -427,7 +501,8 @@ public class Editor{
 						
 				
 			}else{
-				m.toggleListeners();
+				if(!m.b.listen)
+					m.toggleListeners();
 				this.source.dispose();
 				
 			}
@@ -523,8 +598,8 @@ public class Editor{
 						
 					}
 					
-					road.intLoc -= changes[6];
-					road.intLength -= changes[7];
+					changes[6] -= road.intLoc ;
+					changes[7] -= road.intLength;
 					
 					EditShot[] pretendArray = {new EditShot(changes,bools,null,null,road)};
 					
@@ -588,6 +663,93 @@ public class Editor{
 			
 		}
 	
+	}
+	
+	class SelectionListener implements ActionListener,WindowListener{
+
+		Container contentPane;
+		JFrame frame;
+		
+		SelectionListener(Container c, JFrame f){
+			contentPane = c;
+			frame = f;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			try{
+				JButton source = (JButton) arg0.getSource();
+				
+				String text = source.getText();
+				
+				if(text.equals("Ok")){
+					Car toPass =  (Car)parseCombos((JComboBox)frame.getContentPane().getComponent(1),(JComboBox)frame.getContentPane().getComponent(3));
+					m.toggleListeners();
+					frame.dispose();
+					carDialog(toPass);
+					
+				}else{
+					m.toggleListeners();
+					frame.dispose();
+				}
+			}catch(Exception e){
+				JComboBox box = (JComboBox) arg0.getSource();
+				
+				if(box.equals(frame.getContentPane().getComponent(1))){
+					JComboBox cars = (JComboBox) frame.getContentPane().getComponent(3);
+					cars.removeAllItems();
+					String [] strings = populateCars(""+((JComboBox) frame.getContentPane().getComponent(1)).getSelectedItem().toString().charAt(5));
+					for (int i = 1; i < strings.length; i++)
+						   cars.addItem(strings[i]);
+					
+				}
+			}
+			
+		}
+
+		@Override
+		public void windowActivated(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void windowClosed(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void windowClosing(WindowEvent e) {
+			if(!m.b.listen)
+				m.toggleListeners();
+			frame.dispose();
+			
+		}
+
+		@Override
+		public void windowDeactivated(WindowEvent e) {
+					
+		}
+
+		@Override
+		public void windowDeiconified(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void windowIconified(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void windowOpened(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		
 	}
 	
 	class DeletionListener implements ActionListener,WindowListener {

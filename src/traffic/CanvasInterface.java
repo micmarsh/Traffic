@@ -76,7 +76,7 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 			}else
 				frame.c.status = "paused";
 			clicked = null;
-			frame.m.adjCar.setEnabled(false);
+			//frame.m.adjCar.setEnabled(false);
 		}
 		else{
 			if(clicked != null){
@@ -120,7 +120,7 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 				updateCars();
 				
 				frame.c.redraw(true,false);
-				frame.m.adjCar.setEnabled(false);
+			//	frame.m.adjCar.setEnabled(false);
 				
 			}else{
 	
@@ -141,7 +141,7 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 							
 						}
 						frame.b.carStats[5].setText("Selected: Yes");
-						frame.m.adjCar.setEnabled(true);
+					//	frame.m.adjCar.setEnabled(true);
 						frame.c.status = "car selected  (right-click to cancel)";
 						break;
 					}

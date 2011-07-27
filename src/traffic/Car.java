@@ -31,6 +31,7 @@ public class Car implements Cloneable {
 	public Color color;
 	
 	public int minVel,maxVel;
+	public double maxAccel;
 	public boolean controlled;
 	public RoadCanvas c;
 	
@@ -49,8 +50,9 @@ public class Car implements Cloneable {
 		minVel = Integer.parseInt(lineElts[2]);
 		velocity = Integer.parseInt(lineElts[3]);
 		maxVel = Integer.parseInt(lineElts[4]);
-		finish = Integer.parseInt(lineElts[5]);
-		if(lineElts[6].equals("0"))
+		maxAccel = Integer.parseInt(lineElts[5]);
+		finish = Integer.parseInt(lineElts[6]);
+		if(lineElts[7].equals("0"))
 			controlled = false;
 		else
 			controlled = true;
@@ -76,11 +78,11 @@ public class Car implements Cloneable {
 	}
 	
 	public Car copy(){
-		String[] stats = {"",""+start,""+minVel,""+velocity,""+maxVel,""+finish,""};
+		String[] stats = {"",""+start,""+minVel,""+velocity,""+maxVel,""+maxAccel,""+finish,""};
 		if(controlled)
-			stats[6] = "1";
+			stats[7] = "1";
 		else
-			stats[6] = "0";
+			stats[7] = "0";
 		Car toRet = new Car(stats,c,road);
 		toRet.image = image;
 		toRet.color = color;
@@ -88,7 +90,7 @@ public class Car implements Cloneable {
 	}
 	
 	public String toString() {
-				String s = start + "," + minVel + "," + velocity + "," + maxVel + "," + finish + "," + (controlled ? 1 : 0) + "\n";
+				String s = start + "," + minVel + "," + velocity + "," + maxVel + ","+maxAccel+"," + finish + "," + (controlled ? 1 : 0) + "\n";
 		 		return s;
 	}
 

@@ -38,7 +38,7 @@ public class SimpComp extends Controller {
 		}
 	}
 	
-	public SimpComp(ArrayList<Car> cars, int gamma, int delta) {
+	public SimpComp(ArrayList<Car> cars, int gamma, int delta, double epsilon) {
 		this.cars = new Car[cars.size()];
 		for (int i = 0; i < cars.size(); i++) this.cars[i] = cars.get(i).copy();
 		Arrays.sort(this.cars, new CarComp());
