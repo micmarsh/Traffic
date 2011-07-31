@@ -50,19 +50,16 @@ public class Traffic {
 			L.setAlignment(L.LEFT);
 			setLayout(L);
 			
-			//TODO: this will vary with command line args
-			
 			cars = new ArrayList<Car>();
 			memory = new ArrayList<SnapShot[]>();
 			play = false;
 	
-			//Constants.p(lastOpened);
-			
+
 			c = new RoadCanvas(lastOpened,cars,this);//"NONE" for now, will eventually remember last opened file
 			b = new ButtonPanel(this,sim);
 			m = new Menu(this,sim);
 			
-			if(input.equals("SimpComp"))
+			if(input.equals("SimpComp"))//TODO: add other controllers, or Class and Constructor objects
 				con = new SimpComp(cars,c.gamma,c.delta,c.epsilon);
 			else
 				con = new MController(cars, c.gamma, c.delta);
@@ -95,14 +92,17 @@ public class Traffic {
 			try{
 			BufferedReader infile = new BufferedReader(new FileReader("config"));
 			String line = infile.readLine();
-			lastOpened = line;
+			lastOpened = line;//filepath to current simulation's save file
 			line = infile.readLine();
 			if(line.equals("true"))
 				sim = true;
 			else
 				sim = false;
+			
 			line = infile.readLine();
 			miliSecondsPerFrame = (int)(1000/Double.parseDouble(line));
+			//^Inverse of 'frames per second' field
+			
 			ArrayList<String> names = new ArrayList<String>();
 			ArrayList<String> files = new ArrayList<String>();
 			boolean boolDebug = false;
@@ -151,33 +151,35 @@ public class Traffic {
 		}
 		
 		private void sizeComponents(){
-			c.adjustSize(getWidth()-135,getHeight());//135
-			b.adjustSize(130,getHeight());//130
+			c.adjustSize(getWidth()-135,getHeight());
+			b.adjustSize(130,getHeight());
 		//	for(Car car:cars)
 		//		car.adjust(c);
 			listener.updateCars();
 		}
 
-		public void next(){//TODO: this will take arguments, and change accordingly
-			
+		public void next(){
+
 			SnapShot[] current = new SnapShot[cars.size()];
-			ArrayList<Car> oldCars = new ArrayList<Car>();
+			
 			String oldStat = c.status;
+			
 			if(!con.hasSolution(cars))
-				c.status = "Calculating";
+				c.status = "Calculating";//This will display if con.next() below takes a significant amount of time to calculate
 			
 			String message = "";
 			
-
+			
+			ArrayList<Car> oldCars = new ArrayList<Car>();
 			for (Car car : cars)
-					oldCars.add(car.copy());
+					oldCars.add(car.copy());//need to record previous positions of cars so we can calculate the difference below
 			
 			
-			message = con.next(cars);
+			message = con.next(cars);//moves cars, amoung many other things
 			
-			c.status = oldStat;
+			c.status = oldStat;//This will usually appear instantaneously, see note above
 			
-			for (int i = 0; i < cars.size(); i++){
+			for (int i = 0; i < cars.size(); i++){//Snapshot array recording changes to cars
 				Car oldCar = oldCars.get(i);
 				Car car = cars.get(i);
 				current[i] = new SnapShot(car.start - oldCar.start,car.velocity - oldCar.velocity, car );
@@ -189,13 +191,14 @@ public class Traffic {
 			c.redraw(true,false);
 			
 			c.stat2ndLine = message;
-			checkLoop(current);//now just checks for "finished" cars
-		//	listener.updateCars();
+			
+			checkLoop(current);//check to see if any cars have crossed the finish line, deleting if so
+			//^also checks to see if any cars have crashed, prompting user for input if so
 			memory.add(current);
 		}
 		
 		public class RoadAndInt{//Helps, ultimately, to remove cars from "cars" arraylist in proper order, eliminating indexing issues
-			public Road road;
+			public Road road;////(continued from above)associated with removing several objects from an arraylist at once
 			public int integer;
 			RoadAndInt(int num, Road r){
 				road = r;
@@ -218,14 +221,14 @@ public class Traffic {
 					}
 					for(int j = i+1; j<r.rCars.size();j++)
 						if(collision(r.rCars.get(i),r.rCars.get(j))){
-							crash(r.rCars.get(i),r.rCars.get(j),0);
+							crash(r.rCars.get(i),r.rCars.get(j),0);//crashed if two cars are too close to each other
 						}
 						
 					if(r.rCars.get(i).start>= r.intLoc && r.rCars.get(i).start  <= r.intLength + r.intLoc){
 						if(inIntersection == null)
-							inIntersection = r.rCars.get(i);
+							inIntersection = r.rCars.get(i);//remembers if a car is in this road, so subsequent loops can compare
 						else
-							crash(inIntersection,r.rCars.get(i),42);
+							crash(inIntersection,r.rCars.get(i),42);//crashes if two cars are in the same intersection at once
 					}
 						
 				}
@@ -234,7 +237,7 @@ public class Traffic {
 					if(intTaken != null )//once there's a car in two intersections, it crashes
 						crash(inIntersection,intTaken,1);
 					
-					intTaken = inIntersection;
+					intTaken = inIntersection;//"moves" car to second variable, when first variable becomes non-null again, there's an intersection crash
 					inIntersection = null;
 				}
 				
@@ -244,7 +247,7 @@ public class Traffic {
 			RoadAndInt [] toR = new RoadAndInt[toRemove.size()];
 			
 			for(int i = 0; i< toR.length;i++)
-				toR[i] = toRemove.get(i);
+				toR[i] = toRemove.get(i);//transfer elements so array to take advantage of java's built-in sorting function
 			
 			Comparator<RoadAndInt> intcomp = new IntComparator();
 			Arrays.sort(toR,intcomp);//sorts the new "toRemove" array by the "integer" field
@@ -257,11 +260,11 @@ public class Traffic {
 				Car c = r.road.rCars.get(i); 
 					
 					int index = cars.indexOf(c);
-					array[index].deleted = true;
-			//		array[index].road = array[index].source.road.index;
+					array[index].deleted = true;//records the fact that this car was removed with the snapshot array
+			
 					r.road.rCars.remove(i);
 
-					absoluteIndices[j] = index;
+					absoluteIndices[j] = index;//use for removal below
 					j++;
 		//		}
 			}
@@ -269,14 +272,14 @@ public class Traffic {
 			
 			Arrays.sort(absoluteIndices);
 			for(int i = absoluteIndices.length - 1; i >= 0;i--){
-				cars.remove(absoluteIndices[i].intValue());//Does the same as above for "cars" ArrayList
+				cars.remove(absoluteIndices[i].intValue());//removes car from larger "cars" arraylist
 			}
 			
 			if(!toRemove.isEmpty())
-				listener.updateCars();
+				listener.updateCars();//removes ability to click on a car, since it's been removed
 		}
 		
-		public class IntComparator implements Comparator<RoadAndInt>{//allows Array.sort() to sort RoadAndInt's by the "integer" 
+		public class IntComparator implements Comparator<RoadAndInt>{//allows Array.sort() to sort RoadAndInt objects by the "integer" field
 
 			@Override
 			public int compare(RoadAndInt arg0, RoadAndInt arg1) {
@@ -290,40 +293,41 @@ public class Traffic {
 		}
 		
 		public void rewind(){
-			if(!memory.isEmpty()){
+			if(!memory.isEmpty()){//<-If it's empty, we're at the beginning of the program
 				SnapShot[] restore = memory.remove(memory.size()-1);
 				
 				try{
-					EditShot changes = (EditShot) restore[0];
-					if(changes.road != null){//we're rolling back the changes to a road
-						if(changes.created){
+					EditShot changes = (EditShot) restore[0];//<- This will throw its exception if we're undo a simple call to next(), jumping to code block below
+					if(changes.road != null){//<- If road is not null, the EditShot refers to a road
+						if(changes.created){//<- a road was created: remove the road
 							c.roads.remove(changes.road);
 							this.componentResized(new ComponentEvent(new Container(), 2));
 						}
-						else{
+						else{//<- a road was modified: undo changes
 							changes.road.intLoc -= changes.locChange;
 							changes.road.intLength -= changes.lenChange;
 							if(changes.deleted){
 								c.roads.add(changes.road.index+1,changes.road);
 								for(int i = changes.road.index+1; i < c.roads.size();i++)
-									c.roads.get(i).index++;
+									c.roads.get(i).index++;//Adjust indices of reads to compensate for the re-insertion
 								this.componentResized(new ComponentEvent(new Container(), 2));
 								c.repaint();
 							}
 							
 						}
-					}else{//rolling back the changes to a car
-						if(changes.created){
+					}else{//"road" field was null, the Editshot refers to a car
+						
+						if(changes.created){//a new car was added, remove it now.
 							cars.remove(changes.source);
 							changes.source.road.rCars.remove(changes.source);
 							changes.source.road.colors.remove(changes.source.color);
 							
-							MController Mcon = (MController)con;//TODO: this specificity is obviously a big issue, resolve later
+							MController Mcon = (MController)con;//TODO: make cars array part of the prototype?
 							Mcon.cars.remove(changes.source);
 							
 							listener.updateCars();
 						}
-						else{
+						else{//<-The car was only adjusted, undo modifications
 							Car car = changes.source;
 							car.road = c.roads.get(car.road.index - changes.rChange);
 							car.minVel -= changes.minVchange;
@@ -339,7 +343,7 @@ public class Traffic {
 							}
 						}
 					}
-				}catch(Exception e){
+				}catch(ClassCastException e){//<- now we're just rewinding a regular move
 					
 					for(int i = 0; i < restore.length;i++){
 							Car car = restore[i].source;
@@ -367,13 +371,13 @@ public class Traffic {
 				rewind();
 		}
 		
-		public void toggleListeners(){
+		public void toggleListeners(){//Called when custom dialog frames open/close
 			m.listen = !m.listen;
 			b.listen = !b.listen;
 			listener.listen = !listener.listen;
 		}
 		
-		public boolean collision(Car c1, Car c2){
+		public boolean collision(Car c1, Car c2){//checks for a collision on one road
 			int offSet = c.gamma;
 			if(c1.start > c2.start - offSet && c1.start < c2.start + offSet){
 			//	System.out.println("Collision!");
@@ -384,7 +388,7 @@ public class Traffic {
 		}
 		
 		
-		public void crash(Car c1, Car c2,int intersection){
+		public void crash(Car c1, Car c2,int intersection){//Displays crash alert dialog
 			String message = "";
 			if(intersection == 0)
 				message = Constants.colorName(c1.color)+" car "+ctrlStr(c1.controlled)+" and "+Constants.colorName(c2.color)+" car "+ctrlStr(c2.controlled)+" crashed on" +
@@ -410,7 +414,7 @@ public class Traffic {
 			}
 		}
 		
-		private String ctrlStr(boolean controlled){
+		private String ctrlStr(boolean controlled){//converts "controlled" boolean to an appropriate string
 			if(controlled)
 				return "(controlled)";
 			else
@@ -463,7 +467,7 @@ public class Traffic {
 		
 		System.out.println("Program loaded, starting up!");
 		
-		while(true){
+		while(true){//Main loop
 			
 			try {
 				Thread.sleep(m.miliSecondsPerFrame);
