@@ -3,6 +3,11 @@ package traffic;
 import java.util.ArrayList;
 
 public class EditShot extends SnapShot {
+	
+	/*
+	 * Stores all information related to the new creation or deletion of a car or road, to allow
+	 * "undo" and "rewind" to undo those changes, if necessary
+	 */
 	int rChange,minVchange,maxVchange,finChange,place;
 	int locChange,lenChange;
 	boolean created,controlled;

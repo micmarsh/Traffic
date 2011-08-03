@@ -20,6 +20,11 @@ import javax.swing.event.DocumentListener;
 import traffic.Traffic.MainFrame;
 
 public class ButtonPanel extends JPanel implements MouseListener,DocumentListener {
+	/*
+	 * Displays all of the sidebar buttons. The actual functionality of the buttons are mostly
+	 * controlled by MainFrame (for the simulator) and Editor (for the editor, of course)
+	 */
+
 	MainFrame parent;
 //	JButton buttons[];
 	JButton play;
@@ -119,16 +124,16 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 	public void adjustSize(int width,int height){
 		setSize(width,height);
 		revalidate();
-		//TODO: possibly other stuff
 	}
 	
 	
 	
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-	//	JButton b = (JButton) arg0.getComponent();
+		
 		if(!listen)
 			return;
+		
 		JButton b = (JButton)arg0.getComponent();
 		String text = b.getText();
 		
@@ -143,11 +148,7 @@ public class ButtonPanel extends JPanel implements MouseListener,DocumentListene
 			parent.c.status = "playing";
 			if(parent.listener.clicked != null){
 				parent.b.carStats[5].setText("Selected: No");
-			//	if(parent.listener.paused)
-				//	parent.listener.paused = false;
-			//	else if(!parent.c.status.equals("playing"))
-			//		parent.c.status = "paused";
-				
+	
 				parent.listener.clicked = null;
 			}
 		}

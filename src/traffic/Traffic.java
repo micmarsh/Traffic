@@ -26,6 +26,10 @@ import java.lang.reflect.Constructor;
 
 public class Traffic {
 	
+	/*
+	 * Contains MainFrame, the class that houses all of the other classes in the program, and runs
+	 * most of the functions associated with the simulator buttons
+	 */
 
 	
 	public class MainFrame extends JFrame implements ComponentListener {
@@ -37,12 +41,14 @@ public class Traffic {
 		boolean play,sim;
 		int miliSecondsPerFrame;
 		CanvasInterface listener;
-		String lastOpened;
+		String lastOpened,controllerName;
 		Controller con;
+		
 		
 		
 		MainFrame(String title,String input){//Most of the interesting stuff happens in the RoadCanvas constructor
 			super(title);
+			controllerName = input;
 			configure();
 			System.out.println("Contructing Main Window...");
 			setSize(900, 600);
@@ -59,8 +65,10 @@ public class Traffic {
 			b = new ButtonPanel(this,sim);
 			m = new Menu(this,sim);
 			
-			if(input.equals("SimpComp"))//TODO: add other controllers, or Class and Constructor objects
+			if(controllerName.equals("SimpComp"))
 				con = new SimpComp(cars,c.gamma,c.delta,c.epsilon);
+			
+			//TODO: add other controllers, or Class and Constructor objects
 			else
 				con = new MController(cars, c.gamma, c.delta);
 			
@@ -459,8 +467,11 @@ public class Traffic {
 		try{
 			input = args[0];
 		}catch(Exception e){
-			
+			Constants.p("No arguments found, defaulting to MController");
 		}
+		
+		
+		
 		MainFrame m = new MainFrame("Traffic Simulator",input);
 	
 		m.setVisible(true);

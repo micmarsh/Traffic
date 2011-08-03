@@ -25,6 +25,12 @@ import java.util.ArrayList;
 import traffic.CanvasInterface.CarAndBound;
 import traffic.Traffic.MainFrame;
 public class Menu extends JMenuBar implements ActionListener {
+	
+	/*
+	 * The menu at the top of the program: File I/O can be found in RoadCanvas.java
+	 * Functions related to "Adjust Car/Road" can be found in Editor.java
+	 */
+	
 	JMenuBar mainBar;
 	JMenu file,mode,adjust;
 	JMenuItem newC,load,save,adjCar,adjRoad;
@@ -215,8 +221,15 @@ public class Menu extends JMenuBar implements ActionListener {
 		parent.c.roads = new ArrayList<Road>();
 		parent.listener.cars = new ArrayList<CarAndBound>();
 		parent.memory = new ArrayList<SnapShot[]>();
-		parent.con = new MController(parent.cars,parent.c.gamma,parent.c.delta);//TODO: this will most def change once actual gamma and delta changability is implemented
-		//also TODO^:make this choose the appropriate controller
+		
+		if(parent.controllerName.equals("SimpComp"))
+			parent.con = new SimpComp(parent.cars,parent.c.gamma,parent.c.delta,parent.c.epsilon);
+		
+		//TODO: add other controllers, or Class and Constructor objects
+		else
+			parent.con = new MController(parent.cars, parent.c.gamma, parent.c.delta);
+		
+		
 		parent.play = false;
 		parent.miliSecondsPerFrame = 1000;
 		parent.c.adjustSize(parent.c.getWidth(), parent.c.getHeight());

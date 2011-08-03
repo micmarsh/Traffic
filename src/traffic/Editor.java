@@ -28,6 +28,11 @@ import javax.swing.SpringLayout;
 import traffic.Traffic.MainFrame;
 
 public class Editor{
+	/*
+	 * Generates popup windows for all of the "editor" sidebar's functionality, and the listeners
+	 * which execute said functions
+	 */
+	
 	MainFrame m;
 	int lastAdded;
 	int colorInd;
@@ -900,16 +905,5 @@ public class Editor{
 		return null;
 	}
 	
-/*private void reloadCanvas(){
-		try{
-		BufferedWriter writer = new BufferedWriter(new FileWriter("tmp"));
-		m.m.saveFile(writer);
-		writer.close();
-		m.m.wipe();
-		BufferedReader infile = new BufferedReader(new FileReader("tmp"));
-		m.c.loadCanvas(infile, m.cars);
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-	}*/
+	
 }

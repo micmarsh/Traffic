@@ -15,6 +15,13 @@ import javax.swing.AbstractButton;
 import traffic.Traffic.MainFrame;
 
 public class CanvasInterface implements MouseListener,MouseMotionListener {
+	/*
+	 * Superimposes invisible rectangles on top of all of the onscreen cars, handles the "click to move" functionality
+	 * and displaying information about the cars when the mouse moves over them
+	 */
+	
+	
+	
 	MainFrame frame;//used to access the parent MainFrame, and, by extension, most of the rest of the program
 	ArrayList<CarAndBound> cars;//helps associate the car's image with the bounding rectangle the listener will use to keep track of it's location
 	private int prevLoc,prevVel;//^mostly just reduces amount of typing done
@@ -220,62 +227,6 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 	}
 	
 	private int pointToPos(int pointX, int pointY, Road r){
-		/*int[] toPrint = new int[2];
-		
-		int[] point = {pointX,pointY};
-		
-		Constants.polarMove(point, Math.PI/2 - r.startAngle , 25);
-		
-		double tempY = (frame.c.getHeight()/2 - pointY)/(double)r.pixelsPerUnit;
-		toPrint[0] =  (int)(r.unitCenter - tempY/Math.sin(r.startAngle));
-		
-		double tempX = (frame.c.getWidth()/2 - pointX)/(double)r.pixelsPerUnit;
-		toPrint[1] = (int)(r.unitCenter - tempX/Math.cos(r.startAngle));
-		Constants.p("The two position values!: ("+toPrint[1]+","+toPrint[0]+")");
-		return toPrint[1];*/
-		
-	//	double arcTan = Math.atan(frame.c.getHeight()/frame.c.getWidth());
-		
-	/*	if(r.startAngle >= Math.PI*3/2){
-			double tempY = (frame.c.getHeight()/2 - pointY)/(double)r.pixelsPerUnit;
-			return (int)(r.unitCenter - tempY/Math.sin(r.startAngle));
-		}else{
-			double tempX = (frame.c.getWidth()/2 - pointX)/(double)r.pixelsPerUnit;
-			return (int)(r.unitCenter - tempX/Math.cos(r.startAngle));
-		}*//*
-		
-		int [] ref = new int[2];
-		
-	//	if(r.rCars.isEmpty()){
-			ref[0] = frame.c.getWidth()/2;
-			ref[1] = frame.c.getHeight()/2;
-	//	}
-	//	else{
-	//		ref = r.rCars.get(0).translate();
-	//	}
-		
-		double distance = Point.distance(pointX, pointY, ref[0], ref[1]);
-		
-			int divisor = pointX - ref[0];
-		
-		double deviation;
-		
-		
-		
-		if (divisor == 0)
-			deviation = 0;
-		else{
-			deviation = Math.atan((pointY - ref[1])/divisor);
-		}
-		
-		double pixelDist = distance ;//* Math.cos(deviation);		
-		
-		double unitDist = pixelDist/r.pixelsPerUnit;
-		
-		if(pointY <= frame.c.getHeight()/2)
-			return (int)(r.unitCenter - unitDist + r.start);
-		else 
-			return (int)(r.unitCenter + unitDist + r.start);*/
 		
 		double hyp = Point.distance(pointX, pointY, frame.c.getWidth()/2,frame.c.getHeight()/2);
 	//	Constants.p("Hypotenuse: "+hyp);

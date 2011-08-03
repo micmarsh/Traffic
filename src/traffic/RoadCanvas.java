@@ -17,6 +17,11 @@ import javax.swing.JOptionPane;
 import traffic.Traffic.MainFrame;
 
 class RoadCanvas extends Canvas {
+	
+	/*
+	 * Renders roads and cars, handles file I/O
+	 */
+	
 	ArrayList<Road> roads;
 	int delta,gamma;
 	double epsilon;
@@ -24,14 +29,14 @@ class RoadCanvas extends Canvas {
 	String status,stat2ndLine;
 	MainFrame parent;
 	
-	RoadCanvas(String input, ArrayList<Car> cars, MainFrame m){//TODO: this could very well all be re-written once actual input file
+	RoadCanvas(String input, ArrayList<Car> cars, MainFrame m){
 		
 		status = "paused";
 		stat2ndLine = "";
 		roads = new ArrayList<Road>();
 		parent = m;
 		if(!input.equals("NONE")){
-			System.out.println("Constructing Road Canvas...");//format is revealed, don't really need to document yet.
+			System.out.println("Constructing Road Canvas...");
 			BufferedReader infile = null;
 			String line = null;
 			 try {
@@ -48,10 +53,7 @@ class RoadCanvas extends Canvas {
 				e.printStackTrace();
 			}
 			
-			
 		
-			
-			
 			
 			int road = 0;
 			
@@ -59,11 +61,9 @@ class RoadCanvas extends Canvas {
 				int i = 0;
 				
 				int maxEnd = 0;
-				int minStart = -1;
+				int minStart = -1;//used to set screen to correct size
 				do{
-					
-					
-					
+				
 					do{
 						
 						line = infile.readLine();
@@ -71,6 +71,7 @@ class RoadCanvas extends Canvas {
 							break;
 						line = line.replaceAll(" ", "");
 						String[] lineElts = line.split(",");
+						
 						if(lineElts[0].equals("road")){
 							//System.out.println("Road number: "+road);
 							roads.add(new Road(lineElts,road));
@@ -86,29 +87,32 @@ class RoadCanvas extends Canvas {
 								maxEnd = c.finish;
 							if(minStart == -1 || c.start < minStart)
 								minStart = c.start;
+							//^When everything is initialised, the end of every road (on the screen) will
+							//be the farthest finish line among all of the cars
+							
 							
 							c.color = Constants.colors[i];
 							roads.get(road).colors.add(Constants.colors[i]);
+							//^Coloring is handled outside the car contructor since each road needs to keep
+							//track of each color of car it contains, to ensure there are no two cars with the 
+							//same color
 							
 							i = (i+1)%7;
 						}
 						
 					}while(!line.equals("endroad"));
-					/*if(road < roads.size()){
-						roads.get(road).setLength(minStart,maxEnd);//Like all numbers in this loop, this is in UNITS.
-						for(Car car: roads.get(road).rCars)
-							car.normalize();
-					}*/
+				
 					road++;
 				}while(line != null);
 				
-				for (Road r:roads){
+				for (Road r:roads){//set the length of every road, normalize the cars.
 					if(minStart == -1 && maxEnd == 0)
 						r.setLength(0,r.intLoc+50);//still arbitrary
 					else
 						r.setLength(minStart,maxEnd);
 					for (Car c: r.rCars)
-						c.normalize();
+						c.normalize();//Initializes car's image and Subtracts the start of each road from each car's position
+						//^ may not be necessary anymore, as it was originally needed for the horizontal roads
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -126,30 +130,13 @@ class RoadCanvas extends Canvas {
 		
 		int road = 0;
 		
-		 
-				try {
-					line = infile.readLine();
-					delta = Integer.parseInt(line);
-					line = infile.readLine();
-					gamma = Integer.parseInt(line);
-					line = infile.readLine();//Read in "epsilon" value
-					epsilon = Double.parseDouble(line);
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}//Read in "delta" value
-				
-				
-		
 		try {//Populates global road array public and "super global" car array.
 			int i = 0;
-			Color[] colors = {Color.yellow,Color.blue,Color.green,Color.white,Color.magenta,
-					Color.orange,Color.cyan};//this will probably change, since the user may be able to customize colors
+			
 			int maxEnd = 0;
-			int minStart = -1;
+			int minStart = -1;//used to set screen to correct size
 			do{
-				
-				
+			
 				do{
 					
 					line = infile.readLine();
@@ -157,6 +144,7 @@ class RoadCanvas extends Canvas {
 						break;
 					line = line.replaceAll(" ", "");
 					String[] lineElts = line.split(",");
+					
 					if(lineElts[0].equals("road")){
 						//System.out.println("Road number: "+road);
 						roads.add(new Road(lineElts,road));
@@ -167,44 +155,47 @@ class RoadCanvas extends Canvas {
 						Car c = new Car(lineElts,this,roads.get(road));
 						cars.add(c);
 						roads.get(road).rCars.add(c);
+						
 						if(c.finish > maxEnd)
 							maxEnd = c.finish;
 						if(minStart == -1 || c.start < minStart)
 							minStart = c.start;
+						//^When everything is initialised, the end of every road (on the screen) will
+						//be the farthest finish line among all of the cars
 						
-						c.color = colors[i];
-						roads.get(road).colors.add(colors[i]);//Keeping track of the colors of cars on the road
 						
+						c.color = Constants.colors[i];
+						roads.get(road).colors.add(Constants.colors[i]);
+						//^Coloring is handled outside the car contructor since each road needs to keep
+						//track of each color of car it contains, to ensure there are no two cars with the 
+						//same color
 						
 						i = (i+1)%7;
 					}
 					
 				}while(!line.equals("endroad"));
-				/*if(road < roads.size()){
-					roads.get(road).setLength(minStart,maxEnd);//Like all numbers in this loop, this is in UNITS.
-					for(Car car: roads.get(road).rCars)
-						car.normalize();
-				}*/
+			
 				road++;
 			}while(line != null);
 			
-			for (Road r:roads){
+			for (Road r:roads){//set the length of every road, normalize the cars.
 				if(minStart == -1 && maxEnd == 0)
 					r.setLength(0,r.intLoc+50);//still arbitrary
 				else
 					r.setLength(minStart,maxEnd);
 				for (Car c: r.rCars)
-					c.normalize();
+					c.normalize();//Initializes car's image and Subtracts the start of each road from each car's position
+					//^ may not be necessary anymore, as it was originally needed for the horizontal roads
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		repaint();
-		adjustSize(getWidth(),getHeight());
 		
+		adjustSize(getWidth(),getHeight());
+		repaint();
 	}
 	
-	public void redraw(boolean cars, boolean update){
+	public void redraw(boolean cars, boolean update){//used to make handling these booleans easier
 		updateStatus = update;
 		justPaintCars = cars;
 		repaint();
@@ -212,31 +203,42 @@ class RoadCanvas extends Canvas {
 		justPaintCars = false;
 	}
 	
-	public void adjustSize(int width, int height){
+	public void adjustSize(int width, int height){//exactly what it sounds like
 		setSize(width,height);
 		for(Road r:roads)
 			r.adjust(this);
 			
 	}
 	
-	public void paint(Graphics g){//TODO: this is likely not going to change, but it(repaint()) will get a nice wrapper function!
+	public void paint(Graphics g){
 		g.setColor(Color.white);
 		g.fillRect(-2, -2, this.getWidth()+5,this.getHeight()+5);
-		if(updateStatus){
-			drawStatus(g);			
+		if(updateStatus){//in many situations, we only need to update the status or the car's positions
+			drawStatus(g);//so we use theses booleans to avoid wasting resources drawing the roads and background			
 		}else{
-			for(Road r:roads)
-				if(justPaintCars)
+			if(justPaintCars)
+				for(Road r:roads){//^see comment above
 					for(Car car : r.rCars)
 							car.paintCar(g);
-				else
+					r.drawFinishes(g);
+							
+			}else
+				for(Road r:roads)
 					r.paintComponent(g,true,getWidth()/2,getHeight()/2);
+				for(Road r:roads){
+					for(Car car : r.rCars)
+						car.paintCar(g);
+					r.drawFinishes(g);
+				}
+					
+			
+			
 				
-			for (Road r:roads)
-				r.paintComponent(g,false,getWidth()/2,getHeight()/2);
+		//	for (Road r:roads)
+		//		r.paintComponent(g,false,getWidth()/2,getHeight()/2);
 				
-			for (Road r:roads)
-				r.drawFinishes(g);
+		//	for (Road r:roads)
+			//	r.drawFinishes(g);
 			
 			drawStatus(g);
 		

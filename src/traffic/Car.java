@@ -16,7 +16,12 @@ import java.lang.reflect.InvocationTargetException;
 import javax.imageio.ImageIO;
 
 
-public class Car implements Cloneable {
+public class Car {
+	/*
+	 * Stores any and all information relating to the current state of a car as well as the functions 
+	 * that help render it on the canvas (each car's history is recorded in and by MainFrame)
+	 * 
+	 */
 	
 	public int start;//denoted in UNITS
 	int velocity;//denoted in UNITS
@@ -36,13 +41,6 @@ public class Car implements Cloneable {
 	public RoadCanvas c;
 	
 	
-	public Object clone() {
-		try
-		{
-		return super.clone();
-		}
-		catch(Exception e){ return null; }
-	}
 	
 	
 	Car(String lineElts[],RoadCanvas c,Road r){//Everything in units!
@@ -50,7 +48,7 @@ public class Car implements Cloneable {
 		minVel = Integer.parseInt(lineElts[2]);
 		velocity = Integer.parseInt(lineElts[3]);
 		maxVel = Integer.parseInt(lineElts[4]);
-		maxAccel = Integer.parseInt(lineElts[5]);
+		maxAccel = Double.parseDouble(lineElts[5]);
 		finish = Integer.parseInt(lineElts[6]);
 		if(lineElts[7].equals("0"))
 			controlled = false;
@@ -65,10 +63,11 @@ public class Car implements Cloneable {
 	//	adjust();
 	}
 	
-	public void normalize(){//necessary in order for cars to be rendered in correct locations
-		start -= road.start;
-		finish -= road.start;
-		//Constants.p("Start: "+start+" Finish: "+finish);
+	public void normalize(){//may be necessary in order for cars to be rendered in correct locations
+		
+		//finish -= road.start;
+		//start -= road.start;
+	//Constants.p("Start: "+start+" Finish: "+finish);
 		try{
 		image = ImageIO.read(new File("car/"+Constants.colorName(color)+".png"));
 		
@@ -114,46 +113,13 @@ public class Car implements Cloneable {
 		
 	}
 	
-	/*public void adjust(){
-		//TODO: document this mess "tomorrow"
-		/*int yPos = c.roads[roadIndex].sYPos;
-		int ppu = c.roads[roadIndex].pixelsPerUnit;
-		int offSet = Constants.CRASH_OFFSET*ppu;
-		
-		int begin = start*ppu - offSet*3/2;
-				
-		offSet /= 3;
-		int cRange = 2*Constants.CRASH_OFFSET*ppu;
-		crashRange = new Rectangle((start-2)*ppu,yPos,cRange,offSet*Constants.CRASH_OFFSET);
-
-		
-		int[] Xs = {begin,begin+offSet,begin+offSet*3/2,begin+offSet*3/2+cRange,begin+offSet*2+cRange,
-				begin+cRange+offSet*3,begin+cRange+offSet*3,begin};
-		
-		wheelStats[1] = begin + offSet/2;
-		wheelStats[3] = wheelStats[1]+cRange;
-		
-		
-		
-		offSet = c.roads[roadIndex].sHeight/3;
-	
-		int[] Ys = {yPos+offSet,yPos+offSet,yPos,yPos,yPos+offSet,yPos+offSet,yPos+2*offSet,yPos+2*offSet};
-		wheelStats[0] = offSet;
-		wheelStats[2] = yPos+2*offSet;
-		image.reset();
-		
-	
-		for(int i = 0; i<8;i++){
-			image.addPoint(Xs[i], Ys[i]);
-		}*/
-	//}
 	
 	
 	public void paintCar(Graphics g){
 		Graphics2D g2 = (Graphics2D)g;
 		
 		int [] toPlace = translate();
-	//	Constants.p("Car's position: "+this.start+" Translated indices: ("+toPlace[0]+","+toPlace[1]+")");
+	
 		
 		g2.rotate(road.startAngle,toPlace[0],toPlace[1]);
 		
@@ -176,21 +142,7 @@ public class Car implements Cloneable {
 			toDraw = ""+(start - road.intLoc);
 		
 		g.drawString(toDraw, toPlace[0],toPlace[1]);
-	//	Constants.p("("+image.getWidth()/3+","+image.getHeight()/3+")");
-	/*	
-		int [] center = this.translate();
-		double startAngle = c.roads[this.roadIndex].startAngle;
-		Constants.polarMove(center, startAngle+Math.PI/2, Constants.ROAD_WIDTH/2);
-		Constants.polarMove(center, startAngle, 20);
-		
-		g2.drawRect(center[0]-23,center[1]-23,47,47);*/
-		
-	//	Constants.p("Adjusted center: ("+center[0]+","+center[1]+")");
-			
-		
-	//	g.fillOval(wheelStats[1], wheelStats[2], wheelStats[0], wheelStats[0]);
-	//	g.fillOval(wheelStats[3], wheelStats[2], wheelStats[0], wheelStats[0]);
-		
+
 	}
 	
 	

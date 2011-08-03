@@ -3,8 +3,9 @@ package traffic;
 import java.awt.Color;
 
 public final class Constants {
-	//TODO: crash offset is going to be stored somewhere other than here, as it's going to be read in.
-	static final int CRASH_OFFSET = 2;//The length of units (on both sides) that denotes the "crash range" of all cars
+	/*
+	 * Stores various things that it's useful for many other things is the program to be able to access
+	 */
 	static final int ROAD_WIDTH = 40;
 	
 	static Color[] colors = {Color.yellow,Color.blue,Color.green,Color.white,Color.magenta,
@@ -26,8 +27,7 @@ public final class Constants {
 			return "White";
 		if(c.equals(Color.magenta))
 			return "Pink";
-	//	if(c.equals(Color.pink))
-	//		return "Pink";
+
 		if(c.equals(Color.orange))
 			return "Orange";
 		if(c.equals(Color.cyan))
@@ -46,16 +46,18 @@ public final class Constants {
 			return Color.white;
 		if(s.equals("Pink"))
 			return Color.magenta;
-	//	if(c.equals(Color.pink))
-	//		return "Pink";
+
 		if(s.equals("Orange"))
 			return Color.orange;
 		if(s.equals("Cyan"))
 			return Color.cyan;
+		
 		Constants.p("Returning null");
 		return null;
 	}
-	public static void p(String s){
+	
+	public static void p(String s){//Because typing out all 20+ characters of System.out.println(...) is
+								//far too tedious
 		System.out.println(s);
 	}
 }

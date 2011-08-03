@@ -7,14 +7,19 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class Road {
+	/*
+	 * Contains all information relating to a road, as well as the functions that help render it on the canvas
+	 */
+	
+	
 	public int intLoc;//these are in "units"!
 	public int intLength;//these are in "units"!
-	public int height,yPos,sYPos,sHeight;//these are in pixels
+	//public int height,yPos,sYPos,sHeight;//these are in pixels
 	public int start,finish;//these are in "units"!
 	public double pixelsPerUnit;
 	public int index;//TODO: most of this^ shit is going to be changed
 	
-	private Polygon pavement,intersection;
+	private Polygon pavement;//,intersection;
 	public double theta,startAngle;
 	public ArrayList<Car> rCars;
 	public int unitCenter;
@@ -28,7 +33,7 @@ public class Road {
 		rCars = new ArrayList<Car>();
 		index = i;
 		pavement = new Polygon();
-		intersection = new Polygon();
+		//intersection = new Polygon();
 		colors = new HashSet<Color>();
 		
 		
