@@ -8,9 +8,11 @@ import java.util.Comparator;
 import java.util.Random;
 import java.util.Arrays;
 
-public class SimpComp extends Controller {
+public class CeCoComp extends Controller {
+	
 	Car[] cars;
 	int gamma, delta;
+	int numcon;
 	TreeMap<int[], Node> nodes;
 	
 	void PrintVec(int[] vec, String s, PrintStream ps) {
@@ -45,15 +47,6 @@ public class SimpComp extends Controller {
 		}
 	}
 	
-	public SimpComp(ArrayList<Car> cars, int gamma, int delta) {
-		this.cars = new Car[cars.size()];
-		for (int i = 0; i < cars.size(); i++) this.cars[i] = cars.get(i).copy();
-		Arrays.sort(this.cars, new CarComp());
-		this.gamma = gamma;
-		this.delta = delta;
-		nodes = new TreeMap<int[], Node>(new PosComp());
-	}
-	
 	class Node {
 		ArrayList<Edge> edges;
 		boolean safe;
@@ -66,12 +59,27 @@ public class SimpComp extends Controller {
 	
 	class Edge {
 		int[] vel;
+		int safe;
 		
-		public Edge(int[] vel) {
+		public Edge(int[] vel, int safe) {
+			this.safe = safe;
 			this.vel = new int[vel.length];
 			for (int i = 0; i < vel.length; i++) {
 				this.vel[i] = vel[i];
 			}
+		}
+	}
+	
+	public CeCoComp(ArrayList<Car> cars, int gamma, int delta) {
+		this.cars = new Car[cars.size()];
+		for (int i = 0; i < cars.size(); i++) this.cars[i] = cars.get(i).copy();
+		Arrays.sort(this.cars, new CarComp());
+		this.gamma = gamma;
+		this.delta = delta;
+		nodes = new TreeMap<int[], Node>(new PosComp());
+		numcon = 0;
+		for (Car c : cars) {
+			if (c.controlled) numcon++;
 		}
 	}
 	
@@ -97,13 +105,14 @@ public class SimpComp extends Controller {
 		}
 		return pos;
 	}
-
+	
 	@Override
 	public boolean hasSolution(ArrayList<Car> carAL) {
 		int[] pos = GetPos(carAL);
 		return nodes.containsKey(pos);
 	}
 
+	@Override
 	public String next(ArrayList<Car> carAL) {
 		int[] pos = GetPos(carAL);
 		Compute(pos);
@@ -112,10 +121,22 @@ public class SimpComp extends Controller {
 		Random generator = new Random();
 		if (node.safe) { // Choose a random safe control action
 			int r = generator.nextInt(node.edges.size());
-			Update(carAL, pos, node.edges.get(r).vel);
+			int[] edgevel = node.edges.get(r).vel;
+			int[] vel = new int[pos.length];
+			int min, max;
+			for (int i = 0; i < edgevel.length; i++) {
+				if (edgevel[i] == 0) continue;
+				min = Math.max(cars[i].minVel, edgevel[i] - delta);
+				max = Math.min(cars[i].maxVel, edgevel[i] + delta);
+				vel[i] = min + generator.nextInt(max - min + 1);
+			}
+			for (int i = numcon; i < pos.length; i++) {
+				vel[i] = cars[i].minVel + generator.nextInt(cars[i].maxVel - cars[i].minVel + 1);
+			}
+			Update(carAL, pos, vel);
 			return "Safe\n";
 		} // Choose a random feasible control action.
-		int[] vel = new int[cars.length];
+		int[] vel = new int[pos.length];
 		for (int i = 0; i < vel.length; i++) {
 			if (pos[i] == cars[i].finish) vel[i] = 0;
 			else vel[i] = cars[i].minVel + generator.nextInt(cars[i].maxVel - cars[i].minVel + 1);
@@ -158,25 +179,54 @@ public class SimpComp extends Controller {
 		for (int i = 0; i < pos.length; i++) key[i] = pos[i];
 		nodes.put(key, n);
 		boolean done = false;
+		boolean doneuncon;
+		boolean allsafe;
 		// First try the setting all the velocities to minVel, except for those cars that have finished.
 		int[] vel = new int[pos.length];
+		int[] edgevel = new int[numcon];
 		int[] out = new int[pos.length];
-		for (int i = 0; i < vel.length; i++) {
+		for (int i = 0; i < numcon; i++) {
 			if (pos[i] >= cars[i].finish) vel[i] = 0;
 			else vel[i] = cars[i].minVel;
 		}
 		while (!done) {
 			// If the transition doesn't cross the bad set, then recursively check the next node.
-			if (SafeEdge(pos, vel)) {
-				for (int i = 0; i < pos.length; i++) out[i] = Math.min(pos[i] + vel[i], cars[i].finish);
-				if(Compute(out)) {
-					n.safe = true; // A safe solution has been found which uses this transition.
-					n.edges.add(new Edge(vel));
+			for (int i = 0; i < numcon; i++) edgevel[i] = vel[i];
+			for (int i = numcon; i < vel.length; i++) {
+				if (pos[i] >= cars[i].finish) vel[i] = 0;
+				else vel[i] = cars[i].minVel;
+			}
+			doneuncon = false;
+			allsafe = true;
+			while (!doneuncon) {
+				if (SafeEdge(pos, vel)) {
+					for (int i = 0; i < pos.length; i++) out[i] = Math.min(pos[i] + vel[i], cars[i].finish);
+					if(!Compute(out)) {
+						n.edges.add(new Edge(edgevel, 0));
+						allsafe = false;
+						break;
+					}
+				} else {
+					n.edges.add(new Edge(edgevel, 0));
+					allsafe = false;
+					break;
+				}
+				doneuncon = true;
+				for (int i = numcon; i < vel.length; i++) {
+					if (vel[i] == 0) continue;
+					if (vel[i] == cars[i].maxVel) {
+						vel[i] = cars[i].minVel;
+						continue;
+					}
+					vel[i]++;
+					doneuncon = false;
+					break;
 				}
 			}
+			if (allsafe) n.edges.add(new Edge(edgevel, delta + 1));
 			// Compute the next feasible velocity vector, if there is one.
 			done = true;
-			for (int i = 0; i < vel.length; i++) {
+			for (int i = 0; i < numcon; i++) {
 				if (vel[i] == 0) continue;
 				if (vel[i] == cars[i].maxVel) {
 					vel[i] = cars[i].minVel;
@@ -187,7 +237,34 @@ public class SimpComp extends Controller {
 				break;
 			}
 		}
+		int md;
+		Iterator<Edge> iter1, iter2;
+		Edge e1, e2;
+		int[] edgevel2;
+		iter1 = n.edges.iterator();
+		while (iter1.hasNext()) {
+			e1 = iter1.next();
+			if (e1.safe > 0) continue;
+			edgevel = e1.vel;
+			iter2 = n.edges.iterator();
+			while (iter2.hasNext()) {
+				e2 = iter2.next();
+				if (e2.safe == 0) continue;
+				edgevel2 = e2.vel;
+				md = 0;
+				for (int k = 0; k < numcon; k++) {
+					md = Math.max(md, Math.abs(edgevel[k] - edgevel2[k]));
+				}
+				e2.safe = Math.min(e2.safe, md);
+			}
+		}
+		iter1 = n.edges.iterator();
+		while (iter1.hasNext()) {
+			e1 = iter1.next();
+			if (e1.safe <= delta) iter1.remove();
+		}
 		n.edges.trimToSize();
+		if (n.edges.size() > 0) n.safe = true;
 		if (!n.safe) n.edges = null;
 		if (Debug.debug.containsKey("PrintCon")) {
 			PrintStream ps = Debug.debug.get("PrintCon").stream;
@@ -195,9 +272,9 @@ public class SimpComp extends Controller {
 			if (!n.safe) ps.print("Node Unsafe\n\n");
 			else {
 				ps.print("Safe Edges:\n");
-				Iterator<Edge> iter = n.edges.iterator();
-				while (iter.hasNext()) {
-					PrintVec(iter.next().vel, "Vel:", ps);
+				iter1 = n.edges.iterator();
+				while (iter1.hasNext()) {
+					PrintVec(iter1.next().vel, "Vel:", ps);
 				}
 				ps.print("\n");
 			}
@@ -222,6 +299,7 @@ public class SimpComp extends Controller {
 			if (vel[i] == 0) continue;
 			for (int j = i + 1; j < cars.length; j++) {
 				if (vel[j] == 0) continue;
+				if (!cars[i].controlled && !cars[j].controlled) continue;
 				if (cars[i].road.index == cars[j].road.index) {
 					Cij1n = -gamma - in[i] + in[j];
 					Cij2n = gamma - in[i] + in[j];

@@ -1,9 +1,7 @@
 package traffic;
 
+import java.util.Map;
+
 public class Debug {
-	/*
-	 * Will likely be greatly expanded upon in the future
-	 */
-	static String[] debug = null;
-	static String[] debugfiles = null;
+	static Map<String, Pair> debug = null;
 }

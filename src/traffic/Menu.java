@@ -223,7 +223,7 @@ public class Menu extends JMenuBar implements ActionListener {
 		parent.memory = new ArrayList<SnapShot[]>();
 		
 		if(parent.controllerName.equals("SimpComp"))
-			parent.con = new SimpComp(parent.cars,parent.c.gamma,parent.c.delta,parent.c.epsilon);
+			parent.con = new SimpComp(parent.cars,parent.c.gamma,parent.c.delta);
 		
 		//TODO: add other controllers, or Class and Constructor objects
 		else

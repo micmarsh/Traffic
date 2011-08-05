@@ -18,18 +18,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import java.lang.reflect.Constructor;
 
+import java.io.PrintStream;
+
 public class Traffic {
 	
-	/*
-	 * Contains MainFrame, the class that houses all of the other classes in the program, and runs
-	 * most of the functions associated with the simulator buttons
-	 */
 
 	
 	public class MainFrame extends JFrame implements ComponentListener {
@@ -45,10 +47,8 @@ public class Traffic {
 		Controller con;
 		
 		
-		
 		MainFrame(String title,String input){//Most of the interesting stuff happens in the RoadCanvas constructor
 			super(title);
-			controllerName = input;
 			configure();
 			System.out.println("Contructing Main Window...");
 			setSize(900, 600);
@@ -56,19 +56,25 @@ public class Traffic {
 			L.setAlignment(L.LEFT);
 			setLayout(L);
 			
+			controllerName = input;
+			//TODO: this will vary with command line args
+			
 			cars = new ArrayList<Car>();
 			memory = new ArrayList<SnapShot[]>();
 			play = false;
 	
-
+			//Constants.p(lastOpened);
+			
 			c = new RoadCanvas(lastOpened,cars,this);//"NONE" for now, will eventually remember last opened file
 			b = new ButtonPanel(this,sim);
 			m = new Menu(this,sim);
 			
-			if(controllerName.equals("SimpComp"))
-				con = new SimpComp(cars,c.gamma,c.delta,c.epsilon);
-			
-			//TODO: add other controllers, or Class and Constructor objects
+			if(input.equals("SimpComp"))
+				con = new SimpComp(cars,c.gamma,c.delta);
+			else if (input.equals("CeComp"))
+				con = new CeComp(cars,c.gamma,c.delta);
+			else if (input.equals("CeCoComp"))
+				con = new CeCoComp(cars, c.gamma, c.delta);
 			else
 				con = new MController(cars, c.gamma, c.delta);
 			
@@ -100,17 +106,14 @@ public class Traffic {
 			try{
 			BufferedReader infile = new BufferedReader(new FileReader("config"));
 			String line = infile.readLine();
-			lastOpened = line;//filepath to current simulation's save file
+			lastOpened = line;
 			line = infile.readLine();
 			if(line.equals("true"))
 				sim = true;
 			else
 				sim = false;
-			
 			line = infile.readLine();
 			miliSecondsPerFrame = (int)(1000/Double.parseDouble(line));
-			//^Inverse of 'frames per second' field
-			
 			ArrayList<String> names = new ArrayList<String>();
 			ArrayList<String> files = new ArrayList<String>();
 			boolean boolDebug = false;
@@ -120,17 +123,30 @@ public class Traffic {
 					String[] optFile = line.split(" ");
 					
 					names.add(optFile[0]);
-					
-					files.add(optFile[1]);
+					if (optFile.length > 1) files.add(optFile[1]);
+					else files.add(null);
 				}
 			}
 			
 			if(boolDebug){
-				Debug.debug = new String[names.size()];
-				Debug.debugfiles = new String[names.size()];
-				for(int i = 0; i < names.size(); i++){
-					Debug.debug[i] = names.get(i);
-					Debug.debugfiles[i] = files.get(i);
+				Debug.debug = new TreeMap<String, Pair>();
+				boolean found;
+				for (int i = 0; i < names.size(); i++){
+					if (files.get(i) == null) {
+						Debug.debug.put(names.get(i), new Pair(files.get(i), System.out));
+						continue;
+					}
+					found = false;
+					for (int j = 0; j < i; j++) {
+						if (files.get(i).equals(files.get(j))) {
+							Debug.debug.put(names.get(i), new Pair(files.get(i), Debug.debug.get(names.get(j)).stream));
+							found = true;
+							break;
+						}
+					}
+					if (!found) {
+						Debug.debug.put(names.get(i), new Pair(files.get(i), new PrintStream(files.get(i))));
+					}
 				}
 			}
 				
@@ -147,8 +163,16 @@ public class Traffic {
 				config.write(((double)1000/(double)miliSecondsPerFrame)+"\n");
 				if(Debug.debug != null){
 					config.write("DEBUG\n");
-					for(int i = 0; i < Debug.debug.length; i++)
-						config.write(Debug.debug[i]+" "+Debug.debugfiles[i]+"\n");
+					Set< Map.Entry<String, Pair> > entries = Debug.debug.entrySet();
+					Iterator< Map.Entry<String, Pair> > iter = entries.iterator();
+					Map.Entry<String, Pair> me;
+					while (iter.hasNext()) {
+						me = iter.next();
+						config.write(me.getKey());
+						if (me.getValue().name != null) config.write(" " + me.getValue().name);
+						config.write("\n");
+						me.getValue().stream.close();
+					}
 				}
 				
 				config.close();
@@ -159,35 +183,35 @@ public class Traffic {
 		}
 		
 		private void sizeComponents(){
-			c.adjustSize(getWidth()-135,getHeight());
-			b.adjustSize(130,getHeight());
+			c.adjustSize(getWidth()-135,getHeight());//135
+			b.adjustSize(130,getHeight());//130
 		//	for(Car car:cars)
 		//		car.adjust(c);
 			listener.updateCars();
 		}
 
-		public void next(){
-
+		public void next(){//TODO: this will take arguments, and change accordingly
+			
 			SnapShot[] current = new SnapShot[cars.size()];
-			
+			ArrayList<Car> oldCars = new ArrayList<Car>();
 			String oldStat = c.status;
-			
 			if(!con.hasSolution(cars))
-				c.status = "Calculating";//This will display if con.next() below takes a significant amount of time to calculate
+				c.status = "Calculating";
+			
+			c.redraw(false,true);
 			
 			String message = "";
 			
-			
-			ArrayList<Car> oldCars = new ArrayList<Car>();
+
 			for (Car car : cars)
-					oldCars.add(car.copy());//need to record previous positions of cars so we can calculate the difference below
+					oldCars.add(car.copy());
 			
 			
-			message = con.next(cars);//moves cars, amoung many other things
+			message = con.next(cars);
 			
-			c.status = oldStat;//This will usually appear instantaneously, see note above
+			c.status = oldStat;
 			
-			for (int i = 0; i < cars.size(); i++){//Snapshot array recording changes to cars
+			for (int i = 0; i < cars.size(); i++){
 				Car oldCar = oldCars.get(i);
 				Car car = cars.get(i);
 				current[i] = new SnapShot(car.start - oldCar.start,car.velocity - oldCar.velocity, car );
@@ -199,14 +223,13 @@ public class Traffic {
 			c.redraw(true,false);
 			
 			c.stat2ndLine = message;
-			
-			checkLoop(current);//check to see if any cars have crossed the finish line, deleting if so
-			//^also checks to see if any cars have crashed, prompting user for input if so
+			checkLoop(current);//now just checks for "finished" cars
+		//	listener.updateCars();
 			memory.add(current);
 		}
 		
 		public class RoadAndInt{//Helps, ultimately, to remove cars from "cars" arraylist in proper order, eliminating indexing issues
-			public Road road;////(continued from above)associated with removing several objects from an arraylist at once
+			public Road road;
 			public int integer;
 			RoadAndInt(int num, Road r){
 				road = r;
@@ -229,14 +252,14 @@ public class Traffic {
 					}
 					for(int j = i+1; j<r.rCars.size();j++)
 						if(collision(r.rCars.get(i),r.rCars.get(j))){
-							crash(r.rCars.get(i),r.rCars.get(j),0);//crashed if two cars are too close to each other
+							crash(r.rCars.get(i),r.rCars.get(j),0);
 						}
 						
 					if(r.rCars.get(i).start>= r.intLoc && r.rCars.get(i).start  <= r.intLength + r.intLoc){
 						if(inIntersection == null)
-							inIntersection = r.rCars.get(i);//remembers if a car is in this road, so subsequent loops can compare
+							inIntersection = r.rCars.get(i);
 						else
-							crash(inIntersection,r.rCars.get(i),42);//crashes if two cars are in the same intersection at once
+							crash(inIntersection,r.rCars.get(i),42);
 					}
 						
 				}
@@ -245,7 +268,7 @@ public class Traffic {
 					if(intTaken != null )//once there's a car in two intersections, it crashes
 						crash(inIntersection,intTaken,1);
 					
-					intTaken = inIntersection;//"moves" car to second variable, when first variable becomes non-null again, there's an intersection crash
+					intTaken = inIntersection;
 					inIntersection = null;
 				}
 				
@@ -255,7 +278,7 @@ public class Traffic {
 			RoadAndInt [] toR = new RoadAndInt[toRemove.size()];
 			
 			for(int i = 0; i< toR.length;i++)
-				toR[i] = toRemove.get(i);//transfer elements so array to take advantage of java's built-in sorting function
+				toR[i] = toRemove.get(i);
 			
 			Comparator<RoadAndInt> intcomp = new IntComparator();
 			Arrays.sort(toR,intcomp);//sorts the new "toRemove" array by the "integer" field
@@ -268,11 +291,11 @@ public class Traffic {
 				Car c = r.road.rCars.get(i); 
 					
 					int index = cars.indexOf(c);
-					array[index].deleted = true;//records the fact that this car was removed with the snapshot array
-			
+					array[index].deleted = true;
+			//		array[index].road = array[index].source.road.index;
 					r.road.rCars.remove(i);
 
-					absoluteIndices[j] = index;//use for removal below
+					absoluteIndices[j] = index;
 					j++;
 		//		}
 			}
@@ -280,14 +303,14 @@ public class Traffic {
 			
 			Arrays.sort(absoluteIndices);
 			for(int i = absoluteIndices.length - 1; i >= 0;i--){
-				cars.remove(absoluteIndices[i].intValue());//removes car from larger "cars" arraylist
+				cars.remove(absoluteIndices[i].intValue());//Does the same as above for "cars" ArrayList
 			}
 			
 			if(!toRemove.isEmpty())
-				listener.updateCars();//removes ability to click on a car, since it's been removed
+				listener.updateCars();
 		}
 		
-		public class IntComparator implements Comparator<RoadAndInt>{//allows Array.sort() to sort RoadAndInt objects by the "integer" field
+		public class IntComparator implements Comparator<RoadAndInt>{//allows Array.sort() to sort RoadAndInt's by the "integer" 
 
 			@Override
 			public int compare(RoadAndInt arg0, RoadAndInt arg1) {
@@ -301,41 +324,40 @@ public class Traffic {
 		}
 		
 		public void rewind(){
-			if(!memory.isEmpty()){//<-If it's empty, we're at the beginning of the program
+			if(!memory.isEmpty()){
 				SnapShot[] restore = memory.remove(memory.size()-1);
 				
 				try{
-					EditShot changes = (EditShot) restore[0];//<- This will throw its exception if we're undo a simple call to next(), jumping to code block below
-					if(changes.road != null){//<- If road is not null, the EditShot refers to a road
-						if(changes.created){//<- a road was created: remove the road
+					EditShot changes = (EditShot) restore[0];
+					if(changes.road != null){//we're rolling back the changes to a road
+						if(changes.created){
 							c.roads.remove(changes.road);
 							this.componentResized(new ComponentEvent(new Container(), 2));
 						}
-						else{//<- a road was modified: undo changes
+						else{
 							changes.road.intLoc -= changes.locChange;
 							changes.road.intLength -= changes.lenChange;
 							if(changes.deleted){
 								c.roads.add(changes.road.index+1,changes.road);
 								for(int i = changes.road.index+1; i < c.roads.size();i++)
-									c.roads.get(i).index++;//Adjust indices of reads to compensate for the re-insertion
+									c.roads.get(i).index++;
 								this.componentResized(new ComponentEvent(new Container(), 2));
 								c.repaint();
 							}
 							
 						}
-					}else{//"road" field was null, the Editshot refers to a car
-						
-						if(changes.created){//a new car was added, remove it now.
+					}else{//rolling back the changes to a car
+						if(changes.created){
 							cars.remove(changes.source);
 							changes.source.road.rCars.remove(changes.source);
 							changes.source.road.colors.remove(changes.source.color);
 							
-							MController Mcon = (MController)con;//TODO: make cars array part of the prototype?
+							MController Mcon = (MController)con;//TODO: this specificity is obviously a big issue, resolve later
 							Mcon.cars.remove(changes.source);
 							
 							listener.updateCars();
 						}
-						else{//<-The car was only adjusted, undo modifications
+						else{
 							Car car = changes.source;
 							car.road = c.roads.get(car.road.index - changes.rChange);
 							car.minVel -= changes.minVchange;
@@ -351,7 +373,7 @@ public class Traffic {
 							}
 						}
 					}
-				}catch(ClassCastException e){//<- now we're just rewinding a regular move
+				}catch(Exception e){
 					
 					for(int i = 0; i < restore.length;i++){
 							Car car = restore[i].source;
@@ -379,13 +401,13 @@ public class Traffic {
 				rewind();
 		}
 		
-		public void toggleListeners(){//Called when custom dialog frames open/close
+		public void toggleListeners(){
 			m.listen = !m.listen;
 			b.listen = !b.listen;
 			listener.listen = !listener.listen;
 		}
 		
-		public boolean collision(Car c1, Car c2){//checks for a collision on one road
+		public boolean collision(Car c1, Car c2){
 			int offSet = c.gamma;
 			if(c1.start > c2.start - offSet && c1.start < c2.start + offSet){
 			//	System.out.println("Collision!");
@@ -396,7 +418,7 @@ public class Traffic {
 		}
 		
 		
-		public void crash(Car c1, Car c2,int intersection){//Displays crash alert dialog
+		public void crash(Car c1, Car c2,int intersection){
 			String message = "";
 			if(intersection == 0)
 				message = Constants.colorName(c1.color)+" car "+ctrlStr(c1.controlled)+" and "+Constants.colorName(c2.color)+" car "+ctrlStr(c2.controlled)+" crashed on" +
@@ -422,7 +444,7 @@ public class Traffic {
 			}
 		}
 		
-		private String ctrlStr(boolean controlled){//converts "controlled" boolean to an appropriate string
+		private String ctrlStr(boolean controlled){
 			if(controlled)
 				return "(controlled)";
 			else
@@ -467,18 +489,15 @@ public class Traffic {
 		try{
 			input = args[0];
 		}catch(Exception e){
-			Constants.p("No arguments found, defaulting to MController");
+			
 		}
-		
-		
-		
 		MainFrame m = new MainFrame("Traffic Simulator",input);
 	
 		m.setVisible(true);
 		
 		System.out.println("Program loaded, starting up!");
 		
-		while(true){//Main loop
+		while(true){
 			
 			try {
 				Thread.sleep(m.miliSecondsPerFrame);
