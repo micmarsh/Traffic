@@ -32,7 +32,16 @@ import java.io.PrintStream;
 
 public class Traffic {
 	
+	
+	/*
+	 * Contains MainFrame, the class that houses all of the other classes in the program, and runs
+	 * most of the functions associated with the simulator buttons
+	 */
 
+	
+	static boolean roadOrIntersection;
+	
+	static int[] carIndices = new int[2];
 	
 	public class MainFrame extends JFrame implements ComponentListener {
 		RoadCanvas c;		
@@ -106,7 +115,7 @@ public class Traffic {
 			try{
 			BufferedReader infile = new BufferedReader(new FileReader("config"));
 			String line = infile.readLine();
-			lastOpened = line;
+			lastOpened = line;//filepath to current simulation's save file
 			line = infile.readLine();
 			if(line.equals("true"))
 				sim = true;
@@ -114,6 +123,8 @@ public class Traffic {
 				sim = false;
 			line = infile.readLine();
 			miliSecondsPerFrame = (int)(1000/Double.parseDouble(line));
+			//^Inverse of 'frames per second' field
+			
 			ArrayList<String> names = new ArrayList<String>();
 			ArrayList<String> files = new ArrayList<String>();
 			boolean boolDebug = false;
@@ -196,7 +207,8 @@ public class Traffic {
 			ArrayList<Car> oldCars = new ArrayList<Car>();
 			String oldStat = c.status;
 			if(!con.hasSolution(cars))
-				c.status = "Calculating";
+				c.status = "Calculating";//This will display if con.next() below takes a significant amount of time to calculate
+
 			
 			c.redraw(false,true);
 			
@@ -204,14 +216,14 @@ public class Traffic {
 			
 
 			for (Car car : cars)
-					oldCars.add(car.copy());
+					oldCars.add(car.copy());//need to record previous positions of cars so we can calculate the difference below
 			
 			
-			message = con.next(cars);
+			message = con.next(cars);//moves cars, among many other things
 			
-			c.status = oldStat;
+			c.status = oldStat;//This will usually appear instantaneously, see note above
 			
-			for (int i = 0; i < cars.size(); i++){
+			for (int i = 0; i < cars.size(); i++){//Snapshot array recording changes to cars
 				Car oldCar = oldCars.get(i);
 				Car car = cars.get(i);
 				current[i] = new SnapShot(car.start - oldCar.start,car.velocity - oldCar.velocity, car );
@@ -223,13 +235,13 @@ public class Traffic {
 			c.redraw(true,false);
 			
 			c.stat2ndLine = message;
-			checkLoop(current);//now just checks for "finished" cars
-		//	listener.updateCars();
+			checkLoop(current);//check to see if any cars have crossed the finish line, deleting if so
+			//^also checks to see if any cars have crashed, prompting user for input if so
 			memory.add(current);
 		}
 		
 		public class RoadAndInt{//Helps, ultimately, to remove cars from "cars" arraylist in proper order, eliminating indexing issues
-			public Road road;
+			public Road road;////(continued from above)associated with removing several objects from an arraylist 
 			public int integer;
 			RoadAndInt(int num, Road r){
 				road = r;
@@ -242,8 +254,21 @@ public class Traffic {
 			Car intTaken = null;
 			
 			ArrayList<RoadAndInt> toRemove = new ArrayList<RoadAndInt>();
+			
+			for(Road r : c.roads)
+				for(int i = 0; i < r.rCars.size();i++)
+					if(r.rCars.get(i).start >= r.rCars.get(i).finish){
+						toRemove.add(new RoadAndInt(i,r));//records the road and the index in the road's array
+						
+					}
+			
+			if(checkCrashed())
+				crash(cars.get(carIndices[0]),cars.get(carIndices[1]),roadOrIntersection?1:0);//TODO: Holy shit this is terrible. Think of something better ASAP
+			
+
+			
 		
-			for(Road r : c.roads){
+		/*	for(Road r : c.roads){
 				
 				for(int i = 0; i < r.rCars.size();i++){
 					if(r.rCars.get(i).start >= r.rCars.get(i).finish){
@@ -258,8 +283,8 @@ public class Traffic {
 					if(r.rCars.get(i).start>= r.intLoc && r.rCars.get(i).start  <= r.intLength + r.intLoc){
 						if(inIntersection == null)
 							inIntersection = r.rCars.get(i);
-						else
-							crash(inIntersection,r.rCars.get(i),42);
+				//		else
+					//		crash(inIntersection,r.rCars.get(i),42);
 					}
 						
 				}
@@ -273,7 +298,7 @@ public class Traffic {
 				}
 				
 			
-			}
+			}*/
 			
 			RoadAndInt [] toR = new RoadAndInt[toRemove.size()];
 			
@@ -310,6 +335,56 @@ public class Traffic {
 				listener.updateCars();
 		}
 		
+		
+		public boolean checkCrashed(){
+			int[] in = new int[cars.size()];
+			int[] vel = new int[cars.size()];
+			
+			for (int i = 0; i < cars.size();i++){
+				in[i] = cars.get(i).start;
+				vel[i] = cars.get(i).velocity;
+			}
+				
+			
+				int Aij1, Aij2, Aij3, Aij4, Aij12, Aij34, Cij1n, Cij2n, Cijd;
+				for (int i = 0; i < cars.size(); i++) {
+					if (vel[i] == 0) continue;
+					for (int j = i + 1; j < cars.size(); j++) {
+						if (vel[j] == 0) continue;
+						if (!cars.get(i).controlled && !cars.get(j).controlled) continue;
+						if (cars.get(i).road.index == cars.get(j).road.index) {
+							Cij1n = -c.gamma - in[i] + in[j];
+							Cij2n = c.gamma - in[i] + in[j];
+							Cijd = vel[i] - vel[j];
+							if ((Cij2n > Cij1n && Cij2n > 0 && Cij1n < Cijd && Cijd > 0)
+									|| (Cij2n > Cij1n && Cij1n < 0 && Cij2n > Cijd && Cijd < 0)
+									|| (Cij1n < 0 && Cij2n > 0)){
+								carIndices[0] = i;
+								carIndices[1] = j;
+								roadOrIntersection = true;
+								return false;
+							}
+						} else {
+							Aij1 = (cars.get(i).road.intLoc - in[i])*vel[j];
+							Aij2 = (cars.get(j).road.intLoc - in[j])*vel[i];
+							Aij3 = (cars.get(i).road.intLoc + cars.get(i).road.intLength - in[i])*vel[j];
+							Aij4 = (cars.get(j).road.intLoc + cars.get(j).road.intLength - in[j])*vel[i];
+							Aij12 = (Aij1 > Aij2 ? Aij1 : Aij2);
+							Aij34 = (Aij3 < Aij4 ? Aij3 : Aij4);
+							
+							if (Aij34 > Aij12 && Aij34 > 0 && Aij12 < vel[i]*vel[j]){
+								carIndices[0] = i;
+								carIndices[1] = j;
+								roadOrIntersection = false;
+								return false;
+							}
+						}
+					}
+				}
+				return true;
+			
+		}
+		
 		public class IntComparator implements Comparator<RoadAndInt>{//allows Array.sort() to sort RoadAndInt's by the "integer" 
 
 			@Override
@@ -324,36 +399,41 @@ public class Traffic {
 		}
 		
 		public void rewind(){
-			if(!memory.isEmpty()){
+			if(!memory.isEmpty()){//<-If it's empty, we're at the beginning of the program
 				SnapShot[] restore = memory.remove(memory.size()-1);
 				
 				try{
-					EditShot changes = (EditShot) restore[0];
-					if(changes.road != null){//we're rolling back the changes to a road
-						if(changes.created){
+					EditShot changes = (EditShot) restore[0];//<- This will throw its exception if we're undo a simple call to next(), jumping to code block below
+					if(changes.road != null){//<- If road is not null, the EditShot refers to a road
+						if(changes.created){//<- a road was created: remove the road
 							c.roads.remove(changes.road);
 							this.componentResized(new ComponentEvent(new Container(), 2));
 						}
-						else{
+						else{//<- a road was modified: undo changes
 							changes.road.intLoc -= changes.locChange;
 							changes.road.intLength -= changes.lenChange;
 							if(changes.deleted){
 								c.roads.add(changes.road.index+1,changes.road);
 								for(int i = changes.road.index+1; i < c.roads.size();i++)
-									c.roads.get(i).index++;
+									c.roads.get(i).index++;//Adjust indices of roads to compensate for the re-insertion
 								this.componentResized(new ComponentEvent(new Container(), 2));
 								c.repaint();
 							}
 							
 						}
-					}else{//rolling back the changes to a car
+					}else{//"road" field was null, the Editshot refers to a car
 						if(changes.created){
 							cars.remove(changes.source);
 							changes.source.road.rCars.remove(changes.source);
 							changes.source.road.colors.remove(changes.source.color);
 							
+							try{
 							MController Mcon = (MController)con;//TODO: this specificity is obviously a big issue, resolve later
 							Mcon.cars.remove(changes.source);
+							}catch(Exception e){
+								//^That will always happen only with MController, thanks to classCaseExceptions
+								//if any other controllers work this way/require this, include them.
+							}
 							
 							listener.updateCars();
 						}
@@ -373,7 +453,7 @@ public class Traffic {
 							}
 						}
 					}
-				}catch(Exception e){
+				}catch(ClassCastException e){//<- now we're just rewinding a regular move
 					
 					for(int i = 0; i < restore.length;i++){
 							Car car = restore[i].source;
@@ -401,13 +481,13 @@ public class Traffic {
 				rewind();
 		}
 		
-		public void toggleListeners(){
+		public void toggleListeners(){//Called when custom dialog frames open/close
 			m.listen = !m.listen;
 			b.listen = !b.listen;
 			listener.listen = !listener.listen;
 		}
 		
-		public boolean collision(Car c1, Car c2){
+	/*	public boolean collision(Car c1, Car c2){
 			int offSet = c.gamma;
 			if(c1.start > c2.start - offSet && c1.start < c2.start + offSet){
 			//	System.out.println("Collision!");
@@ -415,10 +495,10 @@ public class Traffic {
 			}
 			else
 				return false;
-		}
+		}*/
 		
 		
-		public void crash(Car c1, Car c2,int intersection){
+		public void crash(Car c1, Car c2,int intersection){//Displays crash alert dialog
 			String message = "";
 			if(intersection == 0)
 				message = Constants.colorName(c1.color)+" car "+ctrlStr(c1.controlled)+" and "+Constants.colorName(c2.color)+" car "+ctrlStr(c2.controlled)+" crashed on" +
@@ -444,7 +524,7 @@ public class Traffic {
 			}
 		}
 		
-		private String ctrlStr(boolean controlled){
+		private String ctrlStr(boolean controlled){//converts "controlled" boolean to an appropriate string
 			if(controlled)
 				return "(controlled)";
 			else
@@ -489,7 +569,7 @@ public class Traffic {
 		try{
 			input = args[0];
 		}catch(Exception e){
-			
+			Constants.p("No arguments found, defaulting to MController");
 		}
 		MainFrame m = new MainFrame("Traffic Simulator",input);
 	
@@ -497,7 +577,7 @@ public class Traffic {
 		
 		System.out.println("Program loaded, starting up!");
 		
-		while(true){
+		while(true){//main loop
 			
 			try {
 				Thread.sleep(m.miliSecondsPerFrame);
