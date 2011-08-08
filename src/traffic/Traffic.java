@@ -263,7 +263,7 @@ public class Traffic {
 					}
 			
 			if(checkCrashed())
-				crash(cars.get(carIndices[0]),cars.get(carIndices[1]),roadOrIntersection?1:0);//TODO: Holy shit this is terrible. Think of something better ASAP
+				crash(cars.get(0),cars.get(1),roadOrIntersection?1:0);//TODO: Holy shit this is terrible. Think of something better ASAP
 			
 
 			
