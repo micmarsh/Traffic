@@ -262,10 +262,56 @@ public class Traffic {
 						
 					}
 			
-			if(checkCrashed())
-				crash(cars.get(0),cars.get(1),roadOrIntersection?1:0);//TODO: Holy shit this is terrible. Think of something better ASAP
+			//if(checkCrashed())
+				//crash(cars.get(0),cars.get(1),roadOrIntersection?1:0);//TODO: Holy shit this is terrible. Think of something better ASAP
 			
-
+			int[] in = new int[cars.size()];
+			int[] vel = new int[cars.size()];
+			
+			for (int i = 0; i < cars.size();i++){
+				in[i] = cars.get(i).start;
+				vel[i] = cars.get(i).velocity;
+			}
+				
+			
+				int Aij1, Aij2, Aij3, Aij4, Aij12, Aij34, Cij1n, Cij2n, Cijd;
+				for (int i = 0; i < cars.size(); i++) {
+					if (vel[i] == 0) continue;
+					for (int j = i + 1; j < cars.size(); j++) {
+						if (vel[j] == 0) continue;
+						if (!cars.get(i).controlled && !cars.get(j).controlled) continue;
+						if (cars.get(i).road.index == cars.get(j).road.index) {
+							Cij1n = -c.gamma - in[i] + in[j];
+							Cij2n = c.gamma - in[i] + in[j];
+							Cijd = vel[i] - vel[j];
+							if ((Cij2n > Cij1n && Cij2n > 0 && Cij1n < Cijd && Cijd > 0)
+									|| (Cij2n > Cij1n && Cij1n < 0 && Cij2n > Cijd && Cijd < 0)
+									|| (Cij1n < 0 && Cij2n > 0)){
+							//	carIndices[0] = i;
+							//	carIndices[1] = j;
+							//	roadOrIntersection = true;
+							crash(cars.get(i),cars.get(j),0);
+							}
+						} else {
+							Aij1 = (cars.get(i).road.intLoc - in[i])*vel[j];
+							Aij2 = (cars.get(j).road.intLoc - in[j])*vel[i];
+							Aij3 = (cars.get(i).road.intLoc + cars.get(i).road.intLength - in[i])*vel[j];
+							Aij4 = (cars.get(j).road.intLoc + cars.get(j).road.intLength - in[j])*vel[i];
+							Aij12 = (Aij1 > Aij2 ? Aij1 : Aij2);
+							Aij34 = (Aij3 < Aij4 ? Aij3 : Aij4);
+							
+							if (Aij34 > Aij12 && Aij34 > 0 && Aij12 < vel[i]*vel[j]){
+							//	carIndices[0] = i;
+							//	carIndices[1] = j;
+							//	roadOrIntersection = false;
+								crash(cars.get(i),cars.get(j),1);
+							}
+						}
+					}
+				}
+				//return true;
+			
+		
 			
 		
 		/*	for(Road r : c.roads){
@@ -335,7 +381,7 @@ public class Traffic {
 				listener.updateCars();
 		}
 		
-		
+		/*
 		public boolean checkCrashed(){
 			int[] in = new int[cars.size()];
 			int[] vel = new int[cars.size()];
@@ -383,7 +429,7 @@ public class Traffic {
 				}
 				return true;
 			
-		}
+		}*/
 		
 		public class IntComparator implements Comparator<RoadAndInt>{//allows Array.sort() to sort RoadAndInt's by the "integer" 
 
@@ -501,20 +547,22 @@ public class Traffic {
 		public void crash(Car c1, Car c2,int intersection){//Displays crash alert dialog
 			String message = "";
 			if(intersection == 0)
-				message = Constants.colorName(c1.color)+" car "+ctrlStr(c1.controlled)+" and "+Constants.colorName(c2.color)+" car "+ctrlStr(c2.controlled)+" crashed on" +
-				" road "+(c1.road.index+1)+ " at position "+(c2.start+c2.road.start)+".";
+				message = Constants.colorName(c1.color)+" car "+ctrlStr(c1.controlled)+" at position "+(c1.start+c1.road.start)+" and "+Constants.colorName(c2.color)+" car "+ctrlStr(c2.controlled)+" at position "+
+				(c2.start+c2.road.start)+" crashed on road "+(c1.road.index+1)+".\n";
 			else if (intersection == 1)
-				message = Constants.colorName(c1.color)+" car "+ctrlStr(c1.controlled)+"on road "+(c1.road.index+1)+ " and "+Constants.colorName(c2.color)+" car "+ctrlStr(c2.controlled)+" on" +
-				" road "+(c2.road.index+1)+" crashed in the intersection.";
-			else
-				message = Constants.colorName(c1.color)+ " car "+ctrlStr(c1.controlled)+" and "+Constants.colorName(c2.color)+" car "+(c2.controlled)+" cannot both be in road "+
-				(c1.road.index+1)+"'s intersection at once";
+				message = Constants.colorName(c1.color)+" car "+ctrlStr(c1.controlled)+" on road "+(c1.road.index+1)+ " (intersection start: "+(c1.road.intLoc+c1.road.start)+" intersection end: "+(c1.road.intLoc+c1.road.start+c1.road.intLength)
+				+") and \n"+Constants.colorName(c2.color)+" car "+ctrlStr(c2.controlled)+" on" +
+				" road "+(c2.road.index+1)+ " (intersection start: "+(c2.road.intLoc+c2.road.start)+" intersection end: "+(c2.road.intLoc+c2.road.start+c2.road.intLength)
+				+")"+"\ncrashed in the intersection. ";
+		//	else
+			//	message = Constants.colorName(c1.color)+ " car "+ctrlStr(c1.controlled)+" and "+Constants.colorName(c2.color)+" car "+(c2.controlled)+" cannot both be in road "+
+		//		(c1.road.index+1)+"'s intersection at once";
 			
 				
-			int pressed = JOptionPane.showConfirmDialog(null,message+"\nDo you want to continue?",null,JOptionPane.YES_NO_OPTION);
+			int pressed = JOptionPane.showConfirmDialog(null,message+"Do you want to continue?",null,JOptionPane.YES_NO_OPTION);
 			
-			//JOptionPane.
 			if (pressed==JOptionPane.YES_OPTION){
+			//JOptionPane.
 				if(play)
 					b.mouseClicked(new MouseEvent(b.play, 0,0,0,0,0,0, false));
 			}
