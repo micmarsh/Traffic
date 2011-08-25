@@ -65,8 +65,8 @@ public class Car {
 	
 	public void normalize(){//may be necessary in order for cars to be rendered in correct locations
 		
-		//finish -= road.start;
-		//start -= road.start;
+		finish -= road.start;
+		start -= road.start;
 	//Constants.p("Start: "+start+" Finish: "+finish);
 		try{
 		image = ImageIO.read(new File("car/"+Constants.colorName(color)+".png"));

@@ -119,6 +119,7 @@ public class Menu extends JMenuBar implements ActionListener {
 				 try{
 				 String filePath = fc.getSelectedFile().getAbsolutePath();
 				 BufferedReader reader = new BufferedReader(new FileReader(filePath));
+				 wipe();
 				 parent.c.loadCanvas(reader,parent.cars);
 				 parent.lastOpened = filePath;
 				 }
@@ -220,7 +221,6 @@ public class Menu extends JMenuBar implements ActionListener {
 		parent.memory = new ArrayList<SnapShot[]>();
 		parent.c.roads = new ArrayList<Road>();
 		parent.listener.cars = new ArrayList<CarAndBound>();
-		parent.memory = new ArrayList<SnapShot[]>();
 		
 		if(parent.controllerName.equals("SimpComp"))
 			parent.con = new SimpComp(parent.cars,parent.c.gamma,parent.c.delta);
