@@ -121,7 +121,16 @@ public class Menu extends JMenuBar implements ActionListener {
 				 BufferedReader reader = new BufferedReader(new FileReader(filePath));
 				 wipe();
 				 parent.c.loadCanvas(reader,parent.cars);
+				 
+				 parent.c.addMouseListener(parent.listener);
+				 parent.c.addMouseMotionListener(parent.listener);
+					
+				 parent.addComponentListener(parent);				 
+				 
 				 parent.lastOpened = filePath;
+				 
+				 parent.listener.updateCars();
+				 
 				 }
 				 catch(FileNotFoundException ex){}
 				 
@@ -217,17 +226,26 @@ public class Menu extends JMenuBar implements ActionListener {
 	}
 	
 	public void wipe(){
+		
+		String input = parent.controllerName;
+		Controller con = parent.con;
+		RoadCanvas c = parent.c;
+		ArrayList<Car> cars = parent.cars;
+		
 		parent.cars = new ArrayList<Car>();
 		parent.memory = new ArrayList<SnapShot[]>();
 		parent.c.roads = new ArrayList<Road>();
-		parent.listener.cars = new ArrayList<CarAndBound>();
+		parent.listener = new CanvasInterface(parent);
 		
-		if(parent.controllerName.equals("SimpComp"))
-			parent.con = new SimpComp(parent.cars,parent.c.gamma,parent.c.delta);
 		
-		//TODO: add other controllers, or Class and Constructor objects
+		if(input.equals("SimpComp"))
+			con = new SimpComp(cars,c.gamma,c.delta);
+		else if (input.equals("CeComp"))
+			con = new CeComp(cars,c.gamma,c.delta);
+		else if (input.equals("CeCoComp"))
+			con = new CeCoComp(cars, c.gamma, c.delta);
 		else
-			parent.con = new MController(parent.cars, parent.c.gamma, parent.c.delta);
+			con = new MController(cars, c.gamma, c.delta);
 		
 		
 		parent.play = false;

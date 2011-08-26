@@ -56,12 +56,12 @@ public class CanvasInterface implements MouseListener,MouseMotionListener {
 	private ArrayList<CarAndBound> getCars(){//used to generate/update the CarAndBound array list
 		ArrayList<CarAndBound> c = new ArrayList<CarAndBound>();
 		
-		for (Road r:frame.c.roads){
-			
-			for(int i = r.rCars.size()-1;i >=0; i--)//reverse order due to issues with clicking on multiple cars in
+		for (Road r:frame.c.roads)
+			for(int i = r.rCars.size()-1;i >=0; i--){//reverse order due to issues with clicking on multiple cars in
 				c.add(new CarAndBound(r.rCars.get(i)));//similar locations at one point
+				System.out.println("i: "+i);
+			}
 			
-		}
 		return c;
 	}
 	
